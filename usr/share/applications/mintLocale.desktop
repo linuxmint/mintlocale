@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Languages
+Comment=Language settings
+Exec=mintlocale
+Icon=preferences-desktop-locale
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Categories=GNOME;GTK;Settings;DesktopSettings;
+StartupNotify=false

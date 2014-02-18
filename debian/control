@@ -1,0 +1,12 @@
+Source: mintlocale
+Section: admin
+Priority: optional
+Maintainer: Clement Lefebvre <root@linuxmint.com>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: mintlocale
+Architecture: all
+Depends: python (>= 2.4), python (<< 3)
+Description: Language selection tool
+ Locale selection. 

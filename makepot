@@ -1,0 +1,6 @@
+#!/bin/bash
+intltool-extract --type=gettext/glade usr/lib/linuxmint/mintLocale/mintLocale.ui
+intltool-extract --type=gettext/glade usr/lib/linuxmint/mintLocale/install_remove.ui 
+intltool-extract --type=gettext/glade usr/lib/linuxmint/mintLocale/add.ui
+xgettext --language=Python --keyword=_ --keyword=N_ --output=mintlocale.pot usr/lib/linuxmint/mintLocale/*.py usr/lib/linuxmint/mintLocale/*.ui.h
+rm -f usr/lib/linuxmint/mintLocale/*.ui.h
