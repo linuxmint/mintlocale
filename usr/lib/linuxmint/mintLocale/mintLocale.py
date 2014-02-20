@@ -55,6 +55,7 @@ class MintLocale:
         column.add_attribute(ren, "text", 0)
         self.treeview.append_column(column)
         
+        self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
         self.dmrc_path = os.path.join(GLib.get_home_dir(), ".dmrc")
         self.dmrc = ConfigParser.ConfigParser()
         self.dmrc.read(self.dmrc_path)
@@ -261,13 +262,25 @@ class MintLocale:
                     row = model[active]
                     language = row[1]
                     print "Setting language to '%s'" % language
+
+                    # Set it in Accounts Service
                     try:
                         self.accountService.set_language(language)
                     except:
                         pass
+
+                    # Set it in .dmrc
                     self.dmrc.set('Desktop','Language', language)
                     with open(self.dmrc_path, 'wb') as configfile:
                         self.dmrc.write(configfile)
+
+                    # Set it in .pam_environment
+                    if os.path.exists(self.pam_environment_path):                        
+                        for lc_variable in ['LANGUAGE', 'LANG']:
+                             os.system("sed -i '/^%s=.*/d' %s" % (lc_variable, self.pam_environment_path))
+                        for lc_variable in ['LC_NUMERIC', 'LC_TIME', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
+                             os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, language, self.pam_environment_path))
+                    
                     self.current_language = language
                     self.builder.get_object("button_system_language").set_sensitive(True)
     
