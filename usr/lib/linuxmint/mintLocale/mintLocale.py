@@ -58,6 +58,7 @@ class MintLocale:
         self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
         self.dmrc_path = os.path.join(GLib.get_home_dir(), ".dmrc")
         self.dmrc = ConfigParser.ConfigParser()
+        self.dmrc.optionxform=str # force case sensitivity on ConfigParser
         self.dmrc.read(self.dmrc_path)
         if not self.dmrc.has_section('Desktop'):
             self.dmrc.add_section('Desktop')
