@@ -274,6 +274,7 @@ class MintLocale:
                     self.dmrc.set('Desktop','Language', language)
                     with open(self.dmrc_path, 'wb') as configfile:
                         self.dmrc.write(configfile)
+                    os.system("sed -i 's/ = /=/g' %s" % self.dmrc_path) # Remove space characters around "="" sign, created by ConfigParser
 
                     # Set it in .pam_environment
                     if os.path.exists(self.pam_environment_path):                        
