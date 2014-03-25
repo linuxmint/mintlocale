@@ -153,7 +153,6 @@ class MintLocale:
             else:
                 model.set_value(iter, 3, "<small><span fgcolor='#4ba048'>%s</span></small>" % "Fully installed")
                 model.set_value(iter, 4, True)
-                model.set_value(iter, 5, None)
             if os.path.exists(flag_path):
                 model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file(flag_path))
             else:
