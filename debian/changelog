@@ -1,3 +1,12 @@
+mintlocale (1.1.2) qiana; urgency=medium
+
+  * UI fix for Qiana
+  * Added gir1.2-accountsservice-1.0 to the deps
+  * Added dependency on synaptic
+  * Compatibility with GTK+ 3.4: removed setting the model value to None
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 14 Apr 2014 13:11:49 +0100
+
 mintlocale (1.1) debian; urgency=low
 
   * Bug fixes
