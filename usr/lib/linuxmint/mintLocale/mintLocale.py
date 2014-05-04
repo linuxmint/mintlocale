@@ -18,10 +18,6 @@ except Exception, detail:
 # i18n
 gettext.install("mintlocale", "/usr/share/linuxmint/locale")
 
-# i18n for menu item
-menuName = _("Languages")
-menuComment = _("Language settings")
-
 class MintLocale:
    
     ''' Create the UI '''
