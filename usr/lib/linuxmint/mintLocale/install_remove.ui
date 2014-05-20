@@ -3,7 +3,7 @@
   <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkWindow" id="main_window">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
+    <property name="can_focus">True</property>
     <property name="window_position">center</property>
     <property name="default_width">800</property>
     <property name="default_height">600</property>
@@ -24,7 +24,7 @@
             <child>
               <object class="GtkTreeView" id="treeview_language_list">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
                 <property name="has_tooltip">True</property>
                 <property name="headers_visible">False</property>
                 <property name="rules_hint">True</property>
@@ -62,7 +62,7 @@
               <object class="GtkButton" id="button_add">
                 <property name="label" translatable="yes">Add...</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="has_tooltip">True</property>
                 <property name="tooltip_markup" translatable="yes">Add a new language</property>
@@ -79,7 +79,7 @@
                 <property name="label" translatable="yes">Remove</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="has_tooltip">True</property>
                 <property name="tooltip_markup" translatable="yes">Remove the selected language</property>
@@ -96,7 +96,7 @@
                 <property name="label" translatable="yes">Install language packs</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="has_tooltip">True</property>
                 <property name="tooltip_markup" translatable="yes">Install any missing language packs, translations files, dictionnaries for the selected language</property>
@@ -118,14 +118,14 @@
         <child>
           <object class="GtkButtonBox" id="buttonbox1">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can_focus">True</property>
             <property name="border_width">6</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button_close">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
               </object>

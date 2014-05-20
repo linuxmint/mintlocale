@@ -41,7 +41,7 @@
                 <child>
                   <object class="GtkTreeView" id="treeview_language_list">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Select the default language for your user session</property>
                     <property name="tooltip_text" translatable="yes">Select the default language for your user session</property>
@@ -92,8 +92,8 @@
                   <object class="GtkButton" id="button_system_language">
                     <property name="label" translatable="yes">Apply System-Wide</property>
                     <property name="sensitive">False</property>
-                    <property name="can_focus">False</property>
-                    <property name="receives_default">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Use the selected language as the default system language</property>
                     <property name="tooltip_text" translatable="yes">Use the selected language as the default system language</property>
@@ -108,8 +108,8 @@
                 <child>
                   <object class="GtkButton" id="button_install_remove">
                     <property name="label" translatable="yes">Install / Remove Languages...</property>
-                    <property name="can_focus">False</property>
-                    <property name="receives_default">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Install additional languages or remove installed languages</property>
                     <property name="tooltip_text" translatable="yes">Install additional languages or remove installed languages</property>
@@ -237,7 +237,7 @@
               <object class="GtkButton" id="button_close">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
               </object>
