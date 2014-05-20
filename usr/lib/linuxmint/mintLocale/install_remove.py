@@ -12,12 +12,19 @@ try:
     import apt_pkg
     from subprocess import Popen
     import tempfile
+    import locale
 except Exception, detail:
     print detail
     sys.exit(1)
 
 # i18n
-gettext.install("mintlocale", "/usr/share/linuxmint/locale")
+APP = 'mintlocale'
+LOCALE_DIR = "/usr/share/linuxmint/locale"
+locale.setlocale(locale.LC_ALL, '')
+locale.bindtextdomain(APP, LOCALE_DIR)
+gettext.bindtextdomain(APP, LOCALE_DIR)
+gettext.textdomain(APP)
+_ = gettext.gettext
 
 class MintLocale:
    
@@ -35,6 +42,7 @@ class MintLocale:
         apt_pkg.init()        
 
         self.builder = Gtk.Builder()
+        self.builder.set_translation_domain("mintlocale")
         self.builder.add_from_file('/usr/lib/linuxmint/mintLocale/install_remove.ui')
         self.window = self.builder.get_object( "main_window" )
                
@@ -147,11 +155,11 @@ class MintLocale:
             model.set_value(iter, 0, language_label)
             model.set_value(iter, 1, line)
             if len(missing_packs) > 0:
-                model.set_value(iter, 3, "<small><span fgcolor='#a04848'>%s</span></small>" % "Some language packs are missing")
+                model.set_value(iter, 3, "<small><span fgcolor='#a04848'>%s</span></small>" % _("Some language packs are missing"))
                 model.set_value(iter, 4, False)
                 model.set_value(iter, 5, missing_packs)
             else:
-                model.set_value(iter, 3, "<small><span fgcolor='#4ba048'>%s</span></small>" % "Fully installed")
+                model.set_value(iter, 3, "<small><span fgcolor='#4ba048'>%s</span></small>" % _("Fully installed"))
                 model.set_value(iter, 4, True)
             if os.path.exists(flag_path):
                 model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file(flag_path))

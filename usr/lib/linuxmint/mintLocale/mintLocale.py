@@ -11,12 +11,19 @@ try:
     import gettext 
     import ConfigParser
     import grp
+    import locale
 except Exception, detail:
     print detail
     sys.exit(1)
 
 # i18n
-gettext.install("mintlocale", "/usr/share/linuxmint/locale")
+APP = 'mintlocale'
+LOCALE_DIR = "/usr/share/linuxmint/locale"
+locale.setlocale(locale.LC_ALL, '')
+locale.bindtextdomain(APP, LOCALE_DIR)
+gettext.bindtextdomain(APP, LOCALE_DIR)
+gettext.textdomain(APP)
+_ = gettext.gettext
 
 class MintLocale:
    
@@ -25,10 +32,13 @@ class MintLocale:
 
         # load our glade ui file in
         self.builder = Gtk.Builder()
+        self.builder.set_translation_domain("mintlocale")
         self.builder.add_from_file('/usr/lib/linuxmint/mintLocale/mintLocale.ui')
+        
         self.window = self.builder.get_object( "main_window" )
                
         self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
+
 
         self.treeview = self.builder.get_object("treeview_language_list")
                               

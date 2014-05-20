@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-04 13:31+0100\n"
+"POT-Creation-Date: 2014-05-20 11:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,32 +17,40 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: usr/lib/linuxmint/mintLocale/add.py:34
+#: usr/lib/linuxmint/mintLocale/add.py:42
 msgid "Add a New Language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:45
+#: usr/lib/linuxmint/mintLocale/install_remove.py:53
 msgid "Install / Remove Languages"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:188
-#: usr/lib/linuxmint/mintLocale/install_remove.py:227
+#: usr/lib/linuxmint/mintLocale/install_remove.py:158
+msgid "Some language packs are missing"
+msgstr ""
+
+#: usr/lib/linuxmint/mintLocale/install_remove.py:162
+msgid "Fully installed"
+msgstr ""
+
+#: usr/lib/linuxmint/mintLocale/install_remove.py:196
+#: usr/lib/linuxmint/mintLocale/install_remove.py:235
 msgid "Please wait, this can take some time"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:190
+#: usr/lib/linuxmint/mintLocale/install_remove.py:198
 msgid "Installation is complete"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:229
+#: usr/lib/linuxmint/mintLocale/install_remove.py:237
 msgid "The related language packs were removed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.py:36
+#: usr/lib/linuxmint/mintLocale/mintLocale.py:46
 msgid "Language Settings"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.py:110
+#: usr/lib/linuxmint/mintLocale/mintLocale.py:120
 msgid "No locale defined"
 msgstr ""
 

@@ -9,12 +9,19 @@ try:
     import sys
     import string
     import gettext    
+    import locale
 except Exception, detail:
     print detail
     sys.exit(1)
 
 # i18n
-gettext.install("mintlocale", "/usr/share/linuxmint/locale")
+APP = 'mintlocale'
+LOCALE_DIR = "/usr/share/linuxmint/locale"
+locale.setlocale(locale.LC_ALL, '')
+locale.bindtextdomain(APP, LOCALE_DIR)
+gettext.bindtextdomain(APP, LOCALE_DIR)
+gettext.textdomain(APP)
+_ = gettext.gettext
 
 class MintLocale:
    
@@ -24,6 +31,7 @@ class MintLocale:
         self.selected_language = None
         
         self.builder = Gtk.Builder()
+        self.builder.set_translation_domain("mintlocale")
         self.builder.add_from_file('/usr/lib/linuxmint/mintLocale/add.ui')
         self.window = self.builder.get_object( "main_window" )
                
