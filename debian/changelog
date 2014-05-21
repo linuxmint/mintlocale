@@ -1,3 +1,9 @@
+mintlocale (1.1.5) qiana; urgency=medium
+
+  * Improved keyboard navigation
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 21 May 2014 13:54:00 +0100
+
 mintlocale (1.1.4) qiana; urgency=medium
 
   * Improved l10n
