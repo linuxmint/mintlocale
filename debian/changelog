@@ -1,3 +1,9 @@
+mintlocale (1.1.6) qiana; urgency=medium
+
+  * Updated desktop file
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 27 May 2014 10:57:37 +0100
+
 mintlocale (1.1.5) qiana; urgency=medium
 
   * Improved keyboard navigation
