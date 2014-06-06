@@ -17,7 +17,6 @@ except Exception, detail:
 # i18n
 APP = 'mintlocale'
 LOCALE_DIR = "/usr/share/linuxmint/locale"
-locale.setlocale(locale.LC_ALL, '')
 locale.bindtextdomain(APP, LOCALE_DIR)
 gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)

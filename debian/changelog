@@ -1,3 +1,9 @@
+mintlocale (1.1.7) qiana; urgency=medium
+
+  * Fixed mintlocale not starting in certain languages
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 06 Jun 2014 13:36:24 +0100
+
 mintlocale (1.1.6) qiana; urgency=medium
 
   * Updated desktop file
