@@ -32,7 +32,7 @@ class MintLocale:
         # load our glade ui file in
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
-        self.builder.add_from_file('/usr/lib/linuxmint/mintLocale/mintLocale.ui')
+        self.builder.add_from_file('/usr/share/linuxmint/mintLocale/mintLocale.ui')
         
         self.window = self.builder.get_object( "main_window" )
                
@@ -115,7 +115,7 @@ class MintLocale:
         self.set_num_installed()
 
     def set_system_locale(self):
-        self.builder.get_object("image_system_language").set_from_file('/usr/lib/linuxmint/mintLocale/flags/16/generic.png')
+        self.builder.get_object("image_system_language").set_from_file('/usr/share/linuxmint/mintLocale/flags/16/generic.png')
         self.builder.get_object("label_system_language").set_text(_("No locale defined"))
 
         # Get system locale
@@ -147,20 +147,20 @@ class MintLocale:
                         else:
                             country = country_code
                         language_label = "%s, %s" % (language, country)
-                        flag_path = '/usr/lib/linuxmint/mintLocale/flags/16/' + country_code + '.png'
+                        flag_path = '/usr/share/linuxmint/mintLocale/flags/16/' + country_code + '.png'
                 else:
                     if locale in self.languages:
                         language_label = self.languages[locale]
                     else:
                         language_label = locale
-                    flag_path = '/usr/lib/linuxmint/mintLocale/flags/16/languages/%s.png' % locale                    
+                    flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale                    
                 
                 self.builder.get_object("label_system_language").set_text(language_label)                
                         
                 if os.path.exists(flag_path):
                     self.builder.get_object("image_system_language").set_from_file(flag_path)
                 else:
-                    self.builder.get_object("image_system_language").set_from_file('/usr/lib/linuxmint/mintLocale/flags/16/generic.png')
+                    self.builder.get_object("image_system_language").set_from_file('/usr/share/linuxmint/mintLocale/flags/16/generic.png')
 
     def set_num_installed (self):
         num_installed = commands.getoutput("localedef --list-archive | grep utf8 | wc -l")
@@ -179,7 +179,7 @@ class MintLocale:
 
         #Load countries into memory
         self.countries = {}
-        file = open('/usr/lib/linuxmint/mintLocale/countries', "r")
+        file = open('/usr/share/linuxmint/mintLocale/countries', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -189,7 +189,7 @@ class MintLocale:
 
         #Load languages into memory
         self.languages = {}
-        file = open('/usr/lib/linuxmint/mintLocale/languages', "r")
+        file = open('/usr/share/linuxmint/mintLocale/languages', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -226,13 +226,13 @@ class MintLocale:
                         country = country_code
 
                     language_label = "%s, %s" % (language, country)
-                    flag_path = '/usr/lib/linuxmint/mintLocale/flags/16/' + country_code + '.png'
+                    flag_path = '/usr/share/linuxmint/mintLocale/flags/16/' + country_code + '.png'
             else:                                        
                 if locale_code in self.languages:
                     language_label = self.languages[locale_code]
                 else:
                     language_label = locale_code
-                flag_path = '/usr/lib/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
+                flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
 
             iter = model.append()
             model.set_value(iter, 0, language_label)
@@ -241,7 +241,7 @@ class MintLocale:
             if os.path.exists(flag_path):
                 model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file(flag_path))
             else:                
-                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file('/usr/lib/linuxmint/mintLocale/flags/16/generic.png'))
+                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file('/usr/share/linuxmint/mintLocale/flags/16/generic.png'))
             
             if (line == self.current_language):                        
                 if (set_index is None):

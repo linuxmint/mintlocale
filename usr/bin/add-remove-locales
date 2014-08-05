@@ -2,5 +2,5 @@
 
 import os
 
-os.system("/usr/lib/linuxmint/mintLocale/install_remove.py")
+os.system("/usr/share/linuxmint/mintLocale/install_remove.py")
 

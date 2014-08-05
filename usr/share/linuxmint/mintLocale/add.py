@@ -31,7 +31,7 @@ class MintLocale:
         
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
-        self.builder.add_from_file('/usr/lib/linuxmint/mintLocale/add.ui')
+        self.builder.add_from_file('/usr/share/linuxmint/mintLocale/add.ui')
         self.window = self.builder.get_object( "main_window" )
                
         self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
@@ -66,7 +66,7 @@ class MintLocale:
 
         #Load countries into memory
         self.countries = {}
-        file = open('/usr/lib/linuxmint/mintLocale/countries', "r")
+        file = open('/usr/share/linuxmint/mintLocale/countries', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -76,7 +76,7 @@ class MintLocale:
 
         #Load languages into memory
         self.languages = {}
-        file = open('/usr/lib/linuxmint/mintLocale/languages', "r")
+        file = open('/usr/share/linuxmint/mintLocale/languages', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -112,13 +112,13 @@ class MintLocale:
                             country = country_code
 
                         language_label = "%s, %s" % (language, country)
-                        flag_path = '/usr/lib/linuxmint/mintLocale/flags/16/' + country_code + '.png'
+                        flag_path = '/usr/share/linuxmint/mintLocale/flags/16/' + country_code + '.png'
                 else:                                        
                     if locale_code in self.languages:
                         language_label = self.languages[locale_code]
                     else:
                         language_label = locale_code
-                    flag_path = '/usr/lib/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
+                    flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
                     
                                             
                 iter = model.append()
@@ -127,7 +127,7 @@ class MintLocale:
                 if os.path.exists(flag_path):
                     model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file(flag_path))
                 else:                            
-                    model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file('/usr/lib/linuxmint/mintLocale/flags/16/generic.png'))
+                    model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file('/usr/share/linuxmint/mintLocale/flags/16/generic.png'))
                              
         treeview = self.builder.get_object("treeview_language_list")
         treeview.set_model(model)
