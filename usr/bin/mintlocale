@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import os
 
-os.system("/usr/lib/linuxmint/mintLocale/mintLocale.py")
+os.system("/usr/share/linuxmint/mintLocale/mintLocale.py")
 
 

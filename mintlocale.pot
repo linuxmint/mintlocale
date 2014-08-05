@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-20 11:24+0100\n"
+"POT-Creation-Date: 2014-08-05 15:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,116 +17,116 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: usr/lib/linuxmint/mintLocale/add.py:42
+#: usr/share/linuxmint/mintLocale/add.py:41
 msgid "Add a New Language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:53
+#: usr/share/linuxmint/mintLocale/install_remove.py:52
 msgid "Install / Remove Languages"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:158
+#: usr/share/linuxmint/mintLocale/install_remove.py:157
 msgid "Some language packs are missing"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:162
+#: usr/share/linuxmint/mintLocale/install_remove.py:161
 msgid "Fully installed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:196
-#: usr/lib/linuxmint/mintLocale/install_remove.py:235
+#: usr/share/linuxmint/mintLocale/install_remove.py:195
+#: usr/share/linuxmint/mintLocale/install_remove.py:234
 msgid "Please wait, this can take some time"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:198
+#: usr/share/linuxmint/mintLocale/install_remove.py:197
 msgid "Installation is complete"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:237
+#: usr/share/linuxmint/mintLocale/install_remove.py:236
 msgid "The related language packs were removed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.py:46
+#: usr/share/linuxmint/mintLocale/mintLocale.py:45
 msgid "Language Settings"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.py:120
+#: usr/share/linuxmint/mintLocale/mintLocale.py:119
 msgid "No locale defined"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/add.ui.h:1
+#: usr/share/linuxmint/mintLocale/add.ui.h:1
 msgid "Install"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/add.ui.h:2
+#: usr/share/linuxmint/mintLocale/add.ui.h:2
 msgid "Install the selected language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.ui.h:1
+#: usr/share/linuxmint/mintLocale/install_remove.ui.h:1
 msgid ""
 "<b><small>Note: Installing or upgrading language packs can trigger the "
 "installation of additional languages</small></b>"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.ui.h:2
+#: usr/share/linuxmint/mintLocale/install_remove.ui.h:2
 msgid "Add..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.ui.h:3
+#: usr/share/linuxmint/mintLocale/install_remove.ui.h:3
 msgid "Add a new language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.ui.h:4
+#: usr/share/linuxmint/mintLocale/install_remove.ui.h:4
 msgid "Remove"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.ui.h:5
+#: usr/share/linuxmint/mintLocale/install_remove.ui.h:5
 msgid "Remove the selected language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.ui.h:6
+#: usr/share/linuxmint/mintLocale/install_remove.ui.h:6
 msgid "Install language packs"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.ui.h:7
+#: usr/share/linuxmint/mintLocale/install_remove.ui.h:7
 msgid ""
 "Install any missing language packs, translations files, dictionnaries for "
 "the selected language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.ui.h:1
+#: usr/share/linuxmint/mintLocale/mintLocale.ui.h:1
 msgid "Select your default session language:"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.ui.h:2
+#: usr/share/linuxmint/mintLocale/mintLocale.ui.h:2
 msgid "Select the default language for your user session"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.ui.h:3
+#: usr/share/linuxmint/mintLocale/mintLocale.ui.h:3
 msgid "<b><small>Changes take effect the next time you log in.</small></b>"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.ui.h:4
+#: usr/share/linuxmint/mintLocale/mintLocale.ui.h:4
 msgid "Apply System-Wide"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.ui.h:5
+#: usr/share/linuxmint/mintLocale/mintLocale.ui.h:5
 msgid "Use the selected language as the default system language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.ui.h:6
+#: usr/share/linuxmint/mintLocale/mintLocale.ui.h:6
 msgid "Install / Remove Languages..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.ui.h:7
+#: usr/share/linuxmint/mintLocale/mintLocale.ui.h:7
 msgid "Install additional languages or remove installed languages"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.ui.h:8
+#: usr/share/linuxmint/mintLocale/mintLocale.ui.h:8
 msgid "System language: "
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.ui.h:9
+#: usr/share/linuxmint/mintLocale/mintLocale.ui.h:9
 msgid "Number of languages installed: "
 msgstr ""
 

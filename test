@@ -1,5 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 
-sudo rm -rf /usr/lib/linuxmint/mintLocale
+sudo rm -rf /usr/share/linuxmint/mintLocale
 sudo cp -R usr /
 mintlocale
