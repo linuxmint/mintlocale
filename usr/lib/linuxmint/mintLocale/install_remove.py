@@ -132,13 +132,13 @@ class MintLocale:
                         country = country_code
 
                     language_label = "%s, %s" % (language, country)
-                    flag_path = '/usr/lib/linuxmint/mintLocale/flags/16/' + country_code + '.png'
+                    flag_path = '/usr/share/linuxmint/mintLocale/flags/16/' + country_code + '.png'
             else:
                 if locale_code in self.languages:
                     language_label = self.languages[locale_code]
                 else:
                     language_label = locale_code                    
-                flag_path = '/usr/lib/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
+                flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
                 language_code = locale_code
 
             # Check if the language packs are installed
@@ -163,7 +163,7 @@ class MintLocale:
             if os.path.exists(flag_path):
                 model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file(flag_path))
             else:
-                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file('/usr/lib/linuxmint/mintLocale/flags/16/generic.png'))
+                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file('/usr/share/linuxmint/mintLocale/flags/16/generic.png'))
                              
         treeview = self.builder.get_object("treeview_language_list")
         treeview.set_model(model)
