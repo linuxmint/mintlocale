@@ -150,7 +150,8 @@ class MintLocale:
     def button_install_clicked (self, button):
         locale = self.selected_language.replace(".UTF-8", "")
         os.system("localedef -f UTF-8 -i %s %s.UTF-8" % (locale, locale))
-        os.system("localedef --list-archive | grep utf8 | sed 's/utf8/UTF-8 UTF-8/g' > /var/lib/locales/supported.d/mintlocale")
+        if os.path.exists("/var/lib/locales/supported.d"):
+        	os.system("localedef --list-archive | grep utf8 | sed 's/utf8/UTF-8 UTF-8/g' > /var/lib/locales/supported.d/mintlocale")
         sys.exit(0)
     
 if __name__ == "__main__":
