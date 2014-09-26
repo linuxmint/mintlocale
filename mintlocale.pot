@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-20 11:24+0100\n"
+"POT-Creation-Date: 2014-09-26 10:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,40 +17,40 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: usr/lib/linuxmint/mintLocale/add.py:42
+#: usr/lib/linuxmint/mintLocale/add.py:41
 msgid "Add a New Language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:53
+#: usr/lib/linuxmint/mintLocale/install_remove.py:52
 msgid "Install / Remove Languages"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:158
+#: usr/lib/linuxmint/mintLocale/install_remove.py:157
 msgid "Some language packs are missing"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:162
+#: usr/lib/linuxmint/mintLocale/install_remove.py:161
 msgid "Fully installed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:196
-#: usr/lib/linuxmint/mintLocale/install_remove.py:235
+#: usr/lib/linuxmint/mintLocale/install_remove.py:195
+#: usr/lib/linuxmint/mintLocale/install_remove.py:234
 msgid "Please wait, this can take some time"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:198
+#: usr/lib/linuxmint/mintLocale/install_remove.py:197
 msgid "Installation is complete"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/install_remove.py:237
+#: usr/lib/linuxmint/mintLocale/install_remove.py:236
 msgid "The related language packs were removed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.py:46
+#: usr/lib/linuxmint/mintLocale/mintLocale.py:45
 msgid "Language Settings"
 msgstr ""
 
-#: usr/lib/linuxmint/mintLocale/mintLocale.py:120
+#: usr/lib/linuxmint/mintLocale/mintLocale.py:119
 msgid "No locale defined"
 msgstr ""
 
@@ -90,8 +90,8 @@ msgstr ""
 
 #: usr/lib/linuxmint/mintLocale/install_remove.ui.h:7
 msgid ""
-"Install any missing language packs, translations files, dictionnaries for "
-"the selected language"
+"Install any missing language packs, translations files, dictionaries for the "
+"selected language"
 msgstr ""
 
 #: usr/lib/linuxmint/mintLocale/mintLocale.ui.h:1
