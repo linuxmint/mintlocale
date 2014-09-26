@@ -99,8 +99,8 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="has_tooltip">True</property>
-                <property name="tooltip_markup" translatable="yes">Install any missing language packs, translations files, dictionnaries for the selected language</property>
-                <property name="tooltip_text" translatable="yes">Install any missing language packs, translations files, dictionnaries for the selected language</property>
+                <property name="tooltip_markup" translatable="yes">Install any missing language packs, translations files, dictionaries for the selected language</property>
+                <property name="tooltip_text" translatable="yes">Install any missing language packs, translations files, dictionaries for the selected language</property>
               </object>
               <packing>
                 <property name="expand">False</property>
