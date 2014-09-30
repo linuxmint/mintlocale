@@ -1,3 +1,10 @@
+mintlocale (1.1.8) rebecca; urgency=medium
+
+  * Fix small typo: dictionnaries -> dictionaries
+  * Don't write to /var/lib/locales/supported.d if it doesn't exist (in LMDE for instance)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 30 Sep 2014 13:02:31 +0200
+
 mintlocale (1.1.7) qiana; urgency=medium
 
   * Fixed mintlocale not starting in certain languages
