@@ -105,8 +105,18 @@ class MintLocale:
                         self.builder.get_object("button_install_remove").show()
 
     def button_system_language_clicked (self, button):
-        os.system("gksu set-default-locale '%s'" % self.current_language)
-        self.set_system_locale()
+        model = self.treeview.get_model()
+        active = self.treeview.get_selection().get_selected_rows()
+        if(len(active) > 0):
+            active = active[1]
+            if (len(active) > 0):
+                active = active[0]
+                if active is not None:
+                    row = model[active]
+                    language = row[1]
+                    print "Setting system language to '%s'" % language
+                    os.system("gksu set-default-locale '%s'" % language)
+                    self.set_system_locale()
 
     def button_install_remove_clicked (self, button):
         os.system("gksu add-remove-locales")
