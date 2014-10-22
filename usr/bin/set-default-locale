@@ -5,4 +5,6 @@ import sys, os
 locale = sys.argv[1]
 info = locale.replace(".UTF-8", "")
 language = info.split("_")[0]
-os.system("sed -e 's/$locale/%s/g' -e 's/$info/%s/g' -e 's/$language/%s/g' /usr/lib/linuxmint/mintLocale/default_locale.template > /etc/default/locale" % (locale, info, language))
+region = sys.argv[2]
+
+os.system("sed -e 's/$locale/%s/g' -e 's/$info/%s/g' -e 's/$language/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintLocale/default_locale.template > /etc/default/locale" % (locale, info, language, region))

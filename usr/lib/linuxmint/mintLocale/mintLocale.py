@@ -24,6 +24,224 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
+
+class Section(Gtk.Box):
+    def __init__(self, name):
+        self.name = name
+        super(Section, self).__init__()
+        self.set_orientation(Gtk.Orientation.VERTICAL)
+        self.set_border_width(6)
+        self.set_spacing(6)
+        self.label = Gtk.Label()
+        self.label.set_markup("<b>%s</b>" % self.name)
+        hbox = Gtk.Box()
+        hbox.set_orientation(Gtk.Orientation.HORIZONTAL)
+        hbox.pack_start(self.label, False, False, 0)
+        self.pack_start(hbox, False, True, 0)
+
+    def add(self, widget):
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        box.set_margin_left(40)
+        box.set_margin_right(40)
+        box.pack_start(widget, False, True, 0)
+        self.pack_start(box, False, False, 0)
+
+    def add_expand(self, widget):
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        box.set_margin_left(40)
+        box.set_margin_right(40)
+        box.pack_start(widget, True, True, 0)
+        self.pack_start(box, False, False, 0)
+
+    def add_indented(self, widget):
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        box.set_margin_left(80)
+        box.set_margin_right(10)
+        box.pack_start(widget, False, True, 0)
+        self.pack_start(box, False, False, 0)
+
+    def add_indented_expand(self, widget):
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        box.set_margin_left(80)
+        box.set_margin_right(10)
+        box.pack_start(widget, True, True, 0)
+        self.pack_start(box, False, False, 0)
+
+class SectionBg(Gtk.Viewport):
+    def __init__(self):
+        Gtk.Viewport.__init__(self)
+        self.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+        style = self.get_style_context()
+        style.add_class("section-bg")
+        self.expand = True # Tells CS to give expand us to the whole window
+
+class IndentedHBox(Gtk.HBox):
+    def __init__(self):
+        super(IndentedHBox, self).__init__()
+        indent = Gtk.Label.new('\t')
+        self.pack_start(indent, False, False, 0)
+
+    def add(self, item):
+        self.pack_start(item, False, True, 0)
+
+    def add_expand(self, item):
+        self.pack_start(item, True, True, 0)
+
+class Locale():
+    def __init__ (self, id, name):            
+        self.id = id
+        self.name = name
+
+class PictureChooserButton (Gtk.Button):
+
+    def __init__ (self, num_cols=4, button_picture_size=None, menu_pictures_size=None, has_button_label=False):        
+        super(PictureChooserButton, self).__init__()
+        self.num_cols = num_cols
+        self.button_picture_size = button_picture_size
+        self.menu_pictures_size = menu_pictures_size
+        self.row = 0
+        self.col = 0
+        self.menu = Gtk.Menu()
+        self.button_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        self.button_image = Gtk.Image()
+        self.button_box.add(self.button_image)
+        if has_button_label:
+            self.button_label = Gtk.Label()
+            self.button_box.add(self.button_label)
+        self.add(self.button_box)
+        self.connect("button-release-event", self._on_button_clicked)
+        self.progress = 0.0
+
+        context = self.get_style_context()
+        context.add_class("gtkstyle-fallback")
+
+        self.connect_after("draw", self.on_draw) 
+
+    def on_draw(self, widget, cr, data=None):
+        if self.progress == 0:
+            return False
+        box = widget.get_allocation()
+
+        context = widget.get_style_context()
+        c = context.get_background_color(Gtk.StateFlags.SELECTED)
+
+        max_length = box.width * .6
+        start = (box.width - max_length) / 2
+        y = box.height - 5
+
+        cr.save()
+
+        cr.set_source_rgba(c.red, c.green, c.blue, c.alpha)
+        cr.set_line_width(3)
+        cr.set_line_cap(1)
+        cr.move_to(start, y)
+        cr.line_to(start + (self.progress * max_length), y)
+        cr.stroke()
+
+        cr.restore()
+        return False
+
+    def increment_loading_progress(self, inc):
+        progress = self.progress + inc
+        self.progress = min(1.0, progress)
+        self.queue_draw()
+
+    def reset_loading_progress(self):
+        self.progress = 0.0
+        self.queue_draw()
+
+    def set_picture_from_file (self, path):
+        file = Gio.File.new_for_path(path)
+        file_icon = Gio.FileIcon(file=file)
+        self.button_image.set_from_gicon(file_icon, Gtk.IconSize.DIALOG)
+        if self.menu_pictures_size is not None:
+            self.button_image.set_pixel_size(self.menu_pictures_size)
+
+    def set_button_label(self, label):
+        self.button_label.set_markup(label)
+
+    def popup_menu_below_button (self, menu, widget):  
+        window = widget.get_window()
+        screen = window.get_screen()
+        monitor = screen.get_monitor_at_window(window)
+
+        warea = screen.get_monitor_workarea(monitor)
+        wrect = widget.get_allocation()
+        mrect = menu.get_allocation()
+
+        unused_var, window_x, window_y = window.get_origin()
+
+        # Position left edge of the menu with the right edge of the button
+        x = window_x + wrect.x + wrect.width
+        # Center the menu vertically with respect to the monitor
+        y = warea.y + (warea.height / 2) - (mrect.height / 2)
+
+        # Now, check if we're still touching the button - we want the right edge
+        # of the button always 100% touching the menu
+
+        if y > (window_y + wrect.y):
+            y = y - (y - (window_y + wrect.y))
+        elif (y + mrect.height) < (window_y + wrect.y + wrect.height):
+            y = y + ((window_y + wrect.y + wrect.height) - (y + mrect.height))
+
+        push_in = True # push_in is True so all menu is always inside screen
+        return (x, y, push_in)
+
+    def _on_button_clicked(self, widget, event):
+        if event.button == 1:
+            self.menu.show_all()
+            self.menu.popup(None, None, self.popup_menu_below_button, self, event.button, event.time)
+
+    def _on_picture_selected(self, menuitem, path, callback, id=None):
+        if id is not None:
+            result = callback(path, id)
+        else:
+            result = callback(path)
+        
+        if result:
+            self.set_picture_from_file(path)            
+
+    def clear_menu(self):
+        menu = self.menu
+        self.menu = Gtk.Menu()
+        self.row = 0
+        self.col = 0
+        menu.destroy()
+
+    def add_picture(self, path, callback, title=None, id=None):
+        if os.path.exists(path):          
+            if self.button_picture_size is None:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
+            else:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, -1, self.button_picture_size, True)
+            image = Gtk.Image.new_from_pixbuf (pixbuf)  
+            menuitem = Gtk.MenuItem()            
+            if title is not None:
+                vbox = Gtk.VBox()
+                vbox.pack_start(image, False, False, 2)
+                label = Gtk.Label()
+                label.set_text(title)
+                vbox.pack_start(label, False, False, 2)
+                menuitem.add(vbox)
+            else:
+                menuitem.add(image)
+            if id is not None:
+                menuitem.connect('activate', self._on_picture_selected, path, callback, id)
+            else:
+                menuitem.connect('activate', self._on_picture_selected, path, callback)
+            self.menu.attach(menuitem, self.col, self.col+1, self.row, self.row+1)
+            self.col = (self.col+1) % self.num_cols
+            if (self.col == 0):
+                self.row = self.row + 1
+
+    def add_separator(self):
+        self.row = self.row + 1
+        self.menu.attach(Gtk.SeparatorMenuItem(), 0, self.num_cols, self.row, self.row+1)
+
+    def add_menuitem(self, menuitem):
+        self.row = self.row + 1
+        self.menu.attach(menuitem, 0, self.num_cols, self.row, self.row+1)
+
 class MintLocale:
    
     ''' Create the UI '''
@@ -36,29 +254,45 @@ class MintLocale:
         
         self.window = self.builder.get_object( "main_window" )
                
-        self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
-
-
-        self.treeview = self.builder.get_object("treeview_language_list")
+        self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)        
                               
         # set up larger components.
         self.builder.get_object("main_window").set_title(_("Language Settings"))
         self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
-        self.builder.get_object("button_close").connect("clicked", Gtk.main_quit)
-        self.builder.get_object("button_system_language").connect("clicked", self.button_system_language_clicked)
-        self.builder.get_object("button_install_remove").connect("clicked", self.button_install_remove_clicked)
+        
+        self.locale_button = PictureChooserButton(num_cols=2, button_picture_size=16, has_button_label=True)
+        self.region_button = PictureChooserButton(num_cols=2, button_picture_size=16, has_button_label=True)
+      
+        self.locale_system_wide_button = Gtk.Button()
+        self.locale_system_wide_button.set_label(_("Apply System-Wide"))
+        self.locale_system_wide_button.connect("clicked", self.button_system_language_clicked)
 
-        ren = Gtk.CellRendererPixbuf()
-        column = Gtk.TreeViewColumn("Flags", ren)
-        column.add_attribute(ren, "pixbuf", 2)
-        ren.set_property('ypad', 5)
-        ren.set_property('xpad', 10)
-        self.treeview.append_column(column)
+        self.locale_install_button = Gtk.Button()
+        self.locale_install_button.set_label(_("Install / Remove Languages..."))
+        self.locale_install_button.connect("clicked", self.button_install_remove_clicked)            
 
-        ren = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn("Languages", ren)
-        column.add_attribute(ren, "text", 0)
-        self.treeview.append_column(column)
+        self.system_label = Gtk.Label()
+        self.install_label = Gtk.Label()
+
+        bg = SectionBg()
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        bg.add(vbox)
+        
+        language_section = Section(_("Language"))
+        label = "%s\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Language"), _("Language, interface, date and time..."))
+        language_section.add(self.make_group(label, self.locale_button))
+        label = "%s\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Region"), _("Numbers, currency, addresses, measurement..."))
+        language_section.add(self.make_group(label, self.region_button))        
+        vbox.add(language_section)
+        
+        vbox.add(Gtk.Separator.new(Gtk.Orientation.HORIZONTAL))
+
+        im_section = Section(_("Input method"))        
+        vbox.add(im_section)
+
+        self.builder.get_object("box1").pack_start(bg, True, True, 6)
+
+        bg.show_all()
         
         self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
         self.dmrc_path = os.path.join(GLib.get_home_dir(), ".dmrc")
@@ -70,9 +304,9 @@ class MintLocale:
 
         current_user = GLib.get_user_name()        
 
-        self.current_language = None
+        self.current_language = None        
         dmrc_language = None
-        env_language = os.environ['LANG']
+        env_language = os.environ['LANG']        
         
         if self.dmrc.has_option('Desktop', 'Language'):
             dmrc_language = self.dmrc.get('Desktop', 'Language')
@@ -85,6 +319,26 @@ class MintLocale:
         print "User language in .dmrc: %s" % dmrc_language
         print "User language in $LANG: %s" % env_language
         print "Current language: %s" % self.current_language
+
+        self.current_region = None
+        pam_region = None
+        env_region = os.environ['LC_NUMERIC']
+
+        if os.path.exists(self.pam_environment_path):
+            with open(self.pam_environment_path, 'r') as pam_file:
+                for line in pam_file:
+                    line = line.strip()
+                    if line.startswith("LC_NUMERIC="):
+                        pam_region = line.split("=")[1]             
+
+        if pam_region is not None:
+            self.current_region = pam_region
+        else:
+            self.current_region = env_region
+
+        print "User region in .pam_environment: %s" % pam_region
+        print "User language in $LC_NUMERIC: %s" % env_region
+        print "Current region: %s" % self.current_region
 
         self.build_lang_list()
         self.set_system_locale()
@@ -99,24 +353,32 @@ class MintLocale:
             (name, pw, gid, mem) = group
             if name in ("adm", "sudo"):
                 for user in mem:
-                    if current_user == user:
-                        self.builder.get_object("separator").show()
-                        self.builder.get_object("button_system_language").show()
-                        self.builder.get_object("button_install_remove").show()
+                    if current_user == user:                        
+                        language_section.add(self.make_group(self.system_label, self.locale_system_wide_button))        
+                        language_section.add(self.make_group(self.install_label, self.locale_install_button)) 
+                        language_section.show_all()  
+                        break                     
 
-    def button_system_language_clicked (self, button):
-        model = self.treeview.get_model()
-        active = self.treeview.get_selection().get_selected_rows()
-        if(len(active) > 0):
-            active = active[1]
-            if (len(active) > 0):
-                active = active[0]
-                if active is not None:
-                    row = model[active]
-                    language = row[1]
-                    print "Setting system language to '%s'" % language
-                    os.system("gksu set-default-locale '%s'" % language)
-                    self.set_system_locale()
+    def make_group(self, group_label, widget):
+        self.size_groups = getattr(self, "size_groups", [Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL) for x in range(2)])
+        box = IndentedHBox()
+        if isinstance(group_label, Gtk.Label):
+            label = group_label
+        else:
+            label = Gtk.Label()
+            label.set_markup(group_label)
+        label.props.xalign = 0.0
+        self.size_groups[0].add_widget(label)
+        box.pack_start(label, False, False, 0)
+        self.size_groups[1].add_widget(widget)
+        box.pack_start(widget, False, False, 15)        
+        return box
+
+    def button_system_language_clicked (self, button):       
+        print "Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region)
+        os.system("gksu set-default-locale '%s' '%s'" % (self.current_language, self.current_region))
+        self.set_system_locale()
+        pass
 
     def button_install_remove_clicked (self, button):
         os.system("gksu add-remove-locales")
@@ -125,8 +387,9 @@ class MintLocale:
         self.set_num_installed()
 
     def set_system_locale(self):
-        self.builder.get_object("image_system_language").set_from_file('/usr/share/linuxmint/mintLocale/flags/16/generic.png')
-        self.builder.get_object("label_system_language").set_text(_("No locale defined"))
+        
+        language_str = _("No locale defined")
+        region_str = _("No locale defined")
 
         # Get system locale
         if os.path.exists("/etc/default/locale"):
@@ -157,36 +420,64 @@ class MintLocale:
                         else:
                             country = country_code
                         language_label = "%s, %s" % (language, country)
-                        flag_path = '/usr/share/linuxmint/mintLocale/flags/16/' + country_code + '.png'
                 else:
                     if locale in self.languages:
                         language_label = self.languages[locale]
                     else:
                         language_label = locale
-                    flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale
                 
-                self.builder.get_object("label_system_language").set_text(language_label)                
-                        
-                if os.path.exists(flag_path):
-                    self.builder.get_object("image_system_language").set_from_file(flag_path)
+                language_str = language_label
+                                    
+            if "LC_NUMERIC" in vars:
+                locale = vars['LC_NUMERIC'].replace('"', '').replace("'", "")
+                locale = locale.replace("utf8", "UTF-8")
+                locale = locale.replace("UTF-8", "")
+                locale = locale.replace(".", "")
+                locale = locale.strip()
+                if "_" in locale:
+                    split = locale.split("_")
+                    if len(split) == 2:
+                        language_code = split[0]
+                        if language_code in self.languages:
+                            language = self.languages[language_code]
+                        else:
+                            language = language_code
+                        country_code = split[1].lower()
+                        if country_code in self.countries:
+                            country = self.countries[country_code]
+                        else:
+                            country = country_code
+                        language_label = "%s, %s" % (language, country)
                 else:
-                    self.builder.get_object("image_system_language").set_from_file('/usr/share/linuxmint/mintLocale/flags/16/generic.png')
+                    if locale in self.languages:
+                        language_label = self.languages[locale]
+                    else:
+                        language_label = locale
+                
+                region_str = language_label
+        
+        language_prefix = ("Language:")
+        region_prefix = ("Region:")
+        self.system_label.set_markup("%s\n<small><i><span foreground='#3C3C3C'>%s %s\n%s %s</span></i></small>" % (_("System locale"), language_prefix, language_str, region_prefix, region_str))
+                            
 
     def set_num_installed (self):
-        num_installed = commands.getoutput("localedef --list-archive | grep utf8 | wc -l")
-        self.builder.get_object("label_num_languages_installed").set_text(num_installed)
+        num_installed = int(commands.getoutput("localedef --list-archive | grep utf8 | wc -l"))
+        self.install_label.set_markup("%s\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Language support"), _("%d languages installed") % num_installed))
 
     def accountservice_ready(self, user, param):
         self.builder.get_object("main_window").show()
-        self.treeview.connect("cursor-changed", self.select_language)
 
     def accountservice_changed(self, user):        
         print "AccountsService language is: '%s'" % user.get_language()
 
     def build_lang_list(self):
-        model = Gtk.ListStore(str,str,GdkPixbuf.Pixbuf, str)
-        model.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
+        self.locale_button.clear_menu()
+        self.region_button.clear_menu()
+        self.locale_button.set_button_label(self.current_language)
+        self.region_button.set_button_label(self.current_region)
+        
         #Load countries into memory
         self.countries = {}
         file = open('/usr/lib/linuxmint/mintLocale/countries', "r")
@@ -208,7 +499,6 @@ class MintLocale:
         file.close()
         
         cur_index = -1 # find the locale :P
-        set_index = None
         locales = commands.getoutput("localedef --list-archive")
         for line in locales.split("\n"):
             line = line.replace("utf8", "UTF-8")
@@ -243,63 +533,71 @@ class MintLocale:
                 else:
                     language_label = locale_code
                 flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
-
-            iter = model.append()
-            model.set_value(iter, 0, language_label)
-            model.set_value(iter, 1, line)
-            model.set_value(iter, 3, "<small><span fgcolor='#9c9c9c'>%s</span></small>" % line)            
-            if os.path.exists(flag_path):
-                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file(flag_path))
-            else:                
-                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file('/usr/share/linuxmint/mintLocale/flags/16/generic.png'))
             
-            if (line == self.current_language):                        
-                if (set_index is None):
-                    set_index = iter
+            if os.path.exists(flag_path):
+                flag = flag_path
+            else:  
+                flag = '/usr/share/linuxmint/mintLocale/flags/16/generic.png'
+            locale = Locale(line, language_label)
+            self.locale_button.add_picture(flag, self.set_user_locale, title=language_label, id=locale)
+            self.region_button.add_picture(flag, self.set_user_region, title=language_label, id=locale)
 
-        treeview = self.builder.get_object("treeview_language_list")
-        treeview.set_model(model)
-        if set_index is not None:
-            column = treeview.get_column(0)
-            path = model.get_path(set_index)
-            treeview.set_cursor(path)
-            treeview.scroll_to_cell(path, column=column)
-            self.builder.get_object("button_system_language").set_sensitive(True)
-        treeview.set_search_column(0)    
+            if (line == self.current_language):                
+                self.locale_button.set_picture_from_file(flag)
+                self.locale_button.set_button_label(language_label)                
 
-    def select_language(self, treeview, data=None):
-        model = treeview.get_model()
-        active = treeview.get_selection().get_selected_rows()
-        if(len(active) > 0):          
-            active = active[1]
-            if (len(active) > 0):
-                active = active[0]
-                if active is not None:
-                    row = model[active]
-                    language = row[1]
-                    print "Setting language to '%s'" % language
+            if (line == self.current_region):
+                self.region_button.set_picture_from_file(flag)                
+                self.region_button.set_button_label(language_label)        
+                        
+        self.locale_button.show_all()        
+        self.region_button.show_all()
 
-                    # Set it in Accounts Service
-                    try:
-                        self.accountService.set_language(language)
-                    except:
-                        pass
+    def set_user_locale(self, path, locale):
+        self.locale_button.set_button_label(locale.name)
+        print "Setting language to '%s' (%s)" % (locale.name, locale.id)        
+        # Set it in Accounts Service
+        try:
+            self.accountService.set_language(locale.id)
+        except:
+            pass
 
-                    # Set it in .dmrc
-                    self.dmrc.set('Desktop','Language', language)
-                    with open(self.dmrc_path, 'wb') as configfile:
-                        self.dmrc.write(configfile)
-                    os.system("sed -i 's/ = /=/g' %s" % self.dmrc_path) # Remove space characters around "="" sign, created by ConfigParser
+        # Set it in .dmrc
+        self.dmrc.set('Desktop','Language', locale.id)
+        with open(self.dmrc_path, 'wb') as configfile:
+            self.dmrc.write(configfile)
+        os.system("sed -i 's/ = /=/g' %s" % self.dmrc_path) # Remove space characters around "="" sign, created by ConfigParser
 
-                    # Set it in .pam_environment
-                    if os.path.exists(self.pam_environment_path):                        
-                        for lc_variable in ['LANGUAGE', 'LANG']:
-                             os.system("sed -i '/^%s=.*/d' %s" % (lc_variable, self.pam_environment_path))
-                        for lc_variable in ['LC_NUMERIC', 'LC_TIME', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
-                             os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, language, self.pam_environment_path))
-                    
-                    self.current_language = language
-                    self.builder.get_object("button_system_language").set_sensitive(True)
+        # Set it in .pam_environment
+        if os.path.exists(self.pam_environment_path):                        
+            for lc_variable in ['LANGUAGE', 'LANG']:
+                os.system("sed -i '/^%s=.*/d' %s" % (lc_variable, self.pam_environment_path))
+            for lc_variable in ['LC_TIME']:
+                os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
+        
+        self.current_language = locale.id
+        self.locale_system_wide_button.set_sensitive(True)
+
+        return True
+
+    def set_user_region(self, path, locale):
+        self.region_button.set_button_label(locale.name)
+        print "Setting region to '%s' (%s)" % (locale.name, locale.id)
+        
+        # We don't call self.accountService.set_formats_locale(locale.id) here...
+        # First, we don't really use AccountsService, we're only doing this to be nice to LightDM and all..
+        # Second, it's Ubuntu specific... 
+        # Third it overwrites LC_TIME in .pam_environment        
+
+        # Set it in .pam_environment
+        if os.path.exists(self.pam_environment_path):                                   
+            for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
+                os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
+        
+        self.current_region = locale.id
+        self.locale_system_wide_button.set_sensitive(True)        
+
+        return True    
     
 if __name__ == "__main__":
     MintLocale()
