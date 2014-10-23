@@ -3,6 +3,8 @@
 import gi
 from gi.repository import Gtk, GdkPixbuf, Gdk, GObject, Gio, AccountsService, GLib
 
+from ImConfig.ImConfig import ImConfig
+
 try:
     import os
     import commands
@@ -12,6 +14,9 @@ try:
     import ConfigParser
     import grp
     import locale
+    import apt
+    import tempfile
+    from subprocess import Popen   
 except Exception, detail:
     print detail
     sys.exit(1)
@@ -24,6 +29,12 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
+(IM_CHOICE, IM_NAME) = range(2)
+
+class IMInfo():
+    def __init__(self):
+        self.required = []
+        self.optional = []
 
 class Section(Gtk.Box):
     def __init__(self, name):
@@ -269,7 +280,7 @@ class MintLocale:
 
         self.locale_install_button = Gtk.Button()
         self.locale_install_button.set_label(_("Install / Remove Languages..."))
-        self.locale_install_button.connect("clicked", self.button_install_remove_clicked)            
+        self.locale_install_button.connect("clicked", self.button_install_remove_clicked)      
 
         self.system_label = Gtk.Label()
         self.install_label = Gtk.Label()
@@ -287,12 +298,51 @@ class MintLocale:
         
         vbox.add(Gtk.Separator.new(Gtk.Orientation.HORIZONTAL))
 
-        im_section = Section(_("Input method"))        
+        
+        self.im_combo = Gtk.ComboBox()  
+        model = Gtk.ListStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
+        cell = Gtk.CellRendererText()
+        self.im_combo.pack_start(cell, True)
+        self.im_combo.add_attribute(cell, 'text', IM_NAME)
+        self.im_combo.set_model(model)
+
+        self.ImConfig = ImConfig()
+        im_section = Section(_("Input method"))
+
+        label = Gtk.Label()
+        label.set_markup("<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Input methods are used to write symbols and characters which are not present on the keyboard. They are useful to write in Chinese, Japanese, Korean, Thai, Vietnamese...")))
+        label.set_line_wrap(True)
+        im_section.add(label)
+                
+        im_section.add(self.make_group(_("Input method"), self.im_combo))
+        
+        self.ibus_label = Gtk.Label()
+        self.ibus_label.set_line_wrap(True)
+        self.ibus_button = Gtk.Button()        
+        self.ibus_button.connect('clicked', self.install_im, 'ibus')
+
+        self.fcitx_label = Gtk.Label()
+        self.fcitx_label.set_line_wrap(True)
+        self.fcitx_button = Gtk.Button()
+        self.fcitx_button.connect('clicked', self.install_im, 'fcitx')
+
+        self.scim_label = Gtk.Label()
+        self.scim_label.set_line_wrap(True)
+        self.scim_button = Gtk.Button()
+        self.scim_button.connect('clicked', self.install_im, 'scim')
+
+        self.uim_label = Gtk.Label()       
+        self.uim_label.set_line_wrap(True)
+        self.uim_button = Gtk.Button()
+        self.uim_button.connect('clicked', self.install_im, 'uim')
+
         vbox.add(im_section)
+        
+        self.im_combo.connect("changed", self.on_combobox_input_method_changed)
 
         self.builder.get_object("box1").pack_start(bg, True, True, 6)
 
-        bg.show_all()
+        bg.show_all()       
         
         self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
         self.dmrc_path = os.path.join(GLib.get_home_dir(), ".dmrc")
@@ -356,8 +406,16 @@ class MintLocale:
                     if current_user == user:                        
                         language_section.add(self.make_group(self.system_label, self.locale_system_wide_button))        
                         language_section.add(self.make_group(self.install_label, self.locale_install_button)) 
-                        language_section.show_all()  
-                        break                     
+                        language_section.show_all()
+                        im_section.add(self.make_group(self.ibus_label, self.ibus_button))
+                        im_section.add(self.make_group(self.fcitx_label, self.fcitx_button))
+                        im_section.add(self.make_group(self.scim_label, self.scim_button))
+                        im_section.add(self.make_group(self.uim_label, self.uim_button))
+                        im_section.show_all()
+                        break
+
+        self.read_im_info()
+        self.check_input_methods()
 
     def make_group(self, group_label, widget):
         self.size_groups = getattr(self, "size_groups", [Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL) for x in range(2)])
@@ -384,10 +442,129 @@ class MintLocale:
         os.system("gksu add-remove-locales")
         self.build_lang_list()
         self.set_system_locale()
-        self.set_num_installed()
+        self.set_num_installed()  
 
-    def set_system_locale(self):
+    def read_im_info(self):
+        self.im_info = {}
+        with open("/usr/lib/linuxmint/mintLocale/im.info") as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("#") or line == "":
+                    # skip empty lines and comments
+                    continue
+                (im, urgency, package) = line.split("\t")
+                if not self.im_info.has_key(im):
+                    self.im_info[im] = IMInfo()
+                info = self.im_info[im]
+                if urgency == 'required':
+                    info.required.append(package)
+                elif urgency == 'optional':
+                    info.optional.append(package)
+
+    def install_im(self, button, im):
+        to_install = self.to_install[im]
+        if to_install is not None and len(to_install) > 0:
+            cmd = ["pkexec", "/usr/sbin/synaptic", "--hide-main-window", "--non-interactive"]
+            cmd.append("-o")
+            cmd.append("Synaptic::closeZvt=true")
+            cmd.append("--progress-str")
+            cmd.append("\"" + _("Please wait, this can take some time") + "\"")
+            cmd.append("--finish-str")
+            cmd.append("\"" + _("Installation is complete") + "\"")
+            f = tempfile.NamedTemporaryFile()
+            for pkg in to_install:
+                f.write("%s\tinstall\n" % pkg)
+            cmd.append("--set-selections-file")
+            cmd.append("%s" % f.name)
+            f.flush()
+            comnd = Popen(' '.join(cmd), shell=True)
+            returnCode = comnd.wait()
+            f.close()
+        self.check_input_methods()
+
+    def check_input_methods(self):
+        if not self.ImConfig.available():
+            self.im_combo.set_sensitive(False)
+            return
+
+        model = self.im_combo.get_model()
+        if not model:
+            print "no model"
+            return
+        model.clear()
+
+        # find the default
+        currentIM = self.ImConfig.getCurrentInputMethod()
+
+        # find out about the other options
+        names = dict(xim=_('None'), ibus='IBus', scim='SCIM', fcitx='Fcitx', uim='UIM', hangul='Hangul', thai='Thai')
+        for (i, IM) in enumerate(self.ImConfig.getAvailableInputMethods()):            
+            name = names[IM] if IM in names else IM
+            iter = model.append()
+            model.set_value(iter, IM_CHOICE, IM)
+            model.set_value(iter, IM_NAME, name)
+            if IM == currentIM:
+                self.im_combo.set_active(i)
+
+        links = dict(ibus='https://code.google.com/p/ibus/', fcitx='https://fcitx-im.org', scim='http://sourceforge.net/projects/scim/', uim='https://code.google.com/p/uim/')
+        gtklabels = dict(ibus=self.ibus_label, fcitx=self.fcitx_label, scim=self.scim_label, uim=self.uim_label)
+        gtkbuttons = dict(ibus=self.ibus_button, fcitx=self.fcitx_button, scim=self.scim_button, uim=self.uim_button)
         
+        self.to_install = {}
+
+        cache = apt.Cache()        
+        for (i, IM) in enumerate(self.ImConfig.getAllInputMethods()):            
+            name = names[IM] if IM in names else IM
+            if IM in gtklabels:
+                self.to_install[IM] = []
+                gtklabel = gtklabels[IM]
+                gtkbutton = gtkbuttons[IM]      
+                gtkbutton.set_label('')
+                gtkbutton.set_tooltip_text('')
+                gtkbutton.hide()                
+                if IM in cache:
+                    pkg = cache[IM]
+                    if pkg.is_installed:
+                        status = "<span foreground='#4ba048'>%s</span>" % _("Installed")
+                        missing = []
+                        optional = []
+                        for req in self.im_info[IM].required:
+                            if req in cache and not cache[req].is_installed:
+                                missing.append(req)
+                        for req in self.im_info[IM].optional:
+                            if req in cache and not cache[req].is_installed:
+                                optional.append(req)
+                        if len(missing) > 0:
+                            status = "<span foreground='#a04848'>%s</span>" % (_("%d missing components!") % len(missing))
+                            gtkbutton.set_label(_("Install the missing components"))
+                            gtkbutton.set_tooltip_text('\n'.join(missing))
+                            gtkbutton.show()
+                            self.to_install[IM] = missing
+                        elif len(optional) > 0:
+                            status = "<span foreground='#4ba048'>%s</span>" % (_("%d optional components available") % len(optional))
+                            gtkbutton.set_label(_("Install the optional components"))
+                            gtkbutton.set_tooltip_text('\n'.join(optional))
+                            gtkbutton.show()
+                            self.to_install[IM] = optional
+                    else:
+                        status = "<span foreground='#3C3C3C'>%s</span>" % _("Not installed")
+                        gtkbutton.set_label(_("Add support for %s") % name)
+                        gtkbutton.set_tooltip_text('\n'.join(self.im_info[IM].required))                       
+                        gtkbutton.show()
+                        self.to_install[IM] = self.im_info[IM].required
+
+                    gtklabel.set_markup("<a href='%s'>%s</a>\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (links[IM], name, status))
+                else:
+                    gtklabel.set_markup("%s\n<small><i></i></small>" % (name, _("Not supported")))
+
+    def on_combobox_input_method_changed(self, widget):        
+        model = self.im_combo.get_model()
+        if self.im_combo.get_active() < 0:
+            return
+        (IM_choice, IM_name) = model[self.im_combo.get_active()]
+        self.ImConfig.setInputMethod(IM_choice)
+
+    def set_system_locale(self):    
         language_str = _("No locale defined")
         region_str = _("No locale defined")
 
