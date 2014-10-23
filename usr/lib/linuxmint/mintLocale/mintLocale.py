@@ -524,16 +524,16 @@ class MintLocale:
                 gtkbutton.hide()                
                 if IM in cache:
                     pkg = cache[IM]
+                    missing = []
+                    optional = []
+                    for req in self.im_info[IM].required:
+                        if req in cache and not cache[req].is_installed:
+                            missing.append(req)
+                    for req in self.im_info[IM].optional:
+                        if req in cache and not cache[req].is_installed:
+                            optional.append(req)
                     if pkg.is_installed:
-                        status = "<span foreground='#4ba048'>%s</span>" % _("Installed")
-                        missing = []
-                        optional = []
-                        for req in self.im_info[IM].required:
-                            if req in cache and not cache[req].is_installed:
-                                missing.append(req)
-                        for req in self.im_info[IM].optional:
-                            if req in cache and not cache[req].is_installed:
-                                optional.append(req)
+                        status = "<span foreground='#4ba048'>%s</span>" % _("Installed")                        
                         if len(missing) > 0:
                             status = "<span foreground='#a04848'>%s</span>" % (_("%d missing components!") % len(missing))
                             gtkbutton.set_label(_("Install the missing components"))
@@ -549,9 +549,9 @@ class MintLocale:
                     else:
                         status = "<span foreground='#3C3C3C'>%s</span>" % _("Not installed")
                         gtkbutton.set_label(_("Add support for %s") % name)
-                        gtkbutton.set_tooltip_text('\n'.join(self.im_info[IM].required))                       
+                        gtkbutton.set_tooltip_text('\n'.join(missing))                       
                         gtkbutton.show()
-                        self.to_install[IM] = self.im_info[IM].required
+                        self.to_install[IM] = missing
 
                     gtklabel.set_markup("<a href='%s'>%s</a>\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (links[IM], name, status))
                 else:
