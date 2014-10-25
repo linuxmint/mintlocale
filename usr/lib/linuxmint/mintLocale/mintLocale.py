@@ -374,25 +374,19 @@ class MintLocale:
         print "User language in .dmrc: %s" % dmrc_language
         print "User language in $LANG: %s" % env_language
         print "Current language: %s" % self.current_language
-
-        self.current_region = None
-        pam_region = None
-        env_region = os.environ['LC_NUMERIC']
-
+                
+        if 'LC_NUMERIC' in os.environ:
+            self.current_region = os.environ['LC_NUMERIC']
+        else:
+            self.current_region = self.current_language
+        
         if os.path.exists(self.pam_environment_path):
             with open(self.pam_environment_path, 'r') as pam_file:
                 for line in pam_file:
                     line = line.strip()
                     if line.startswith("LC_NUMERIC="):
-                        pam_region = line.split("=")[1]             
+                        self.current_region = line.split("=")[1].replace("\"", "").replace("'", "").strip()
 
-        if pam_region is not None:
-            self.current_region = pam_region
-        else:
-            self.current_region = env_region
-
-        print "User region in .pam_environment: %s" % pam_region
-        print "User language in $LC_NUMERIC: %s" % env_region
         print "Current region: %s" % self.current_region
 
         self.build_lang_list()
@@ -757,6 +751,8 @@ class MintLocale:
                 os.system("sed -i '/^%s=.*/d' %s" % (lc_variable, self.pam_environment_path))
             for lc_variable in ['LC_TIME']:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
+        else:
+            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintLocale/default_pam_environment.template > %s" % (locale.id, self.current_region, self.pam_environment_path))
         
         self.current_language = locale.id
         self.locale_system_wide_button.set_sensitive(True)
@@ -776,6 +772,8 @@ class MintLocale:
         if os.path.exists(self.pam_environment_path):                                   
             for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
+        else:
+            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintLocale/default_pam_environment.template > %s" % (self.current_language, locale.id, self.pam_environment_path))
         
         self.current_region = locale.id
         self.locale_system_wide_button.set_sensitive(True)        
