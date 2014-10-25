@@ -84,13 +84,11 @@ class MintLocale:
                 self.languages[split[0]] = split[1]
         file.close()
                 
-        locales = commands.getoutput("cat /usr/share/i18n/SUPPORTED | awk {'print $1;'} | grep UTF-8")
-        installed = commands.getoutput("localedef --list-archive | grep utf8 | sed s/utf8/UTF-8/g").split("\n")
-        for line in locales.split("\n"):            
+        locales = commands.getoutput("cat /usr/share/i18n/SUPPORTED")
+        installed = commands.getoutput("localedef --list-archive | sed s/utf8/UTF-8/g").split("\n")
+        for line in locales.split("\n"):
             if line not in installed:
-                locale_code = line.replace("UTF-8", "")
-                locale_code = locale_code.replace(".", "")
-                locale_code = locale_code.strip()
+                locale_code = line.split(".")[0].strip()                
                 
                 if "_" in locale_code:
                     split = locale_code.split("_")
@@ -148,7 +146,7 @@ class MintLocale:
                     self.builder.get_object("button_install").set_sensitive(True)
     
     def button_install_clicked (self, button):
-        locale = self.selected_language.replace(".UTF-8", "")
+        locale = self.selected_language.split(".")[0].strip()
         os.system("localedef -f UTF-8 -i %s %s.UTF-8" % (locale, locale))
         if os.path.exists("/var/lib/locales/supported.d"):
         	os.system("localedef --list-archive | grep utf8 | sed 's/utf8/UTF-8 UTF-8/g' > /var/lib/locales/supported.d/mintlocale")

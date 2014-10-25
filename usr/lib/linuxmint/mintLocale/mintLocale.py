@@ -336,6 +336,11 @@ class MintLocale:
         self.uim_button = Gtk.Button()
         self.uim_button.connect('clicked', self.install_im, 'uim')
 
+        self.gcin_label = Gtk.Label()       
+        self.gcin_label.set_line_wrap(True)
+        self.gcin_button = Gtk.Button()
+        self.gcin_button.connect('clicked', self.install_im, 'gcin')
+
         vbox.add(im_section)
         
         self.im_combo.connect("changed", self.on_combobox_input_method_changed)
@@ -411,6 +416,7 @@ class MintLocale:
                         im_section.add(self.make_group(self.fcitx_label, self.fcitx_button))
                         im_section.add(self.make_group(self.scim_label, self.scim_button))
                         im_section.add(self.make_group(self.uim_label, self.uim_button))
+                        im_section.add(self.make_group(self.gcin_label, self.gcin_button))
                         im_section.show_all()
                         break
 
@@ -497,7 +503,7 @@ class MintLocale:
         currentIM = self.ImConfig.getCurrentInputMethod()
 
         # find out about the other options
-        names = dict(xim=_('None'), ibus='IBus', scim='SCIM', fcitx='Fcitx', uim='UIM', hangul='Hangul', thai='Thai')
+        names = dict(xim=_('None'), ibus='IBus', scim='SCIM', fcitx='Fcitx', uim='UIM', gcin='gcin', hangul='Hangul', thai='Thai')
         for (i, IM) in enumerate(self.ImConfig.getAvailableInputMethods()):            
             name = names[IM] if IM in names else IM
             iter = model.append()
@@ -506,9 +512,9 @@ class MintLocale:
             if IM == currentIM:
                 self.im_combo.set_active(i)
 
-        links = dict(ibus='https://code.google.com/p/ibus/', fcitx='https://fcitx-im.org', scim='http://sourceforge.net/projects/scim/', uim='https://code.google.com/p/uim/')
-        gtklabels = dict(ibus=self.ibus_label, fcitx=self.fcitx_label, scim=self.scim_label, uim=self.uim_label)
-        gtkbuttons = dict(ibus=self.ibus_button, fcitx=self.fcitx_button, scim=self.scim_button, uim=self.uim_button)
+        links = dict(ibus='https://code.google.com/p/ibus/', fcitx='https://fcitx-im.org', scim='http://sourceforge.net/projects/scim/', uim='https://code.google.com/p/uim/', gcin='http://hyperrate.com/dir.php?eid=67')
+        gtklabels = dict(ibus=self.ibus_label, fcitx=self.fcitx_label, scim=self.scim_label, uim=self.uim_label, gcin=self.gcin_label)
+        gtkbuttons = dict(ibus=self.ibus_button, fcitx=self.fcitx_button, scim=self.scim_button, uim=self.uim_button, gcin=self.gcin_button)
         
         self.to_install = {}
 

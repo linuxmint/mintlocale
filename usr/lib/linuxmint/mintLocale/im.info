@@ -1,11 +1,11 @@
 # IBus
-ibus	required	im-config
 ibus	required	ibus
 ibus	required	gir1.2-ibus-1.0
 ibus	required	ibus-clutter
 ibus	required	ibus-gtk
 ibus	required	ibus-gtk3
 ibus	required	ibus-qt4
+ibus	required	im-config
 ibus	optional	ibus-anthy
 ibus	optional	ibus-array
 ibus	optional	ibus-cangjie
@@ -60,7 +60,6 @@ ibus	optional	ibus-unikey
 ibus	optional	ibus-xkb
 
 # Fcitx
-fcitx	required	im-config
 fcitx	required	fcitx
 fcitx	required	fcitx-config-gtk
 fcitx	required	fcitx-frontend-all
@@ -85,6 +84,7 @@ fcitx	required	fcitx-ui-kimpanel
 fcitx	required	fcitx-ui-light
 fcitx	required	fcitx-ui-qimpanel
 fcitx	required	gir1.2-fcitx-1.0
+fcitx	required	im-config
 fcitx	optional	fcitx-anthy
 fcitx	optional	fcitx-chewing
 fcitx	optional	fcitx-googlepinyin
@@ -148,7 +148,6 @@ fcitx	optional	fcitx-table-ziranma
 fcitx	optional	fcitx-unikey
 
 # SCIM
-scim	required	im-config
 scim	required	scim
 scim	required	scim-bridge-agent
 scim	required	scim-bridge-client-qt4
@@ -159,6 +158,7 @@ scim	required	scim-qt-immodule
 scim	required	scim-im-agent
 scim	required	scim-modules-socket
 scim	required	scim-modules-table
+scim	required	im-config
 scim	optional	scim-anthy
 scim	optional	scim-canna
 scim	optional	scim-chewing
@@ -174,7 +174,6 @@ scim	optional	scim-thai
 scim	optional	scim-unikey
 
 # UIM
-uim	required	im-config
 uim	required	uim
 uim	required	uim-common
 uim	required	uim-dict-gtk
@@ -186,6 +185,7 @@ uim	required	uim-applet-gnome
 uim	required	uim-utils
 uim	required	uim-xim
 uim	required	uim-fep
+uim	required	im-config
 uim	optional	uim-ajax-ime
 uim	optional	uim-anthy
 uim	optional	uim-baidu-olime-jp
@@ -206,3 +206,11 @@ uim	optional	uim-tcode
 uim	optional	uim-viqr
 uim	optional	uim-yahoo-jp
 
+# gcin
+gcin	required	gcin
+gcin	required	gcin-anthy
+gcin	required	gcin-chewing
+gcin	required	gcin-gtk3-immodule
+gcin	required	gcin-qt4-immodule
+gcin	required	gcin-tables
+gcin	required	im-config
