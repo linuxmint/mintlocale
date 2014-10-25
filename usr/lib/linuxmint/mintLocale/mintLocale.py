@@ -231,7 +231,7 @@ class PictureChooserButton (Gtk.Button):
                 vbox = Gtk.VBox()
                 vbox.pack_start(image, False, False, 2)
                 label = Gtk.Label()
-                label.set_text(title)
+                label.set_markup(title)
                 vbox.pack_start(label, False, False, 2)
                 menuitem.add(vbox)
             else:
@@ -579,10 +579,7 @@ class MintLocale:
                     vars[var_name] = value
             if "LANG" in vars:
                 locale = vars['LANG'].replace('"', '').replace("'", "")
-                locale = locale.replace("utf8", "UTF-8")
-                locale = locale.replace("UTF-8", "")
-                locale = locale.replace(".", "")
-                locale = locale.strip()
+                locale = locale.split(".")[0].strip()                
                 if "_" in locale:
                     split = locale.split("_")
                     if len(split) == 2:
@@ -607,10 +604,7 @@ class MintLocale:
                                     
             if "LC_NUMERIC" in vars:
                 locale = vars['LC_NUMERIC'].replace('"', '').replace("'", "")
-                locale = locale.replace("utf8", "UTF-8")
-                locale = locale.replace("UTF-8", "")
-                locale = locale.replace(".", "")
-                locale = locale.strip()
+                locale = locale.split(".")[0].strip()                
                 if "_" in locale:
                     split = locale.split("_")
                     if len(split) == 2:
@@ -639,7 +633,7 @@ class MintLocale:
                             
 
     def set_num_installed (self):
-        num_installed = int(commands.getoutput("localedef --list-archive | grep utf8 | wc -l"))
+        num_installed = int(commands.getoutput("localedef --list-archive | wc -l"))
         self.install_label.set_markup("%s\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Language support"), _("%d languages installed") % num_installed))
 
     def accountservice_ready(self, user, param):
@@ -679,12 +673,11 @@ class MintLocale:
         locales = commands.getoutput("localedef --list-archive")
         for line in locales.split("\n"):
             line = line.replace("utf8", "UTF-8")
-            if "UTF-8" not in line:
-                continue            
-            cur_index += 1        
-            locale_code = line.replace("UTF-8", "")
-            locale_code = locale_code.replace(".", "")
-            locale_code = locale_code.strip()
+            cur_index += 1
+            locale_code = line.split(".")[0].strip()
+            charmap = None
+            if len(line.split(".")) > 1:
+                charmap = line.split(".")[1].strip()
 
             if "_" in locale_code:
                 split = locale_code.split("_")
@@ -696,13 +689,17 @@ class MintLocale:
                     else:
                         language = language_code
 
-                    country_code = split[1].lower()
+                    country_code = split[1].lower().split('@')[0].strip()
                     if country_code in self.countries:
                         country = self.countries[country_code]
                     else:
-                        country = country_code
+                        country = country_code                  
 
-                    language_label = "%s, %s" % (language, country)
+                    if '@' in split[1]:
+                        language_label = "%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
+                    else:
+                        language_label = "%s, %s" % (language, country)
+
                     flag_path = '/usr/share/linuxmint/mintLocale/flags/16/' + country_code + '.png'
             else:                                        
                 if locale_code in self.languages:
@@ -710,6 +707,9 @@ class MintLocale:
                 else:
                     language_label = locale_code
                 flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
+
+            if charmap is not None:
+                language_label = "%s  <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)           
             
             if os.path.exists(flag_path):
                 flag = flag_path
@@ -732,7 +732,7 @@ class MintLocale:
 
     def set_user_locale(self, path, locale):
         self.locale_button.set_button_label(locale.name)
-        print "Setting language to '%s' (%s)" % (locale.name, locale.id)        
+        print "Setting language to %s" % locale.id
         # Set it in Accounts Service
         try:
             self.accountService.set_language(locale.id)
@@ -761,7 +761,7 @@ class MintLocale:
 
     def set_user_region(self, path, locale):
         self.region_button.set_button_label(locale.name)
-        print "Setting region to '%s' (%s)" % (locale.name, locale.id)
+        print "Setting region to %s" % locale.id
         
         # We don't call self.accountService.set_formats_locale(locale.id) here...
         # First, we don't really use AccountsService, we're only doing this to be nice to LightDM and all..

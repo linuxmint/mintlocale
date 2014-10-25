@@ -66,7 +66,7 @@ class MintLocale:
 
         ren = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn("Languages", ren)
-        column.add_attribute(ren, "text", 0)
+        column.add_attribute(ren, "markup", 0)
         self.treeview.append_column(column)
 
         ren = Gtk.CellRendererText()
@@ -108,13 +108,11 @@ class MintLocale:
                 
         locales = commands.getoutput("localedef --list-archive")
         for line in locales.split("\n"):
-            line = line.replace("utf8", "UTF-8")
-            if "UTF-8" not in line:
-                continue            
-            locale_code = line.replace("UTF-8", "")
-            locale_code = locale_code.replace(".", "")
-            locale_code = locale_code.strip()
-
+            line = line.replace("utf8", "UTF-8")            
+            locale_code = line.split(".")[0].strip()
+            charmap = None
+            if len(line.split(".")) > 1:
+                charmap = line.split(".")[1].strip()
 
             if "_" in locale_code:
                 split = locale_code.split("_")
@@ -125,13 +123,17 @@ class MintLocale:
                     else:
                         language = language_code
 
-                    country_code = split[1].lower()
+                    country_code = split[1].lower().split('@')[0].strip()
                     if country_code in self.countries:
                         country = self.countries[country_code]
                     else:
                         country = country_code
 
-                    language_label = "%s, %s" % (language, country)
+                    if '@' in split[1]:
+                        language_label = "%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
+                    else:
+                        language_label = "%s, %s" % (language, country)
+
                     flag_path = '/usr/share/linuxmint/mintLocale/flags/16/' + country_code + '.png'
             else:
                 if locale_code in self.languages:
@@ -140,6 +142,9 @@ class MintLocale:
                     language_label = locale_code                    
                 flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
                 language_code = locale_code
+
+            if charmap is not None:
+                language_label = "%s <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
 
             # Check if the language packs are installed
             missing_packs = []
@@ -215,7 +220,7 @@ class MintLocale:
         language_code = locale.split("_")[0]
         os.system("localedef --delete-from-archive %s" % locale)
         # If there are no more locales using the language, remove the language packs
-        num_locales = commands.getoutput("localedef --list-archive | grep utf8 | grep %s_ | wc -l" % language_code)
+        num_locales = commands.getoutput("localedef --list-archive | grep %s_ | wc -l" % language_code)
         # Check if the language packs are installed
         if num_locales == "0":
             installed_packs = []
