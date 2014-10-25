@@ -671,6 +671,20 @@ class MintLocale:
         
         cur_index = -1 # find the locale :P
         locales = commands.getoutput("localedef --list-archive")
+
+        all_locales_are_utf8 = True
+        for line in locales.split("\n"):
+            line = line.replace("utf8", "UTF-8")
+            charmap = None
+            if len(line.split(".")) > 1:
+                charmap = line.split(".")[1].strip()
+                if charmap != "UTF-8":
+                    all_locales_are_utf8 = False
+                    break    
+            else:            
+                all_locales_are_utf8 = False
+                break
+
         for line in locales.split("\n"):
             line = line.replace("utf8", "UTF-8")
             cur_index += 1
@@ -708,8 +722,8 @@ class MintLocale:
                     language_label = locale_code
                 flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
 
-            if charmap is not None:
-                language_label = "%s  <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)           
+            if charmap is not None and not all_locales_are_utf8:
+                language_label = "%s  <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)            
             
             if os.path.exists(flag_path):
                 flag = flag_path
@@ -746,7 +760,7 @@ class MintLocale:
         os.system("sed -i 's/ = /=/g' %s" % self.dmrc_path) # Remove space characters around "="" sign, created by ConfigParser
 
         # Set it in .pam_environment
-        if os.path.exists(self.pam_environment_path):                        
+        if os.path.exists(self.pam_environment_path):
             for lc_variable in ['LANGUAGE', 'LANG']:
                 os.system("sed -i '/^%s=.*/d' %s" % (lc_variable, self.pam_environment_path))
             for lc_variable in ['LC_TIME']:
