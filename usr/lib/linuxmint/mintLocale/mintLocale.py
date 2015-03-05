@@ -389,6 +389,10 @@ class MintLocale:
 
         print "Current region: %s" % self.current_region
 
+        # Replace utf8 with UTF-8 (lightDM GTK greeter messes that up)
+        self.current_language = self.current_language.replace(".utf8", ".UTF-8")
+        self.current_region = self.current_region.replace(".utf8", ".UTF-8")
+
         self.build_lang_list()
         self.set_system_locale()
         self.set_num_installed()
