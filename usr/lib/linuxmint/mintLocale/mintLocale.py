@@ -269,7 +269,6 @@ class MintLocale:
                               
         # set up larger components.
         self.builder.get_object("main_window").set_title(_("Language Settings"))
-        self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
         
         self.locale_button = PictureChooserButton(num_cols=2, button_picture_size=16, has_button_label=True)
         self.region_button = PictureChooserButton(num_cols=2, button_picture_size=16, has_button_label=True)
@@ -293,12 +292,20 @@ class MintLocale:
         label = "%s\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Language"), _("Language, interface, date and time..."))
         language_section.add(self.make_group(label, self.locale_button))
         label = "%s\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Region"), _("Numbers, currency, addresses, measurement..."))
-        language_section.add(self.make_group(label, self.region_button))        
+        language_section.add(self.make_group(label, self.region_button))
+
+        self.system_box = self.make_group(self.system_label, self.locale_system_wide_button)
+        self.system_box.set_no_show_all(True)
+        language_section.add(self.system_box)
+
+        self.install_box = self.make_group(self.install_label, self.locale_install_button)
+        self.install_box.set_no_show_all(True)
+        language_section.add(self.install_box)
+
         vbox.add(language_section)
         
         vbox.add(Gtk.Separator.new(Gtk.Orientation.HORIZONTAL))
 
-        
         self.im_combo = Gtk.ComboBox()  
         model = Gtk.ListStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
         cell = Gtk.CellRendererText()
@@ -320,26 +327,41 @@ class MintLocale:
         self.ibus_label.set_line_wrap(True)
         self.ibus_button = Gtk.Button()        
         self.ibus_button.connect('clicked', self.install_im, 'ibus')
+        self.ibus_box = self.make_group(self.ibus_label, self.ibus_button)
+        self.ibus_box.set_no_show_all(True)
+        im_section.add(self.ibus_box)
 
         self.fcitx_label = Gtk.Label()
         self.fcitx_label.set_line_wrap(True)
         self.fcitx_button = Gtk.Button()
         self.fcitx_button.connect('clicked', self.install_im, 'fcitx')
+        self.fcitx_box = self.make_group(self.fcitx_label, self.fcitx_button)
+        self.fcitx_box.set_no_show_all(True)
+        im_section.add(self.fcitx_box)
 
         self.scim_label = Gtk.Label()
         self.scim_label.set_line_wrap(True)
         self.scim_button = Gtk.Button()
         self.scim_button.connect('clicked', self.install_im, 'scim')
+        self.scim_box = self.make_group(self.scim_label, self.scim_button)
+        self.scim_box.set_no_show_all(True)
+        im_section.add(self.scim_box)
 
         self.uim_label = Gtk.Label()       
         self.uim_label.set_line_wrap(True)
         self.uim_button = Gtk.Button()
         self.uim_button.connect('clicked', self.install_im, 'uim')
+        self.uim_box = self.make_group(self.uim_label, self.uim_button)
+        self.uim_box.set_no_show_all(True)
+        im_section.add(self.uim_box)
 
         self.gcin_label = Gtk.Label()       
         self.gcin_label.set_line_wrap(True)
         self.gcin_button = Gtk.Button()
         self.gcin_button.connect('clicked', self.install_im, 'gcin')
+        self.gcin_box = self.make_group(self.gcin_label, self.gcin_button)
+        self.gcin_box.set_no_show_all(True)
+        im_section.add(self.gcin_box)
 
         vbox.add(im_section)
         
@@ -406,15 +428,15 @@ class MintLocale:
             (name, pw, gid, mem) = group
             if name in ("adm", "sudo"):
                 for user in mem:
-                    if current_user == user:                        
-                        language_section.add(self.make_group(self.system_label, self.locale_system_wide_button))        
-                        language_section.add(self.make_group(self.install_label, self.locale_install_button)) 
+                    if current_user == user:
+                        self.system_box.set_no_show_all(False)
+                        self.install_box.set_no_show_all(False)
                         language_section.show_all()
-                        im_section.add(self.make_group(self.ibus_label, self.ibus_button))
-                        im_section.add(self.make_group(self.fcitx_label, self.fcitx_button))
-                        im_section.add(self.make_group(self.scim_label, self.scim_button))
-                        im_section.add(self.make_group(self.uim_label, self.uim_button))
-                        im_section.add(self.make_group(self.gcin_label, self.gcin_button))
+                        self.ibus_box.set_no_show_all(False)
+                        self.fcitx_box.set_no_show_all(False)
+                        self.scim_box.set_no_show_all(False)
+                        self.uim_box.set_no_show_all(False)
+                        self.gcin_box.set_no_show_all(False)
                         im_section.show_all()
                         break
 
