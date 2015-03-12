@@ -450,7 +450,13 @@ class MintLocale:
 
     def read_im_info(self):
         self.im_info = {}
-        with open("/usr/lib/linuxmint/mintLocale/im.info") as f:
+
+        # use specific im_info file if exists
+        im_info_path = "/usr/lib/linuxmint/mintLocale/iminfo/{0}.info".format(self.current_language.split(".")[0].split("_")[0])
+        if not os.path.exists(im_info_path):
+            im_info_path = "/usr/lib/linuxmint/mintLocale/iminfo/other.info"
+
+        with open(im_info_path) as f:
             for line in f:
                 line = line.strip()
                 if line.startswith("#") or line == "":
