@@ -446,9 +446,26 @@ class MintLocale:
 
     def read_im_info(self):
         self.im_info = {}
+        language_code = "other"
+
+        if os.path.exists("/etc/default/locale"):
+            vars = dict()
+            with open("/etc/default/locale") as f:
+                for line in f:
+                    eq_index = line.find('=')
+                    var_name = line[:eq_index].strip()
+                    value = line[eq_index + 1:].strip()
+                    vars[var_name] = value
+            if "LANG" in vars:
+                locale = vars['LANG'].replace('"', '').replace("'", "")
+                locale = locale.split(".")[0].strip()
+                if "_" in locale:
+                    split = locale.split("_")
+                    if len(split) == 2:
+                        language_code = split[0]
 
         # use specific im_info file if exists
-        im_info_path = "/usr/lib/linuxmint/mintLocale/iminfo/{0}.info".format(self.language_code)
+        im_info_path = "/usr/lib/linuxmint/mintLocale/iminfo/{0}.info".format(language_code)
         if not os.path.exists(im_info_path):
             im_info_path = "/usr/lib/linuxmint/mintLocale/iminfo/other.info"
 
@@ -589,11 +606,11 @@ class MintLocale:
                 if "_" in locale:
                     split = locale.split("_")
                     if len(split) == 2:
-                        self.language_code = split[0]
-                        if self.language_code in self.languages:
-                            language = self.languages[self.language_code]
+                        language_code = split[0]
+                        if language_code in self.languages:
+                            language = self.languages[language_code]
                         else:
-                            language = self.language_code
+                            language = language_code
                         country_code = split[1].lower()
                         if country_code in self.countries:
                             country = self.countries[country_code]
@@ -614,11 +631,11 @@ class MintLocale:
                 if "_" in locale:
                     split = locale.split("_")
                     if len(split) == 2:
-                        self.language_code = split[0]
-                        if self.language_code in self.languages:
-                            language = self.languages[self.language_code]
+                        language_code = split[0]
+                        if language_code in self.languages:
+                            language = self.languages[language_code]
                         else:
-                            language = self.language_code
+                            language = language_code
                         country_code = split[1].lower()
                         if country_code in self.countries:
                             country = self.countries[country_code]
@@ -702,12 +719,12 @@ class MintLocale:
             if "_" in locale_code:
                 split = locale_code.split("_")
                 if len(split) == 2:
-                    self.language_code = split[0]
+                    language_code = split[0]
 
-                    if self.language_code in self.languages:
-                        language = self.languages[self.language_code]
+                    if language_code in self.languages:
+                        language = self.languages[language_code]
                     else:
-                        language = self.language_code
+                        language = language_code
 
                     country_code = split[1].lower().split('@')[0].strip()
                     if country_code in self.countries:
