@@ -446,26 +446,9 @@ class MintLocale:
 
     def read_im_info(self):
         self.im_info = {}
-        language_code = "other"
-
-        if os.path.exists("/etc/default/locale"):
-            vars = dict()
-            with open("/etc/default/locale") as f:
-                for line in f:
-                    eq_index = line.find('=')
-                    var_name = line[:eq_index].strip()
-                    value = line[eq_index + 1:].strip()
-                    vars[var_name] = value
-            if "LANG" in vars:
-                locale = vars['LANG'].replace('"', '').replace("'", "")
-                locale = locale.split(".")[0].strip()
-                if "_" in locale:
-                    split = locale.split("_")
-                    if len(split) == 2:
-                        language_code = split[0]
 
         # use specific im_info file if exists
-        im_info_path = "/usr/lib/linuxmint/mintLocale/iminfo/{0}.info".format(language_code)
+        im_info_path = "/usr/lib/linuxmint/mintLocale/iminfo/{0}.info".format(self.current_language.split(".")[0].split("_")[0])
         if not os.path.exists(im_info_path):
             im_info_path = "/usr/lib/linuxmint/mintLocale/iminfo/other.info"
 
