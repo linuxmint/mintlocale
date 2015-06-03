@@ -16,6 +16,7 @@ try:
     import locale
     import apt
     import tempfile
+    import thread
     from subprocess import Popen   
 except Exception, detail:
     print detail
@@ -30,6 +31,8 @@ gettext.textdomain(APP)
 _ = gettext.gettext
 
 (IM_CHOICE, IM_NAME) = range(2)
+
+GObject.threads_init()
 
 class IMInfo():
     def __init__(self):
@@ -307,14 +310,14 @@ class MintLocale:
         self.im_combo.set_model(model)
 
         self.ImConfig = ImConfig()
-        im_section = Section(_("Input method"))
+        self.im_section = Section(_("Input method"))
 
         label = Gtk.Label()
         label.set_markup("<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Input methods are used to write symbols and characters which are not present on the keyboard. They are useful to write in Chinese, Japanese, Korean, Thai, Vietnamese...")))
         label.set_line_wrap(True)
-        im_section.add(label)
+        self.im_section.add(label)
                 
-        im_section.add(self.make_group(_("Input method"), self.im_combo))
+        self.im_section.add(self.make_group(_("Input method"), self.im_combo))
         
         self.ibus_label = Gtk.Label()
         self.ibus_label.set_line_wrap(True)
@@ -341,7 +344,7 @@ class MintLocale:
         self.gcin_button = Gtk.Button()
         self.gcin_button.connect('clicked', self.install_im, 'gcin')
 
-        vbox.add(im_section)
+        vbox.add(self.im_section)
         
         self.im_combo.connect("changed", self.on_combobox_input_method_changed)
 
@@ -410,12 +413,12 @@ class MintLocale:
                         language_section.add(self.make_group(self.system_label, self.locale_system_wide_button))        
                         language_section.add(self.make_group(self.install_label, self.locale_install_button)) 
                         language_section.show_all()
-                        im_section.add(self.make_group(self.ibus_label, self.ibus_button))
-                        im_section.add(self.make_group(self.fcitx_label, self.fcitx_button))
-                        im_section.add(self.make_group(self.scim_label, self.scim_button))
-                        im_section.add(self.make_group(self.uim_label, self.uim_button))
-                        im_section.add(self.make_group(self.gcin_label, self.gcin_button))
-                        im_section.show_all()
+                        self.im_section.add(self.make_group(self.ibus_label, self.ibus_button))
+                        self.im_section.add(self.make_group(self.fcitx_label, self.fcitx_button))
+                        self.im_section.add(self.make_group(self.scim_label, self.scim_button))
+                        self.im_section.add(self.make_group(self.uim_label, self.uim_button))
+                        self.im_section.add(self.make_group(self.gcin_label, self.gcin_button))
+                        self.im_section.hide()
                         break
 
         self.read_im_info()
@@ -497,18 +500,27 @@ class MintLocale:
             self.im_combo.set_sensitive(False)
             return
 
-        model = self.im_combo.get_model()
-        if not model:
+        if not self.im_combo.get_model():
             print "no model"
             return
-        model.clear()
 
-        # find the default
+        thread.start_new_thread(self.check_input_methods_async, ())
+
+    def check_input_methods_async(self):
+        # slow operations
         currentIM = self.ImConfig.getCurrentInputMethod()
+        availableIM = self.ImConfig.getAvailableInputMethods()
+        allIM = self.ImConfig.getAllInputMethods()
+        cache = apt.Cache()
+        GObject.idle_add(self.check_input_methods_update_ui, currentIM, availableIM, allIM, cache)
+
+    def check_input_methods_update_ui(self, currentIM, availableIM, allIM, cache):
+        model = self.im_combo.get_model()
+        model.clear()
 
         # find out about the other options
         names = dict(xim=_('None'), ibus='IBus', scim='SCIM', fcitx='Fcitx', uim='UIM', gcin='gcin', hangul='Hangul', thai='Thai')
-        for (i, IM) in enumerate(self.ImConfig.getAvailableInputMethods()):            
+        for (i, IM) in enumerate(availableIM):
             name = names[IM] if IM in names else IM
             iter = model.append()
             model.set_value(iter, IM_CHOICE, IM)
@@ -519,11 +531,10 @@ class MintLocale:
         links = dict(ibus='https://code.google.com/p/ibus/', fcitx='https://fcitx-im.org', scim='http://sourceforge.net/projects/scim/', uim='https://code.google.com/p/uim/', gcin='http://hyperrate.com/dir.php?eid=67')
         gtklabels = dict(ibus=self.ibus_label, fcitx=self.fcitx_label, scim=self.scim_label, uim=self.uim_label, gcin=self.gcin_label)
         gtkbuttons = dict(ibus=self.ibus_button, fcitx=self.fcitx_button, scim=self.scim_button, uim=self.uim_button, gcin=self.gcin_button)
-        
+
         self.to_install = {}
 
-        cache = apt.Cache()        
-        for (i, IM) in enumerate(self.ImConfig.getAllInputMethods()):            
+        for (i, IM) in enumerate(allIM):            
             name = names[IM] if IM in names else IM
             if IM in gtklabels:
                 self.to_install[IM] = []
@@ -566,6 +577,8 @@ class MintLocale:
                     gtklabel.set_markup("<a href='%s'>%s</a>\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (links[IM], name, status))
                 else:
                     gtklabel.set_markup("%s\n<small><i></i></small>" % (name, _("Not supported")))
+
+        self.im_section.show_all()
 
     def on_combobox_input_method_changed(self, widget):        
         model = self.im_combo.get_model()
