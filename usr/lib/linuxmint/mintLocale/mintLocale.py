@@ -345,7 +345,8 @@ class MintLocale:
         self.gcin_button.connect('clicked', self.install_im, 'gcin')
 
         vbox.add(self.im_section)
-        
+
+        self.im_loaded = False # don't react to im changes until we're fully loaded (we're loading that combo asynchronously)
         self.im_combo.connect("changed", self.on_combobox_input_method_changed)
 
         self.builder.get_object("box1").pack_start(bg, True, True, 6)
@@ -507,6 +508,8 @@ class MintLocale:
         thread.start_new_thread(self.check_input_methods_async, ())
 
     def check_input_methods_async(self):
+        self.im_loaded = False
+
         # slow operations
         currentIM = self.ImConfig.getCurrentInputMethod()
         availableIM = self.ImConfig.getAvailableInputMethods()
@@ -579,8 +582,13 @@ class MintLocale:
                     gtklabel.set_markup("%s\n<small><i></i></small>" % (name, _("Not supported")))
 
         self.im_section.show_all()
+        self.im_loaded = True
 
-    def on_combobox_input_method_changed(self, widget):        
+    def on_combobox_input_method_changed(self, widget):
+        if not self.im_loaded:
+            # IM info not fully loaded yet, so ignore the signal
+            return
+
         model = self.im_combo.get_model()
         if self.im_combo.get_active() < 0:
             return
