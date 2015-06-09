@@ -312,6 +312,7 @@ class MintLocale:
 
         tool_item = Gtk.ToolItem()
         tool_item.set_expand(True)
+        tool_item.get_style_context().add_class("raised")
         toolbar.insert(tool_item, 0)
         switch_holder = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         switch_holder.set_border_width(1)
