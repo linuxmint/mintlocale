@@ -34,72 +34,14 @@ _ = gettext.gettext
 
 GObject.threads_init()
 
+def list_header_func(row, before, user_data):
+    if before and not row.get_header():
+        row.set_header(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
+
 class IMInfo():
     def __init__(self):
         self.required = []
         self.optional = []
-
-class Section(Gtk.Box):
-    def __init__(self, name):
-        self.name = name
-        super(Section, self).__init__()
-        self.set_orientation(Gtk.Orientation.VERTICAL)
-        self.set_border_width(6)
-        self.set_spacing(6)
-        self.label = Gtk.Label()
-        self.label.set_markup("<b>%s</b>" % self.name)
-        hbox = Gtk.Box()
-        hbox.set_orientation(Gtk.Orientation.HORIZONTAL)
-        hbox.pack_start(self.label, False, False, 0)
-        self.pack_start(hbox, False, True, 0)
-
-    def add(self, widget):
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        box.set_margin_left(40)
-        box.set_margin_right(40)
-        box.pack_start(widget, False, True, 0)
-        self.pack_start(box, False, False, 0)
-
-    def add_expand(self, widget):
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        box.set_margin_left(40)
-        box.set_margin_right(40)
-        box.pack_start(widget, True, True, 0)
-        self.pack_start(box, False, False, 0)
-
-    def add_indented(self, widget):
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        box.set_margin_left(80)
-        box.set_margin_right(10)
-        box.pack_start(widget, False, True, 0)
-        self.pack_start(box, False, False, 0)
-
-    def add_indented_expand(self, widget):
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        box.set_margin_left(80)
-        box.set_margin_right(10)
-        box.pack_start(widget, True, True, 0)
-        self.pack_start(box, False, False, 0)
-
-class SectionBg(Gtk.Viewport):
-    def __init__(self):
-        Gtk.Viewport.__init__(self)
-        self.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
-        style = self.get_style_context()
-        style.add_class("section-bg")
-        self.expand = True # Tells CS to give expand us to the whole window
-
-class IndentedHBox(Gtk.HBox):
-    def __init__(self):
-        super(IndentedHBox, self).__init__()
-        indent = Gtk.Label.new('\t')
-        self.pack_start(indent, False, False, 0)
-
-    def add(self, item):
-        self.pack_start(item, False, True, 0)
-
-    def add_expand(self, item):
-        self.pack_start(item, True, True, 0)
 
 class Locale():
     def __init__ (self, id, name):            
@@ -256,6 +198,89 @@ class PictureChooserButton (Gtk.Button):
         self.row = self.row + 1
         self.menu.attach(menuitem, 0, self.num_cols, self.row, self.row+1)
 
+class SettingsPage(Gtk.Box):
+    def __init__(self):
+        Gtk.Box.__init__(self)
+        self.set_orientation(Gtk.Orientation.VERTICAL)
+        self.set_spacing(15)
+        self.set_margin_left(80)
+        self.set_margin_right(80)
+        self.set_margin_top(15)
+        self.set_margin_bottom(15)
+
+    def add_section(self, title):
+        section = SettingsBox(title)
+        self.pack_start(section, False, False, 0)
+
+        return section
+
+class SettingsBox(Gtk.Frame):
+    def __init__(self, title):
+        Gtk.Frame.__init__(self)
+        self.set_shadow_type(Gtk.ShadowType.IN)
+        frame_style = self.get_style_context()
+        frame_style.add_class("view")
+        self.size_group = Gtk.SizeGroup()
+        self.size_group.set_mode(Gtk.SizeGroupMode.VERTICAL)
+
+        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.add(self.box)
+
+        toolbar = Gtk.Toolbar.new()
+        toolbar_context = toolbar.get_style_context()
+        Gtk.StyleContext.add_class(Gtk.Widget.get_style_context(toolbar), "cs-header")
+
+        label = Gtk.Label.new()
+        label.set_markup("<b>%s</b>" % title)
+        title_holder = Gtk.ToolItem()
+        title_holder.add(label)
+        toolbar.add(title_holder)
+        self.box.add(toolbar)
+
+        toolbar_separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        self.box.add(toolbar_separator)
+        separator_context = toolbar_separator.get_style_context()
+        frame_color = frame_style.get_border_color(Gtk.StateFlags.NORMAL).to_string()
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_data(".separator { -GtkWidget-wide-separators: 0; \
+                                                   color: %s;                    \
+                                                }" % frame_color)
+        separator_context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+        self.list_box = Gtk.ListBox()
+        self.list_box.set_selection_mode(Gtk.SelectionMode.NONE)
+        self.list_box.set_header_func(list_header_func, None)
+        self.box.add(self.list_box)
+
+    def add_row(self, row):
+        self.list_box.add(row)
+
+class SettingsRow(Gtk.ListBoxRow):
+    def __init__(self, widget):
+        Gtk.ListBoxRow.__init__(self)
+
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        hbox.set_border_width(5)
+        hbox.set_margin_left(20)
+        hbox.set_margin_right(20)
+        self.add(hbox)
+
+        grid = Gtk.Grid()
+        grid.set_column_spacing(15)
+        hbox.pack_start(grid, True, True, 0)
+
+        self.description_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.description_box.props.hexpand = True
+        self.description_box.props.halign = Gtk.Align.START
+        self.description_box.props.valign = Gtk.Align.CENTER
+
+        grid.attach(self.description_box, 0, 0, 1, 1)
+        grid.attach_next_to(widget, self.description_box, Gtk.PositionType.RIGHT, 1, 1)
+
+    def add_label(self, label):
+        label.props.xalign = 0.0
+        self.description_box.add(label)
+
 class MintLocale:
    
     ''' Create the UI '''
@@ -272,35 +297,81 @@ class MintLocale:
                               
         # set up larger components.
         self.builder.get_object("main_window").set_title(_("Language Settings"))
-        self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
+
+        toolbar = Gtk.Toolbar()
+        toolbar.get_style_context().add_class("primary-toolbar")
+        self.builder.get_object("box1").pack_start(toolbar, False, False, 0)
+
+        stack = Gtk.Stack()
+        stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+        stack.set_transition_duration(150)
+        self.builder.get_object("box1").pack_start(stack, True, True, 0)
+
+        stack_switcher = Gtk.StackSwitcher()
+        stack_switcher.set_stack(stack)
+
+        tool_item = Gtk.ToolItem()
+        tool_item.set_expand(True)
+        tool_item.get_style_context().add_class("raised")
+        toolbar.insert(tool_item, 0)
+        switch_holder = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        switch_holder.set_border_width(1)
+        tool_item.add(switch_holder)
+        switch_holder.pack_start(stack_switcher, True, True, 0)
+        stack_switcher.set_halign(Gtk.Align.CENTER)
+        toolbar.show_all()
         
+        size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
+
         self.locale_button = PictureChooserButton(num_cols=2, button_picture_size=16, has_button_label=True)
+        size_group.add_widget(self.locale_button)
         self.region_button = PictureChooserButton(num_cols=2, button_picture_size=16, has_button_label=True)
-      
+        size_group.add_widget(self.region_button)
+
         self.locale_system_wide_button = Gtk.Button()
         self.locale_system_wide_button.set_label(_("Apply System-Wide"))
         self.locale_system_wide_button.connect("clicked", self.button_system_language_clicked)
+        size_group.add_widget(self.locale_system_wide_button)
 
         self.locale_install_button = Gtk.Button()
         self.locale_install_button.set_label(_("Install / Remove Languages..."))
         self.locale_install_button.connect("clicked", self.button_install_remove_clicked)      
+        size_group.add_widget(self.locale_install_button)
 
         self.system_label = Gtk.Label()
         self.install_label = Gtk.Label()
 
-        bg = SectionBg()
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        bg.add(vbox)
-        
-        language_section = Section(_("Language"))
-        label = "%s\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Language"), _("Language, interface, date and time..."))
-        language_section.add(self.make_group(label, self.locale_button))
-        label = "%s\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Region"), _("Numbers, currency, addresses, measurement..."))
-        language_section.add(self.make_group(label, self.region_button))        
-        vbox.add(language_section)
-        
-        vbox.add(Gtk.Separator.new(Gtk.Orientation.HORIZONTAL))
+        page = SettingsPage()
+        stack.add_titled(page, "language", _("Language"))
 
+        language_settings = page.add_section(_("Language"))
+
+        row = SettingsRow(self.locale_button)
+        label = Gtk.Label.new()
+        label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Language"), _("Language, interface, date and time...")))
+        row.add_label(label)
+        language_settings.add_row(row)
+
+        row = SettingsRow(self.region_button)
+        label = Gtk.Label.new()
+        label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Region"), _("Numbers, currency, addresses, measurement...")))
+        row.add_label(label)
+        language_settings.add_row(row)
+
+        self.system_row = SettingsRow(self.locale_system_wide_button)
+        self.system_row.add_label(self.system_label)
+        self.system_row.set_no_show_all(True)
+        language_settings.add_row(self.system_row)
+
+        self.install_row = SettingsRow(self.locale_install_button)
+        self.install_row.add_label(self.install_label)
+        self.install_row.set_no_show_all(True)
+        language_settings.add_row(self.install_row)
+
+        page = SettingsPage()
+        stack.add_titled(page, "input settings", _("Input method"))
+
+        size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
         
         self.im_combo = Gtk.ComboBox()  
         model = Gtk.ListStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
@@ -308,50 +379,76 @@ class MintLocale:
         self.im_combo.pack_start(cell, True)
         self.im_combo.add_attribute(cell, 'text', IM_NAME)
         self.im_combo.set_model(model)
+        size_group.add_widget(self.im_combo)
 
         self.ImConfig = ImConfig()
-        self.im_section = Section(_("Input method"))
 
         label = Gtk.Label()
-        label.set_markup("<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Input methods are used to write symbols and characters which are not present on the keyboard. They are useful to write in Chinese, Japanese, Korean, Thai, Vietnamese...")))
+        label.set_markup("<small><i>%s</i></small>" % (_("Input methods are used to write symbols and characters which are not present on the keyboard. They are useful to write in Chinese, Japanese, Korean, Thai, Vietnamese...")))
         label.set_line_wrap(True)
-        self.im_section.add(label)
-                
-        self.im_section.add(self.make_group(_("Input method"), self.im_combo))
+        page.add(label)
+
+        self.input_settings = page.add_section(_("Input method"))
+
+        row = SettingsRow(self.im_combo)
+        label = Gtk.Label(_("Input method"))
+        row.add_label(label)
+        self.input_settings.add_row(row)
         
         self.ibus_label = Gtk.Label()
         self.ibus_label.set_line_wrap(True)
-        self.ibus_button = Gtk.Button()        
+        self.ibus_button = Gtk.Button()
+        size_group.add_widget(self.ibus_button)        
         self.ibus_button.connect('clicked', self.install_im, 'ibus')
+        self.ibus_row = SettingsRow(self.ibus_button)
+        self.ibus_row.add_label(self.ibus_label)
+        self.ibus_row.set_no_show_all(True)
+        self.input_settings.add_row(self.ibus_row)
 
         self.fcitx_label = Gtk.Label()
         self.fcitx_label.set_line_wrap(True)
         self.fcitx_button = Gtk.Button()
+        size_group.add_widget(self.fcitx_button)
         self.fcitx_button.connect('clicked', self.install_im, 'fcitx')
+        self.fcitx_row = SettingsRow(self.fcitx_button)
+        self.fcitx_row.add_label(self.fcitx_label)
+        self.fcitx_row.set_no_show_all(True)
+        self.input_settings.add_row(self.fcitx_row)
 
         self.scim_label = Gtk.Label()
         self.scim_label.set_line_wrap(True)
         self.scim_button = Gtk.Button()
+        size_group.add_widget(self.scim_button)
         self.scim_button.connect('clicked', self.install_im, 'scim')
+        self.scim_row = SettingsRow(self.scim_button)
+        self.scim_row.add_label(self.scim_label)
+        self.scim_row.set_no_show_all(True)
+        self.input_settings.add_row(self.scim_row)
 
         self.uim_label = Gtk.Label()       
         self.uim_label.set_line_wrap(True)
         self.uim_button = Gtk.Button()
+        size_group.add_widget(self.uim_button)
         self.uim_button.connect('clicked', self.install_im, 'uim')
+        self.uim_row = SettingsRow(self.uim_button)
+        self.uim_row.add_label(self.uim_label)
+        self.uim_row.set_no_show_all(True)
+        self.input_settings.add_row(self.uim_row)
 
         self.gcin_label = Gtk.Label()       
         self.gcin_label.set_line_wrap(True)
         self.gcin_button = Gtk.Button()
+        size_group.add_widget(self.gcin_button)
         self.gcin_button.connect('clicked', self.install_im, 'gcin')
-
-        vbox.add(self.im_section)
+        self.gcin_row = SettingsRow(self.gcin_button)
+        self.gcin_row.add_label(self.gcin_label)
+        self.gcin_row.set_no_show_all(True)
+        self.input_settings.add_row(self.gcin_row)
 
         self.im_loaded = False # don't react to im changes until we're fully loaded (we're loading that combo asynchronously)
         self.im_combo.connect("changed", self.on_combobox_input_method_changed)
 
-        self.builder.get_object("box1").pack_start(bg, True, True, 6)
-
-        bg.show_all()       
+        stack.show_all()       
         
         self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
         self.dmrc_path = os.path.join(GLib.get_home_dir(), ".dmrc")
@@ -411,34 +508,19 @@ class MintLocale:
             if name in ("adm", "sudo"):
                 for user in mem:
                     if current_user == user:                        
-                        language_section.add(self.make_group(self.system_label, self.locale_system_wide_button))        
-                        language_section.add(self.make_group(self.install_label, self.locale_install_button)) 
-                        language_section.show_all()
-                        self.im_section.add(self.make_group(self.ibus_label, self.ibus_button))
-                        self.im_section.add(self.make_group(self.fcitx_label, self.fcitx_button))
-                        self.im_section.add(self.make_group(self.scim_label, self.scim_button))
-                        self.im_section.add(self.make_group(self.uim_label, self.uim_button))
-                        self.im_section.add(self.make_group(self.gcin_label, self.gcin_button))
-                        self.im_section.hide()
+                        self.system_row.set_no_show_all(False)        
+                        self.install_row.set_no_show_all(False)
+                        language_settings.show_all()
+                        self.ibus_row.set_no_show_all(False)
+                        self.fcitx_row.set_no_show_all(False)
+                        self.scim_row.set_no_show_all(False)
+                        self.uim_row.set_no_show_all(False)
+                        self.gcin_row.set_no_show_all(False)
+                        self.input_settings.hide()
                         break
 
         self.read_im_info()
         self.check_input_methods()
-
-    def make_group(self, group_label, widget):
-        self.size_groups = getattr(self, "size_groups", [Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL) for x in range(2)])
-        box = IndentedHBox()
-        if isinstance(group_label, Gtk.Label):
-            label = group_label
-        else:
-            label = Gtk.Label()
-            label.set_markup(group_label)
-        label.props.xalign = 0.0
-        self.size_groups[0].add_widget(label)
-        box.pack_start(label, False, False, 0)
-        self.size_groups[1].add_widget(widget)
-        box.pack_start(widget, False, False, 15)        
-        return box
 
     def button_system_language_clicked (self, button):       
         print "Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region)
@@ -571,17 +653,18 @@ class MintLocale:
                             gtkbutton.show()
                             self.to_install[IM] = optional
                     else:
-                        status = "<span foreground='#3C3C3C'>%s</span>" % _("Not installed")
+                        status = "%s" % _("Not installed")
                         gtkbutton.set_label(_("Add support for %s") % name)
                         gtkbutton.set_tooltip_text('\n'.join(missing))                       
                         gtkbutton.show()
                         self.to_install[IM] = missing
 
-                    gtklabel.set_markup("<a href='%s'>%s</a>\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (links[IM], name, status))
-                else:
-                    gtklabel.set_markup("%s\n<small><i></i></small>" % (name, _("Not supported")))
+                    gtklabel.set_markup("<a href='%s'>%s</a>\n<small>%s</small>" % (links[IM], name, status))
 
-        self.im_section.show_all()
+                else:
+                    gtklabel.set_markup("%s\n<small>%s</small>" % (name, _("Not supported")))
+
+        self.input_settings.show_all()
         self.im_loaded = True
 
     def on_combobox_input_method_changed(self, widget):
@@ -660,12 +743,11 @@ class MintLocale:
         
         language_prefix = ("Language:")
         region_prefix = ("Region:")
-        self.system_label.set_markup("%s\n<small><i><span foreground='#3C3C3C'>%s %s\n%s %s</span></i></small>" % (_("System locale"), language_prefix, language_str, region_prefix, region_str))
-                            
+        self.system_label.set_markup("<b>%s</b>\n<small>%s <i>%s</i>\n%s <i>%s</i></small>" % (_("System locale"), language_prefix, language_str, region_prefix, region_str))
 
     def set_num_installed (self):
         num_installed = int(commands.getoutput("localedef --list-archive | wc -l"))
-        self.install_label.set_markup("%s\n<small><i><span foreground='#3C3C3C'>%s</span></i></small>" % (_("Language support"), _("%d languages installed") % num_installed))
+        self.install_label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Language support"), _("%d languages installed") % num_installed))
 
     def accountservice_ready(self, user, param):
         self.builder.get_object("main_window").show()
