@@ -76,6 +76,22 @@ class MintLocale:
         self.treeview.append_column(column)
         
         self.build_lang_list()
+    
+    # Checks for minority languages that have a flag and returns the corresponding flag_path or the unchanged flag_path
+    def set_minority_language_flag_path(self, locale_code, flag_path):
+        # Get the language code from the locale_code. For example, Basque's locale code can be eu or eu_es or eu_fr, Welsh's cy or cy_gb...
+        language_code = locale_code.split("_")[0]
+        
+        if language_code == 'ca':
+            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Catalonia.png'
+        elif language_code == 'cy':
+            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Wales.png'
+        elif language_code == 'eu':
+            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Basque Country.png'
+        elif language_code == 'gl':
+            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Galicia.png'
+        
+        return flag_path
         
     def build_lang_list(self):
         self.cache = apt_pkg.Cache(None)
@@ -143,6 +159,8 @@ class MintLocale:
                 flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
                 language_code = locale_code
 
+            flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
+            
             if charmap is not None:
                 language_label = "%s <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
 

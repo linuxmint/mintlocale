@@ -679,7 +679,7 @@ class MintLocale:
         self.ImConfig.setInputMethod(IM_choice)
 
     # Checks for minority languages that have a flag and returns the corresponding flag_path or the unchanged flag_path
-    def set_minoritary_language_flag_path(self, locale_code, flag_path):
+    def set_minority_language_flag_path(self, locale_code, flag_path):
         # Get the language code from the locale_code. For example, Basque's locale code can be eu or eu_es or eu_fr, Welsh's cy or cy_gb...
         language_code = locale_code.split("_")[0]
         
@@ -851,7 +851,7 @@ class MintLocale:
                     language_label = locale_code
                 flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
 
-            flag_path = self.set_minoritary_language_flag_path(locale_code, flag_path)
+            flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
             
             if charmap is not None and not all_locales_are_utf8:
                 language_label = "%s  <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)            
