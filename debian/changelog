@@ -1,3 +1,10 @@
+mintlocale (1.2.6) rafaela; urgency=medium
+
+  [ Asier Iturralde Sarasola ]
+  * Use flags of minority languages
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 13 Jun 2015 10:15:54 +0200
+
 mintlocale (1.2.5) rafaela; urgency=medium
 
   [ Philippe Jandot ]
