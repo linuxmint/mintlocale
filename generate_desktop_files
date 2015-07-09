@@ -17,7 +17,7 @@ Icon=preferences-desktop-locale
 Terminal=false
 Type=Application
 Encoding=UTF-8
-Categories=GNOME;GTK;Settings;DesktopSettings;
+Categories=GNOME;GTK;Settings;DesktopSettings;XFCE;X-XFCE-SettingsDialog;X-XFCE-SystemSettings;
 StartupNotify=false
 """
 
