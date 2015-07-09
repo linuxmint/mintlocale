@@ -1,3 +1,9 @@
+mintlocale (1.2.7) rafaela; urgency=medium
+
+  * Added memu item to Xfce settings
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 09 Jul 2015 13:44:46 +0200
+
 mintlocale (1.2.6) rafaela; urgency=medium
 
   [ Asier Iturralde Sarasola ]
