@@ -12,14 +12,14 @@ try:
     import commands
     import sys
     import string
-    import gettext 
+    import gettext
     import ConfigParser
     import grp
     import locale
     import apt
     import tempfile
     import thread
-    from subprocess import Popen   
+    from subprocess import Popen
 except Exception, detail:
     print detail
     sys.exit(1)
@@ -46,13 +46,13 @@ class IMInfo():
         self.optional = []
 
 class Locale():
-    def __init__ (self, id, name):            
+    def __init__ (self, id, name):
         self.id = id
         self.name = name
 
 class PictureChooserButton (Gtk.Button):
 
-    def __init__ (self, num_cols=4, button_picture_size=None, menu_pictures_size=None, has_button_label=False):        
+    def __init__ (self, num_cols=4, button_picture_size=None, menu_pictures_size=None, has_button_label=False):
         super(PictureChooserButton, self).__init__()
         self.num_cols = num_cols
         self.button_picture_size = button_picture_size
@@ -73,7 +73,7 @@ class PictureChooserButton (Gtk.Button):
         context = self.get_style_context()
         context.add_class("gtkstyle-fallback")
 
-        self.connect_after("draw", self.on_draw) 
+        self.connect_after("draw", self.on_draw)
 
     def on_draw(self, widget, cr, data=None):
         if self.progress == 0:
@@ -118,7 +118,7 @@ class PictureChooserButton (Gtk.Button):
     def set_button_label(self, label):
         self.button_label.set_markup(label)
 
-    def popup_menu_below_button (self, menu, widget):  
+    def popup_menu_below_button (self, menu, widget):
         window = widget.get_window()
         screen = window.get_screen()
         monitor = screen.get_monitor_at_window(window)
@@ -155,9 +155,9 @@ class PictureChooserButton (Gtk.Button):
             result = callback(path, id)
         else:
             result = callback(path)
-        
+
         if result:
-            self.set_picture_from_file(path)            
+            self.set_picture_from_file(path)
 
     def clear_menu(self):
         menu = self.menu
@@ -167,13 +167,13 @@ class PictureChooserButton (Gtk.Button):
         menu.destroy()
 
     def add_picture(self, path, callback, title=None, id=None):
-        if os.path.exists(path):          
+        if os.path.exists(path):
             if self.button_picture_size is None:
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
             else:
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, -1, self.button_picture_size, True)
-            image = Gtk.Image.new_from_pixbuf (pixbuf)  
-            menuitem = Gtk.MenuItem()            
+            image = Gtk.Image.new_from_pixbuf (pixbuf)
+            menuitem = Gtk.MenuItem()
             if title is not None:
                 vbox = Gtk.VBox()
                 vbox.pack_start(image, False, False, 2)
@@ -284,7 +284,7 @@ class SettingsRow(Gtk.ListBoxRow):
         self.description_box.add(label)
 
 class MintLocale:
-   
+
     ''' Create the UI '''
     def __init__(self):
 
@@ -292,11 +292,11 @@ class MintLocale:
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
         self.builder.add_from_file('/usr/lib/linuxmint/mintLocale/mintLocale.ui')
-        
+
         self.window = self.builder.get_object( "main_window" )
-               
-        self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)        
-                              
+
+        self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
+
         # set up larger components.
         self.builder.get_object("main_window").set_title(_("Language Settings"))
 
@@ -322,7 +322,7 @@ class MintLocale:
         switch_holder.pack_start(stack_switcher, True, True, 0)
         stack_switcher.set_halign(Gtk.Align.CENTER)
         toolbar.show_all()
-        
+
         size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
 
         self.locale_button = PictureChooserButton(num_cols=2, button_picture_size=16, has_button_label=True)
@@ -337,7 +337,7 @@ class MintLocale:
 
         self.locale_install_button = Gtk.Button()
         self.locale_install_button.set_label(_("Install / Remove Languages..."))
-        self.locale_install_button.connect("clicked", self.button_install_remove_clicked)      
+        self.locale_install_button.connect("clicked", self.button_install_remove_clicked)
         size_group.add_widget(self.locale_install_button)
 
         self.system_label = Gtk.Label()
@@ -374,8 +374,8 @@ class MintLocale:
         stack.add_titled(page, "input settings", _("Input method"))
 
         size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
-        
-        self.im_combo = Gtk.ComboBox()  
+
+        self.im_combo = Gtk.ComboBox()
         model = Gtk.ListStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
         cell = Gtk.CellRendererText()
         self.im_combo.pack_start(cell, True)
@@ -396,11 +396,11 @@ class MintLocale:
         label = Gtk.Label(_("Input method"))
         row.add_label(label)
         self.input_settings.add_row(row)
-        
+
         self.ibus_label = Gtk.Label()
         self.ibus_label.set_line_wrap(True)
         self.ibus_button = Gtk.Button()
-        size_group.add_widget(self.ibus_button)        
+        size_group.add_widget(self.ibus_button)
         self.ibus_button.connect('clicked', self.install_im, 'ibus')
         self.ibus_row = SettingsRow(self.ibus_button)
         self.ibus_row.add_label(self.ibus_label)
@@ -427,7 +427,7 @@ class MintLocale:
         self.scim_row.set_no_show_all(True)
         self.input_settings.add_row(self.scim_row)
 
-        self.uim_label = Gtk.Label()       
+        self.uim_label = Gtk.Label()
         self.uim_label.set_line_wrap(True)
         self.uim_button = Gtk.Button()
         size_group.add_widget(self.uim_button)
@@ -437,7 +437,7 @@ class MintLocale:
         self.uim_row.set_no_show_all(True)
         self.input_settings.add_row(self.uim_row)
 
-        self.gcin_label = Gtk.Label()       
+        self.gcin_label = Gtk.Label()
         self.gcin_label.set_line_wrap(True)
         self.gcin_button = Gtk.Button()
         size_group.add_widget(self.gcin_button)
@@ -450,8 +450,8 @@ class MintLocale:
         self.im_loaded = False # don't react to im changes until we're fully loaded (we're loading that combo asynchronously)
         self.im_combo.connect("changed", self.on_combobox_input_method_changed)
 
-        stack.show_all()       
-        
+        stack.show_all()
+
         self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
         self.dmrc_path = os.path.join(GLib.get_home_dir(), ".dmrc")
         self.dmrc = ConfigParser.ConfigParser()
@@ -460,15 +460,15 @@ class MintLocale:
         if not self.dmrc.has_section('Desktop'):
             self.dmrc.add_section('Desktop')
 
-        current_user = GLib.get_user_name()        
+        current_user = GLib.get_user_name()
 
-        self.current_language = None        
+        self.current_language = None
         dmrc_language = None
-        env_language = os.environ['LANG']        
-        
+        env_language = os.environ['LANG']
+
         if self.dmrc.has_option('Desktop', 'Language'):
             dmrc_language = self.dmrc.get('Desktop', 'Language')
-        
+
         if dmrc_language is not None:
             self.current_language = dmrc_language
         else:
@@ -477,12 +477,12 @@ class MintLocale:
         print "User language in .dmrc: %s" % dmrc_language
         print "User language in $LANG: %s" % env_language
         print "Current language: %s" % self.current_language
-                
+
         if 'LC_NUMERIC' in os.environ:
             self.current_region = os.environ['LC_NUMERIC']
         else:
             self.current_region = self.current_language
-        
+
         if os.path.exists(self.pam_environment_path):
             with open(self.pam_environment_path, 'r') as pam_file:
                 for line in pam_file:
@@ -509,8 +509,8 @@ class MintLocale:
             (name, pw, gid, mem) = group
             if name in ("adm", "sudo"):
                 for user in mem:
-                    if current_user == user:                        
-                        self.system_row.set_no_show_all(False)        
+                    if current_user == user:
+                        self.system_row.set_no_show_all(False)
                         self.install_row.set_no_show_all(False)
                         language_settings.show_all()
                         self.ibus_row.set_no_show_all(False)
@@ -524,7 +524,7 @@ class MintLocale:
         self.read_im_info()
         self.check_input_methods()
 
-    def button_system_language_clicked (self, button):       
+    def button_system_language_clicked (self, button):
         print "Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region)
         os.system("gksu set-default-locale '%s' '%s'" % (self.current_language, self.current_region))
         self.set_system_locale()
@@ -534,7 +534,7 @@ class MintLocale:
         os.system("gksu add-remove-locales")
         self.build_lang_list()
         self.set_system_locale()
-        self.set_num_installed()  
+        self.set_num_installed()
 
     def read_im_info(self):
         self.im_info = {}
@@ -621,15 +621,15 @@ class MintLocale:
 
         self.to_install = {}
 
-        for (i, IM) in enumerate(allIM):            
+        for (i, IM) in enumerate(allIM):
             name = names[IM] if IM in names else IM
             if IM in gtklabels:
                 self.to_install[IM] = []
                 gtklabel = gtklabels[IM]
-                gtkbutton = gtkbuttons[IM]      
+                gtkbutton = gtkbuttons[IM]
                 gtkbutton.set_label('')
                 gtkbutton.set_tooltip_text('')
-                gtkbutton.hide()                
+                gtkbutton.hide()
                 if IM in cache:
                     pkg = cache[IM]
                     missing = []
@@ -641,7 +641,7 @@ class MintLocale:
                         if req in cache and not cache[req].is_installed:
                             optional.append(req)
                     if pkg.is_installed:
-                        status = "<span foreground='#4ba048'>%s</span>" % _("Installed")                        
+                        status = "<span foreground='#4ba048'>%s</span>" % _("Installed")
                         if len(missing) > 0:
                             status = "<span foreground='#a04848'>%s</span>" % (_("%d missing components!") % len(missing))
                             gtkbutton.set_label(_("Install the missing components"))
@@ -657,7 +657,7 @@ class MintLocale:
                     else:
                         status = "%s" % _("Not installed")
                         gtkbutton.set_label(_("Add support for %s") % name)
-                        gtkbutton.set_tooltip_text('\n'.join(missing))                       
+                        gtkbutton.set_tooltip_text('\n'.join(missing))
                         gtkbutton.show()
                         self.to_install[IM] = missing
 
@@ -684,7 +684,7 @@ class MintLocale:
     def set_minority_language_flag_path(self, locale_code, flag_path):
         # Get the language code from the locale_code. For example, Basque's locale code can be eu or eu_es or eu_fr, Welsh's cy or cy_gb...
         language_code = locale_code.split("_")[0]
-        
+
         if language_code == 'ca':
             flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Catalonia.png'
         elif language_code == 'cy':
@@ -693,10 +693,10 @@ class MintLocale:
             flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Basque Country.png'
         elif language_code == 'gl':
             flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Galicia.png'
-        
+
         return flag_path
 
-    def set_system_locale(self):    
+    def set_system_locale(self):
         language_str = _("No locale defined")
         region_str = _("No locale defined")
 
@@ -711,7 +711,7 @@ class MintLocale:
                     vars[var_name] = value
             if "LANG" in vars:
                 locale = vars['LANG'].replace('"', '').replace("'", "")
-                locale = locale.split(".")[0].strip()                
+                locale = locale.split(".")[0].strip()
                 if "_" in locale:
                     split = locale.split("_")
                     if len(split) == 2:
@@ -731,12 +731,12 @@ class MintLocale:
                         language_label = self.languages[locale]
                     else:
                         language_label = locale
-                
+
                 language_str = language_label
-                                    
+
             if "LC_NUMERIC" in vars:
                 locale = vars['LC_NUMERIC'].replace('"', '').replace("'", "")
-                locale = locale.split(".")[0].strip()                
+                locale = locale.split(".")[0].strip()
                 if "_" in locale:
                     split = locale.split("_")
                     if len(split) == 2:
@@ -756,9 +756,9 @@ class MintLocale:
                         language_label = self.languages[locale]
                     else:
                         language_label = locale
-                
+
                 region_str = language_label
-        
+
         language_prefix = ("Language:")
         region_prefix = ("Region:")
         self.system_label.set_markup("<b>%s</b>\n<small>%s <i>%s</i>\n%s <i>%s</i></small>" % (_("System locale"), language_prefix, language_str, region_prefix, region_str))
@@ -770,7 +770,7 @@ class MintLocale:
     def accountservice_ready(self, user, param):
         self.builder.get_object("main_window").show()
 
-    def accountservice_changed(self, user):        
+    def accountservice_changed(self, user):
         print "AccountsService language is: '%s'" % user.get_language()
 
     def build_lang_list(self):
@@ -779,7 +779,7 @@ class MintLocale:
         self.region_button.clear_menu()
         self.locale_button.set_button_label(self.current_language)
         self.region_button.set_button_label(self.current_region)
-        
+
         #Load countries into memory
         self.countries = {}
         file = open('/usr/lib/linuxmint/mintLocale/countries', "r")
@@ -799,7 +799,7 @@ class MintLocale:
             if len(split) == 2:
                 self.languages[split[0]] = split[1]
         file.close()
-        
+
         cur_index = -1 # find the locale :P
         locales = commands.getoutput("localedef --list-archive")
 
@@ -811,8 +811,8 @@ class MintLocale:
                 charmap = line.split(".")[1].strip()
                 if charmap != "UTF-8":
                     all_locales_are_utf8 = False
-                    break    
-            else:            
+                    break
+            else:
                 all_locales_are_utf8 = False
                 break
 
@@ -838,7 +838,7 @@ class MintLocale:
                     if country_code in self.countries:
                         country = self.countries[country_code]
                     else:
-                        country = country_code                  
+                        country = country_code
 
                     if '@' in split[1]:
                         language_label = "%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
@@ -846,7 +846,7 @@ class MintLocale:
                         language_label = "%s, %s" % (language, country)
 
                     flag_path = '/usr/share/linuxmint/mintLocale/flags/16/' + country_code + '.png'
-            else:                                        
+            else:
                 if locale_code in self.languages:
                     language_label = self.languages[locale_code]
                 else:
@@ -854,27 +854,27 @@ class MintLocale:
                 flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
 
             flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
-            
+
             if charmap is not None and not all_locales_are_utf8:
-                language_label = "%s  <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)            
-            
+                language_label = "%s  <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
+
             if os.path.exists(flag_path):
                 flag = flag_path
-            else:  
+            else:
                 flag = '/usr/share/linuxmint/mintLocale/flags/16/generic.png'
             locale = Locale(line, language_label)
             self.locale_button.add_picture(flag, self.set_user_locale, title=language_label, id=locale)
             self.region_button.add_picture(flag, self.set_user_region, title=language_label, id=locale)
 
-            if (line == self.current_language):                
+            if (line == self.current_language):
                 self.locale_button.set_picture_from_file(flag)
-                self.locale_button.set_button_label(language_label)                
+                self.locale_button.set_button_label(language_label)
 
             if (line == self.current_region):
-                self.region_button.set_picture_from_file(flag)                
-                self.region_button.set_button_label(language_label)        
-                        
-        self.locale_button.show_all()        
+                self.region_button.set_picture_from_file(flag)
+                self.region_button.set_button_label(language_label)
+
+        self.locale_button.show_all()
         self.region_button.show_all()
 
     def set_user_locale(self, path, locale):
@@ -900,7 +900,7 @@ class MintLocale:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
         else:
             os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintLocale/default_pam_environment.template > %s" % (locale.id, self.current_region, self.pam_environment_path))
-        
+
         self.current_language = locale.id
         self.locale_system_wide_button.set_sensitive(True)
 
@@ -909,24 +909,24 @@ class MintLocale:
     def set_user_region(self, path, locale):
         self.region_button.set_button_label(locale.name)
         print "Setting region to %s" % locale.id
-        
+
         # We don't call self.accountService.set_formats_locale(locale.id) here...
         # First, we don't really use AccountsService, we're only doing this to be nice to LightDM and all..
-        # Second, it's Ubuntu specific... 
-        # Third it overwrites LC_TIME in .pam_environment        
+        # Second, it's Ubuntu specific...
+        # Third it overwrites LC_TIME in .pam_environment
 
         # Set it in .pam_environment
-        if os.path.exists(self.pam_environment_path):                                   
+        if os.path.exists(self.pam_environment_path):
             for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
         else:
             os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintLocale/default_pam_environment.template > %s" % (self.current_language, locale.id, self.pam_environment_path))
-        
-        self.current_region = locale.id
-        self.locale_system_wide_button.set_sensitive(True)        
 
-        return True    
-    
+        self.current_region = locale.id
+        self.locale_system_wide_button.set_sensitive(True)
+
+        return True
+
 if __name__ == "__main__":
     MintLocale()
     Gtk.main()
