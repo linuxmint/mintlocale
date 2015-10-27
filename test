@@ -2,4 +2,5 @@
 
 sudo rm -rf /usr/lib/linuxmint/mintLocale
 sudo cp -R usr /
+sudo cp -R etc /
 mintlocale

@@ -1,7 +1,3 @@
-#!/usr/bin/python
+#!/bin/bash
 
-import os
-
-os.system("/usr/lib/linuxmint/mintLocale/mintLocale.py")
-
-
+/usr/lib/linuxmint/mintLocale/mintLocale.py $@

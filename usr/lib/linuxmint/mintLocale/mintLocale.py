@@ -286,7 +286,7 @@ class SettingsRow(Gtk.ListBoxRow):
 class MintLocale:
 
     ''' Create the UI '''
-    def __init__(self):
+    def __init__(self, show_input_methods):
 
         # load our glade ui file in
         self.builder = Gtk.Builder()
@@ -523,6 +523,10 @@ class MintLocale:
 
         self.read_im_info()
         self.check_input_methods()
+
+        if (show_input_methods):
+            page.show()
+            stack.set_visible_child(page)
 
     def button_system_language_clicked (self, button):
         print "Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region)
@@ -928,5 +932,13 @@ class MintLocale:
         return True
 
 if __name__ == "__main__":
-    MintLocale()
+
+    if len(sys.argv) > 1 and sys.argv[1] == "im":
+        print ("Starting mintlocale in IM mode")
+        show_input_methods = True
+    else:
+        print ("Starting mintlocale")
+        show_input_methods = False
+
+    MintLocale(show_input_methods)
     Gtk.main()

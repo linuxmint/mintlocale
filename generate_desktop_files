@@ -22,3 +22,16 @@ StartupNotify=false
 """
 
 additionalfiles.generate(DOMAIN, PATH, "usr/share/applications/mintLocale.desktop", prefix, _("Languages"), _("Language settings"), suffix)
+
+prefix = "[Desktop Entry]\n"
+
+suffix = """Exec=mintlocale im
+Icon=im-chooser
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Categories=GNOME;GTK;Settings;DesktopSettings;XFCE;X-XFCE-SettingsDialog;X-XFCE-SystemSettings;
+StartupNotify=false
+"""
+
+additionalfiles.generate(DOMAIN, PATH, "usr/share/applications/mintlocale-im.desktop", prefix, _("Input method"), _("Language settings"), suffix)
