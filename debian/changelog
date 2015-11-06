@@ -1,3 +1,16 @@
+mintlocale (1.2.8) rosa; urgency=medium
+
+  [ leigh123linux ]
+  * fix gi import version
+
+  [ Clement Lefebvre ]
+  * Removed trailing spaces
+  * Let users launch mintlocale in IM mode
+  * Explicitly set python shebangs
+  * Updated desktop files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 06 Nov 2015 16:04:54 +0000
+
 mintlocale (1.2.7) rafaela; urgency=medium
 
   * Added memu item to Xfce settings
