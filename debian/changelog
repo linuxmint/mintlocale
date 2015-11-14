@@ -1,3 +1,9 @@
+mintlocale (1.2.9) rosa; urgency=medium
+
+  * Added missing etc/linuxmint/adjustments/15-mintlocale.menu
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sat, 14 Nov 2015 18:26:04 +0000
+
 mintlocale (1.2.8) rosa; urgency=medium
 
   [ leigh123linux ]
