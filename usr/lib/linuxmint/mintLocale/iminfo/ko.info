@@ -1,0 +1,42 @@
+# IBus
++ibus	required	ibus
++ibus	required	ibus-hangul
++ibus	required	im-config
++
++# UIM
++uim	required	uim
++uim	required	uim-byeoru
++uim	required	im-config
++
++# Fcitx
++fcitx	required	fcitx
++fcitx	required	fcitx-hangul
++fcitx	required	im-config
++
++# SCIM
++scim	required	scim
++scim	required	scim-bridge-agent
++scim	required	scim-bridge-client-qt4
++scim	required	scim-clutter-immodule
++scim	required	scim-gtk-immodule
++scim	required	scim-gtk2-immodule
++scim	required	scim-qt-immodule
++scim	required	scim-im-agent
++scim	required	scim-modules-socket
++scim	required	scim-modules-table
++scim	required	im-config
++scim	optional	scim-anthy
++scim	optional	scim-canna
++scim	optional	scim-kmfl-imengine
++scim	optional	scim-skk
++scim	optional	scim-tables-additional
++scim	optional	scim-tables-ja
++
++# gcin
++gcin	required	gcin
++gcin	required	gcin-anthy
++gcin	required	gcin-chewing
++gcin	required	gcin-gtk3-immodule
++gcin	required	gcin-qt4-immodule
++gcin	required	gcin-tables
++gcin	required	im-config
