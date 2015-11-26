@@ -658,6 +658,9 @@ class MintLocale:
                             gtkbutton.set_tooltip_text('\n'.join(optional))
                             gtkbutton.show()
                             self.to_install[IM] = optional
+                        else:
+                            gtkbutton.set_no_show_all(True)
+                            gtkbutton.hide()
                     else:
                         status = "%s" % _("Not installed")
                         gtkbutton.set_label(_("Add support for %s") % name)
