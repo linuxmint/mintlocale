@@ -208,9 +208,9 @@ uim	optional	uim-yahoo-jp
 
 # gcin
 gcin	required	gcin
-gcin	required	gcin-anthy
-gcin	required	gcin-chewing
 gcin	required	gcin-gtk3-immodule
 gcin	required	gcin-qt4-immodule
 gcin	required	gcin-tables
 gcin	required	im-config
+gcin	optional	gcin-anthy
+gcin	optional	gcin-chewing

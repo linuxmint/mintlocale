@@ -38,7 +38,7 @@ fcitx	required	fcitx-ui-kimpanel
 fcitx	required	gir1.2-fcitx-1.0
 fcitx	required	im-config
 fcitx	required	fcitx-mozc
-fcitx	optionla	fcitx-frontend-fbterm
+fcitx	optional	fcitx-frontend-fbterm
 fcitx	optional	fcitx-ui-light
 fcitx	optional	fcitx-tools
 fcitx	optional	fcitx-anthy
@@ -94,9 +94,8 @@ uim	optional	uim-yahoo-jp
 
 # gcin
 gcin	required	gcin
-gcin	required	gcin-anthy
-gcin	required	gcin-chewing
 gcin	required	gcin-gtk3-immodule
 gcin	required	gcin-qt4-immodule
 gcin	required	gcin-tables
 gcin	required	im-config
+gcin	required	gcin-anthy
