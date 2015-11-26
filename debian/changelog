@@ -1,3 +1,12 @@
+mintlocale (1.3.1) rosa; urgency=medium
+
+  * Fixed a few issues in iminfo
+  * Tuned IM info for Korean
+  * Partially tuned IM info for Chinese (need more info from a Chinese user...)
+  * IM: Added lists for Thai and Vietnamese
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 26 Nov 2015 19:52:59 +0000
+
 mintlocale (1.3.0) rosa; urgency=medium
 
   * IM: Hide button when everything is installed for a particular IM
