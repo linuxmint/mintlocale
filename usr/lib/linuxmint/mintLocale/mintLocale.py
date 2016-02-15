@@ -4,25 +4,19 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AccountsService', '1.0')
 from gi.repository import Gtk, GdkPixbuf, Gdk, GObject, Gio, AccountsService, GLib
-
 from ImConfig.ImConfig import ImConfig
-
-try:
-    import os
-    import commands
-    import sys
-    import string
-    import gettext
-    import ConfigParser
-    import grp
-    import locale
-    import apt
-    import tempfile
-    import thread
-    from subprocess import Popen
-except Exception, detail:
-    print detail
-    sys.exit(1)
+import os
+import commands
+import sys
+import string
+import gettext
+import ConfigParser
+import grp
+import locale
+import apt
+import tempfile
+import thread
+from subprocess import Popen
 
 # i18n
 APP = 'mintlocale'
