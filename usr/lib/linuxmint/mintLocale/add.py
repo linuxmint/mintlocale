@@ -17,9 +17,11 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
+
 class MintLocale:
 
     ''' Create the UI '''
+
     def __init__(self):
 
         self.selected_language = None
@@ -27,7 +29,7 @@ class MintLocale:
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
         self.builder.add_from_file('/usr/share/linuxmint/mintLocale/add.ui')
-        self.window = self.builder.get_object( "main_window" )
+        self.window = self.builder.get_object("main_window")
 
         self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
 
@@ -72,10 +74,10 @@ class MintLocale:
     def build_lang_list(self):
         self.builder.get_object('button_install').set_sensitive(False)
 
-        model = Gtk.ListStore(str, str, GdkPixbuf.Pixbuf) # label, locale, flag
+        model = Gtk.ListStore(str, str, GdkPixbuf.Pixbuf)  # label, locale, flag
         model.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
-        #Load countries into memory
+        # Load countries into memory
         self.countries = {}
         file = open('/usr/lib/linuxmint/mintLocale/countries', "r")
         for line in file:
@@ -85,7 +87,7 @@ class MintLocale:
                 self.countries[split[0]] = split[1]
         file.close()
 
-        #Load languages into memory
+        # Load languages into memory
         self.languages = {}
         file = open('/usr/lib/linuxmint/mintLocale/languages', "r")
         for line in file:
@@ -119,7 +121,7 @@ class MintLocale:
                         language_code = split[0]
 
                         if language_code == "iw":
-                            continue # use 'he' instead
+                            continue  # use 'he' instead
 
                         if language_code in self.languages:
                             language = self.languages[language_code]
@@ -175,7 +177,7 @@ class MintLocale:
                     self.selected_language = language
                     self.builder.get_object("button_install").set_sensitive(True)
 
-    def button_install_clicked (self, button):
+    def button_install_clicked(self, button):
         parts = self.selected_language.split(" ")
         locale = parts[0].strip()
         short_locale = locale.split(".")[0].strip()
@@ -187,7 +189,7 @@ class MintLocale:
             print "localedef -i %s %s" % (short_locale, locale)
             os.system("localedef -i %s %s" % (short_locale, locale))
         if os.path.exists("/var/lib/locales/supported.d"):
-        	os.system("localedef --list-archive | sed 's/utf8/UTF-8 UTF-8/g' > /var/lib/locales/supported.d/mintlocale")
+            os.system("localedef --list-archive | sed 's/utf8/UTF-8 UTF-8/g' > /var/lib/locales/supported.d/mintlocale")
         sys.exit(0)
 
 if __name__ == "__main__":

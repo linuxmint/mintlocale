@@ -20,9 +20,11 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
+
 class MintLocale:
 
     ''' Create the UI '''
+
     def __init__(self):
 
         self.selected_language = None
@@ -38,7 +40,7 @@ class MintLocale:
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
         self.builder.add_from_file('/usr/share/linuxmint/mintLocale/install_remove.ui')
-        self.window = self.builder.get_object( "main_window" )
+        self.window = self.builder.get_object("main_window")
 
         self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
 
@@ -94,10 +96,10 @@ class MintLocale:
         self.builder.get_object('button_install').set_sensitive(False)
         self.builder.get_object('button_remove').set_sensitive(False)
 
-        model = Gtk.ListStore(str, str, GdkPixbuf.Pixbuf, str, bool, object) # label, locale, flag, packs_label, packs_installed, list_of_missing_packs
+        model = Gtk.ListStore(str, str, GdkPixbuf.Pixbuf, str, bool, object)  # label, locale, flag, packs_label, packs_installed, list_of_missing_packs
         model.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
-        #Load countries into memory
+        # Load countries into memory
         self.countries = {}
         file = open('/usr/lib/linuxmint/mintLocale/countries', "r")
         for line in file:
@@ -107,7 +109,7 @@ class MintLocale:
                 self.countries[split[0]] = split[1]
         file.close()
 
-        #Load languages into memory
+        # Load languages into memory
         self.languages = {}
         file = open('/usr/lib/linuxmint/mintLocale/languages', "r")
         for line in file:
@@ -204,7 +206,7 @@ class MintLocale:
                     self.builder.get_object("button_remove").set_sensitive(True)
                     self.builder.get_object("button_install").set_sensitive(not langpacks_installed)
 
-    def button_install_clicked (self, button):
+    def button_install_clicked(self, button):
         if self.selected_language_packs is not None:
             cmd = ["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % self.builder.get_object("main_window").get_window().get_xid()]
             cmd.append("-o")
@@ -224,11 +226,11 @@ class MintLocale:
             f.close()
         self.build_lang_list()
 
-    def button_add_clicked (self, button):
+    def button_add_clicked(self, button):
         os.system("/usr/lib/linuxmint/mintLocale/add.py")
         self.build_lang_list()
 
-    def button_remove_clicked (self, button):
+    def button_remove_clicked(self, button):
         locale = self.selected_language.replace("UTF-8", "utf8")
         language_code = locale.split("_")[0]
         os.system("localedef --delete-from-archive %s" % locale)
