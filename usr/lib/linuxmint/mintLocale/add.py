@@ -26,7 +26,7 @@ class MintLocale:
 
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
-        self.builder.add_from_file('/usr/lib/linuxmint/mintLocale/add.ui')
+        self.builder.add_from_file('/usr/share/linuxmint/mintLocale/add.ui')
         self.window = self.builder.get_object( "main_window" )
 
         self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
