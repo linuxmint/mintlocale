@@ -28,7 +28,7 @@ class MintLocale:
 
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
-        self.builder.add_from_file('/usr/share/linuxmint/mintLocale/add.ui')
+        self.builder.add_from_file('/usr/share/linuxmint/mintlocale/add.ui')
         self.window = self.builder.get_object("main_window")
 
         self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
@@ -61,13 +61,13 @@ class MintLocale:
         language_code = locale_code.split("_")[0]
 
         if language_code == 'ca':
-            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Catalonia.png'
+            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Catalonia.png'
         elif language_code == 'cy':
-            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Wales.png'
+            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Wales.png'
         elif language_code == 'eu':
-            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Basque Country.png'
+            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Basque Country.png'
         elif language_code == 'gl':
-            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Galicia.png'
+            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Galicia.png'
 
         return flag_path
 
@@ -79,7 +79,7 @@ class MintLocale:
 
         # Load countries into memory
         self.countries = {}
-        file = open('/usr/lib/linuxmint/mintLocale/countries', "r")
+        file = open('/usr/lib/linuxmint/mintlocale/countries', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -89,7 +89,7 @@ class MintLocale:
 
         # Load languages into memory
         self.languages = {}
-        file = open('/usr/lib/linuxmint/mintLocale/languages', "r")
+        file = open('/usr/lib/linuxmint/mintlocale/languages', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -138,13 +138,13 @@ class MintLocale:
                             language_label = "%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
                         else:
                             language_label = "%s, %s" % (language, country)
-                        flag_path = '/usr/share/linuxmint/mintLocale/flags/16/' + country_code + '.png'
+                        flag_path = '/usr/share/linuxmint/mintlocale/flags/16/' + country_code + '.png'
                 else:
                     if locale_code in self.languages:
                         language_label = self.languages[locale_code]
                     else:
                         language_label = locale_code
-                    flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
+                    flag_path = '/usr/share/linuxmint/mintlocale/flags/16/languages/%s.png' % locale_code
 
                 flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
 
@@ -157,7 +157,7 @@ class MintLocale:
                 if os.path.exists(flag_path):
                     model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file(flag_path))
                 else:
-                    model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file('/usr/share/linuxmint/mintLocale/flags/16/generic.png'))
+                    model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file('/usr/share/linuxmint/mintlocale/flags/16/generic.png'))
 
         treeview = self.builder.get_object("treeview_language_list")
         treeview.set_model(model)

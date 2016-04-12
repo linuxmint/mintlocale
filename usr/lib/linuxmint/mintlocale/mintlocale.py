@@ -299,7 +299,7 @@ class MintLocale:
         # load our glade ui file in
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
-        self.builder.add_from_file('/usr/share/linuxmint/mintLocale/mintLocale.ui')
+        self.builder.add_from_file('/usr/share/linuxmint/mintlocale/mintlocale.ui')
 
         self.window = self.builder.get_object("main_window")
 
@@ -552,9 +552,9 @@ class MintLocale:
         self.im_info = {}
 
         # use specific im_info file if exists
-        im_info_path = "/usr/lib/linuxmint/mintLocale/iminfo/{0}.info".format(self.current_language.split(".")[0].split("_")[0])
+        im_info_path = "/usr/lib/linuxmint/mintlocale/iminfo/{0}.info".format(self.current_language.split(".")[0].split("_")[0])
         if not os.path.exists(im_info_path):
-            im_info_path = "/usr/lib/linuxmint/mintLocale/iminfo/other.info"
+            im_info_path = "/usr/lib/linuxmint/mintlocale/iminfo/other.info"
 
         with open(im_info_path) as f:
             for line in f:
@@ -701,13 +701,13 @@ class MintLocale:
         language_code = locale_code.split("_")[0]
 
         if language_code == 'ca':
-            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Catalonia.png'
+            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Catalonia.png'
         elif language_code == 'cy':
-            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Wales.png'
+            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Wales.png'
         elif language_code == 'eu':
-            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Basque Country.png'
+            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Basque Country.png'
         elif language_code == 'gl':
-            flag_path = '/usr/share/linuxmint/mintLocale/flags/16/_Galicia.png'
+            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Galicia.png'
 
         return flag_path
 
@@ -797,7 +797,7 @@ class MintLocale:
 
         # Load countries into memory
         self.countries = {}
-        file = open('/usr/lib/linuxmint/mintLocale/countries', "r")
+        file = open('/usr/lib/linuxmint/mintlocale/countries', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -807,7 +807,7 @@ class MintLocale:
 
         # Load languages into memory
         self.languages = {}
-        file = open('/usr/lib/linuxmint/mintLocale/languages', "r")
+        file = open('/usr/lib/linuxmint/mintlocale/languages', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -860,13 +860,13 @@ class MintLocale:
                     else:
                         language_label = "%s, %s" % (language, country)
 
-                    flag_path = '/usr/share/linuxmint/mintLocale/flags/16/' + country_code + '.png'
+                    flag_path = '/usr/share/linuxmint/mintlocale/flags/16/' + country_code + '.png'
             else:
                 if locale_code in self.languages:
                     language_label = self.languages[locale_code]
                 else:
                     language_label = locale_code
-                flag_path = '/usr/share/linuxmint/mintLocale/flags/16/languages/%s.png' % locale_code
+                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/languages/%s.png' % locale_code
 
             flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
 
@@ -876,7 +876,7 @@ class MintLocale:
             if os.path.exists(flag_path):
                 flag = flag_path
             else:
-                flag = '/usr/share/linuxmint/mintLocale/flags/16/generic.png'
+                flag = '/usr/share/linuxmint/mintlocale/flags/16/generic.png'
             locale = Locale(line, language_label)
             self.locale_button.add_picture(flag, self.set_user_locale, title=language_label, id=locale)
             self.region_button.add_picture(flag, self.set_user_region, title=language_label, id=locale)
@@ -914,7 +914,7 @@ class MintLocale:
             for lc_variable in ['LC_TIME']:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
         else:
-            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintLocale/default_pam_environment.template > %s" % (locale.id, self.current_region, self.pam_environment_path))
+            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintlocale/default_pam_environment.template > %s" % (locale.id, self.current_region, self.pam_environment_path))
 
         self.current_language = locale.id
         self.locale_system_wide_button.set_sensitive(True)
@@ -935,7 +935,7 @@ class MintLocale:
             for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
         else:
-            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintLocale/default_pam_environment.template > %s" % (self.current_language, locale.id, self.pam_environment_path))
+            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintlocale/default_pam_environment.template > %s" % (self.current_language, locale.id, self.pam_environment_path))
 
         self.current_region = locale.id
         self.locale_system_wide_button.set_sensitive(True)
