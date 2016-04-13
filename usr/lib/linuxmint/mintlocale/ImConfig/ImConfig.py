@@ -7,8 +7,9 @@
 import os
 import subprocess
 
+
 class ImConfig(object):
-    
+
     def __init__(self):
         pass
 
@@ -25,7 +26,7 @@ class ImConfig(object):
 
     def getCurrentInputMethod(self):
         (systemConfig, userConfig, autoConfig) = \
-          subprocess.check_output(['im-config', '-m']).decode().split()
+            subprocess.check_output(['im-config', '-m']).decode().split()
         if userConfig != 'missing':
             return userConfig
 
@@ -54,7 +55,7 @@ class ImConfig(object):
 
     def setInputMethod(self, im):
         subprocess.call(['im-config', '-n', im])
-    
+
 if __name__ == '__main__':
     im = ImConfig()
     print('available input methods: %s' % im.getAvailableInputMethods())
