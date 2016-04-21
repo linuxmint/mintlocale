@@ -1,14 +1,8 @@
 #!/usr/bin/python2
 
-import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('AccountsService', '1.0')
-from gi.repository import Gtk, GdkPixbuf, Gdk, GObject, Gio, AccountsService, GLib
-from ImConfig.ImConfig import ImConfig
 import os
 import commands
 import sys
-import string
 import gettext
 import ConfigParser
 import grp
@@ -17,6 +11,14 @@ import apt
 import tempfile
 import thread
 from subprocess import Popen
+
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('AccountsService', '1.0')
+from gi.repository import Gtk, GObject, Gio, AccountsService, GLib
+
+from ImConfig.ImConfig import ImConfig
+
 
 # i18n
 APP = 'mintlocale'
@@ -552,9 +554,9 @@ class MintLocale:
         self.im_info = {}
 
         # use specific im_info file if exists
-        im_info_path = "/usr/lib/linuxmint/mintlocale/iminfo/{0}.info".format(self.current_language.split(".")[0].split("_")[0])
+        im_info_path = "/usr/share/linuxmint/mintlocale/iminfo/{0}.info".format(self.current_language.split(".")[0].split("_")[0])
         if not os.path.exists(im_info_path):
-            im_info_path = "/usr/lib/linuxmint/mintlocale/iminfo/other.info"
+            im_info_path = "/usr/share/linuxmint/mintlocale/iminfo/other.info"
 
         with open(im_info_path) as f:
             for line in f:
@@ -797,7 +799,7 @@ class MintLocale:
 
         # Load countries into memory
         self.countries = {}
-        file = open('/usr/lib/linuxmint/mintlocale/countries', "r")
+        file = open('/usr/share/linuxmint/mintlocale/countries', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -807,7 +809,7 @@ class MintLocale:
 
         # Load languages into memory
         self.languages = {}
-        file = open('/usr/lib/linuxmint/mintlocale/languages', "r")
+        file = open('/usr/share/linuxmint/mintlocale/languages', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -914,7 +916,7 @@ class MintLocale:
             for lc_variable in ['LC_TIME']:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
         else:
-            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintlocale/default_pam_environment.template > %s" % (locale.id, self.current_region, self.pam_environment_path))
+            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/share/linuxmint/mintlocale/templates/default_pam_environment.template > %s" % (locale.id, self.current_region, self.pam_environment_path))
 
         self.current_language = locale.id
         self.locale_system_wide_button.set_sensitive(True)
@@ -935,7 +937,7 @@ class MintLocale:
             for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
         else:
-            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/lib/linuxmint/mintlocale/default_pam_environment.template > %s" % (self.current_language, locale.id, self.pam_environment_path))
+            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/share/linuxmint/mintlocale/templates/default_pam_environment.template > %s" % (self.current_language, locale.id, self.pam_environment_path))
 
         self.current_region = locale.id
         self.locale_system_wide_button.set_sensitive(True)
