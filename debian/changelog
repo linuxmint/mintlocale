@@ -1,3 +1,16 @@
+mintlocale (1.3.3) sarah; urgency=medium
+
+  [ Daniel Alley ]
+  * Moved ui files from /usr/lib to /usr/share
+  * Formatting
+  * Removed dh-python from the build process & formatted control file
+  * Renamed folders from camelCase to lowercase
+
+  [ Clement Lefebvre ]
+  * Updated generated files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 22 Apr 2016 12:27:22 +0100
+
 mintlocale (1.3.2) sarah; urgency=medium
 
   * Reviewed shebangs, removed trailing spaces, simplified imports
