@@ -65,9 +65,11 @@ class PictureChooserButton (Gtk.Button):
         self.button_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         self.button_image = Gtk.Image()
         self.button_box.add(self.button_image)
+
         if has_button_label:
             self.button_label = Gtk.Label()
             self.button_box.add(self.button_label)
+
         self.add(self.button_box)
         self.connect("button-release-event", self._on_button_clicked)
         self.progress = 0.0
@@ -80,6 +82,7 @@ class PictureChooserButton (Gtk.Button):
     def on_draw(self, widget, cr, data=None):
         if self.progress == 0:
             return False
+
         box = widget.get_allocation()
 
         context = widget.get_style_context()
@@ -114,13 +117,19 @@ class PictureChooserButton (Gtk.Button):
         file = Gio.File.new_for_path(path)
         file_icon = Gio.FileIcon(file=file)
         self.button_image.set_from_gicon(file_icon, Gtk.IconSize.DIALOG)
+
         if self.menu_pictures_size is not None:
             self.button_image.set_pixel_size(self.menu_pictures_size)
 
     def set_button_label(self, label):
         self.button_label.set_markup(label)
 
-    def popup_menu_below_button(self, menu, widget):
+    def popup_menu_below_button(self, menu, *args):
+        # Done this way for compatibility across Gtk versions
+        # Mint 17.x   =>   "widget" will be arg 2
+        # Mint 18.x   =>   "widget" will be arg 4
+        widget = args[-1]
+
         window = widget.get_window()
         screen = window.get_screen()
         monitor = screen.get_monitor_at_window(window)
