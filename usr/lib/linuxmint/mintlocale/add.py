@@ -1,13 +1,14 @@
 #!/usr/bin/python2
 
-import gi
-from gi.repository import Gtk, GdkPixbuf, Gdk, GObject, Gio
 import os
 import commands
 import sys
-import string
 import gettext
 import locale
+
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, GdkPixbuf
 
 # i18n
 APP = 'mintlocale'
@@ -79,7 +80,7 @@ class MintLocale:
 
         # Load countries into memory
         self.countries = {}
-        file = open('/usr/lib/linuxmint/mintlocale/countries', "r")
+        file = open('/usr/share/linuxmint/mintlocale/countries', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
@@ -89,7 +90,7 @@ class MintLocale:
 
         # Load languages into memory
         self.languages = {}
-        file = open('/usr/lib/linuxmint/mintlocale/languages', "r")
+        file = open('/usr/share/linuxmint/mintlocale/languages', "r")
         for line in file:
             line = line.strip()
             split = line.split("=")
