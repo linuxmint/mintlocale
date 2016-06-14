@@ -1,3 +1,9 @@
+mintlocale (1.3.6) sarah; urgency=medium
+
+  * Added fcitx-config-gtk2 to list of fcitx required packages
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 14 Jun 2016 17:01:59 +0100
+
 mintlocale (1.3.5) sarah; urgency=medium
 
   * Fixed applying locale system-wide (regression during dev. cycle)
