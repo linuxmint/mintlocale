@@ -13,6 +13,7 @@ ibus	required	ibus-unikey
 # Fcitx
 fcitx	required	fcitx
 fcitx	required	fcitx-config-gtk
+fcitx	required	fcitx-config-gtk2
 fcitx	required	fcitx-frontend-all
 fcitx	required	fcitx-frontend-fbterm
 fcitx	required	fcitx-frontend-gtk2
