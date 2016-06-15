@@ -25,13 +25,9 @@ class ImConfig(object):
         return sorted(inputMethods)
 
     def getCurrentInputMethod(self):
-        # Output from the comamand "im-config -m" is different between Trusty (17.x) and Xenial (18.x)
-        try:
-            # Mint 17.x
-            (systemConfig, userConfig, autoConfig) = subprocess.check_output(['im-config', '-m']).decode().split()
-        except ValueError:
-            # Mint 18.x
-            (systemConfig, userConfig, autoConfig, unused) = subprocess.check_output(['im-config', '-m']).decode().split()
+        # Output from the comamand "im-config -m" is different between Trusty (17.x) and Xenial (18.x), but the first three values are the same
+        splits = subprocess.check_output(['im-config', '-m']).decode().split()
+        (systemConfig, userConfig, autoConfig) = splits[0:3]
 
         if userConfig != 'missing':
             return userConfig
