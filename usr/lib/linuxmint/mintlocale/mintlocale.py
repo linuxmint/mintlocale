@@ -10,7 +10,7 @@ import locale
 import apt
 import tempfile
 import thread
-from subprocess import Popen
+import subprocess
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -98,7 +98,7 @@ class IMLanguage():
             cmd.append("--set-selections-file")
             cmd.append("%s" % f.name)
             f.flush()
-            comnd = Popen(' '.join(cmd), shell=True)
+            comnd = subprocess.Popen(' '.join(cmd), shell=True)
             returnCode = comnd.wait()
             f.close()
         self.app.check_input_methods()
@@ -587,7 +587,7 @@ class MintLocale:
 
     def button_system_language_clicked(self, button):
         print "Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region)
-        os.system("gksu set-default-locale '%s' '%s'" % (self.current_language, self.current_region))
+        subprocess.call(['gksu', 'set-default-locale', self.current_language, self.current_region])
         self.set_system_locale()
         pass
 
