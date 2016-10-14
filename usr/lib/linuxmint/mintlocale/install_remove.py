@@ -29,12 +29,8 @@ class MintLocale:
 
         self.selected_language = None
         self.selected_language_packs = None
-        codename = commands.getoutput("lsb_release -cs")
 
-        if codename == "debian":
-            self.pack_prefixes = ["firefox-l10n-", "thunderbird-l10n-", "libreoffice-l10n-", "hunspell-"]
-        else:
-            self.pack_prefixes = ["language-pack-", "language-pack-gnome-", "firefox-locale-", "thunderbird-locale-", "libreoffice-l10n-", "hunspell-"]
+        self.pack_prefixes = ["language-pack-", "language-pack-gnome-", "firefox-locale-", "firefox-l10n-", "thunderbird-locale-", "thunderbird-l10n-", "libreoffice-l10n-", "hunspell-"]
 
         apt_pkg.init()
 
