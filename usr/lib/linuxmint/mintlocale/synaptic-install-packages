@@ -1,0 +1,46 @@
+#!/usr/bin/python3
+
+import gettext
+import locale
+import subprocess
+import sys
+import tempfile
+
+# i18n
+APP = 'mintlocale'
+LOCALE_DIR = "/usr/share/linuxmint/locale"
+locale.bindtextdomain(APP, LOCALE_DIR)
+gettext.bindtextdomain(APP, LOCALE_DIR)
+gettext.textdomain(APP)
+_ = gettext.gettext
+
+try:
+
+    refresh = sys.argv[1]
+    window_id = sys.argv[2]
+    packages = sys.argv[3:]
+
+    if refresh == "yes":
+        subprocess.call(["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--update-at-startup", "--parent-window-id", window_id])
+
+    cmd = ["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", window_id]
+    cmd.append("-o")
+    cmd.append("Synaptic::closeZvt=true")
+    cmd.append("--progress-str")
+    cmd.append("\"" + _("Please wait, this can take some time") + "\"")
+    cmd.append("--finish-str")
+    cmd.append("\"" + _("Installation is complete") + "\"")
+    f = tempfile.NamedTemporaryFile()
+    for pkg in packages:
+        pkg_line = ("%s\tinstall\n" % pkg)
+        f.write(pkg_line.encode("utf-8"))
+    cmd.append("--set-selections-file")
+    cmd.append("%s" % f.name)
+    f.flush()
+    comnd = subprocess.Popen(' '.join(cmd), shell=True)
+    returnCode = comnd.wait()
+    f.close()
+    sys.exit(returnCode)
+
+except Exception as detail:
+    print(detail)

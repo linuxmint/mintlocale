@@ -4,7 +4,7 @@ import os
 import commands
 import gettext
 import apt_pkg
-from subprocess import Popen
+import subprocess
 import tempfile
 import locale
 
@@ -33,6 +33,8 @@ class MintLocale:
         self.pack_prefixes = ["language-pack-", "language-pack-gnome-", "firefox-locale-", "firefox-l10n-", "thunderbird-locale-", "thunderbird-l10n-", "libreoffice-l10n-", "hunspell-"]
 
         apt_pkg.init()
+        self.cache = apt_pkg.Cache(None)
+        self.cache_updated = False
 
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
@@ -205,23 +207,17 @@ class MintLocale:
 
     def button_install_clicked(self, button):
         if self.selected_language_packs is not None:
-            cmd = ["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % self.builder.get_object("main_window").get_window().get_xid()]
-            cmd.append("-o")
-            cmd.append("Synaptic::closeZvt=true")
-            cmd.append("--progress-str")
-            cmd.append("\"" + _("Please wait, this can take some time") + "\"")
-            cmd.append("--finish-str")
-            cmd.append("\"" + _("Installation is complete") + "\"")
-            f = tempfile.NamedTemporaryFile()
+            refresh = "no"
+            if not self.cache_updated:
+                refresh = "yes"
+                self.cache_updated = True
+            xid = str(self.builder.get_object("main_window").get_window().get_xid())
+            cmd = ["/usr/lib/linuxmint/mintlocale/synaptic-install-packages", refresh, xid]
             for pkg in self.selected_language_packs:
-                f.write("%s\tinstall\n" % pkg.name)
-            cmd.append("--set-selections-file")
-            cmd.append("%s" % f.name)
-            f.flush()
-            comnd = Popen(' '.join(cmd), shell=True)
+                cmd.append(pkg.name)
+            comnd = subprocess.Popen(cmd)
             returnCode = comnd.wait()
-            f.close()
-        self.build_lang_list()
+            self.build_lang_list()
 
     def button_add_clicked(self, button):
         os.system("/usr/lib/linuxmint/mintlocale/add.py")
@@ -257,7 +253,7 @@ class MintLocale:
                 cmd.append("--set-selections-file")
                 cmd.append("%s" % f.name)
                 f.flush()
-                comnd = Popen(' '.join(cmd), shell=True)
+                comnd = subprocess.Popen(' '.join(cmd), shell=True)
                 returnCode = comnd.wait()
                 f.close()
 

@@ -84,23 +84,16 @@ class IMLanguage():
                         self.packages.append(line)
 
     def install(self, widget):
+        xid = str(self.app.window.get_window().get_xid())
         if len(self.missing_packages) > 0:
-            cmd = ["pkexec", "/usr/sbin/synaptic", "--hide-main-window", "--non-interactive"]
-            cmd.append("-o")
-            cmd.append("Synaptic::closeZvt=true")
-            cmd.append("--progress-str")
-            cmd.append("\"" + _("Please wait, this can take some time") + "\"")
-            cmd.append("--finish-str")
-            cmd.append("\"" + _("Installation is complete") + "\"")
-            f = tempfile.NamedTemporaryFile()
-            for pkg in self.missing_packages:
-                f.write("%s\tinstall\n" % pkg)
-            cmd.append("--set-selections-file")
-            cmd.append("%s" % f.name)
-            f.flush()
-            comnd = subprocess.Popen(' '.join(cmd), shell=True)
+            refresh = "no"
+            if not self.app.cache_updated:
+                refresh = "yes"
+                self.app.cache_updated = True
+            cmd = ["gksu", "/usr/lib/linuxmint/mintlocale/synaptic-install-packages", refresh, xid]
+            cmd = cmd + self.missing_packages
+            comnd = subprocess.Popen(cmd)
             returnCode = comnd.wait()
-            f.close()
         self.app.check_input_methods()
 
     def update_status(self, cache):
@@ -390,6 +383,10 @@ class MintLocale:
 
     def __init__(self, show_input_methods):
 
+        # Prepare the APT cache
+        self.cache = apt.Cache()
+        self.cache_updated = False
+
         # load our glade ui file in
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
@@ -615,13 +612,14 @@ class MintLocale:
         currentIM = self.ImConfig.getCurrentInputMethod()
         availableIM = self.ImConfig.getAvailableInputMethods()
         allIM = self.ImConfig.getAllInputMethods()
-        cache = apt.Cache()
-        GObject.idle_add(self.check_input_methods_update_ui, currentIM, availableIM, allIM, cache)
+        GObject.idle_add(self.check_input_methods_update_ui, currentIM, availableIM, allIM)
 
-    def check_input_methods_update_ui(self, currentIM, availableIM, allIM, cache):
+    def check_input_methods_update_ui(self, currentIM, availableIM, allIM):
+
+        self.cache.open(None)
 
         for im_language in self.im_languages:
-            im_language.update_status(cache)
+            im_language.update_status(self.cache)
 
         model = self.im_combo.get_model()
         model.clear()
