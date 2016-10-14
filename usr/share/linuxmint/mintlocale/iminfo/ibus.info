@@ -1,0 +1,9 @@
+gir1.2-ibus-1.0
+ibus
+ibus-clutter
+ibus-gtk
+ibus-gtk3
+ibus-qt4
+ibus-table
+im-config
+poppler-data
