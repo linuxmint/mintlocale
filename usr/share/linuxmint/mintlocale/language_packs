@@ -31,6 +31,7 @@ tr::gnome-getting-started-docs:gnome-getting-started-docs-
 tr::kdelibs5-data:kde-l10n-
 tr::calligra-libs:calligra-l10n-
 tr::gcompris:gcompris-sound-
+tr::k3b:k3b-i18n
 
 # Finnish support for voikko
 wa:fi:firefox:xul-ext-mozvoikko
