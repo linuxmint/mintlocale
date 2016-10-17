@@ -57,10 +57,13 @@ class IMLanguage():
 
         fcitx = "<a href='https://fcitx-im.org'>Fcitx</a>"
         ibus = "<a href='https://en.wikipedia.org/wiki/Intelligent_Input_Bus'>IBus</a>"
+        uim = "<a href='https://en.wikipedia.org/wiki/Uim'>UIM</a>"
         self.installed_label = Gtk.Label()
         self.installed_label.set_justify(Gtk.Justification.CENTER)
         if self.methods == "fcitx:ibus":
             self.installed_label.set_markup("%s\n<small>%s</small>" % (_("Installed"), _("Use %s or %s") % (fcitx, ibus)))
+        elif self.methods == "ibus:uim:fcitx":
+            self.installed_label.set_markup("%s\n<small>%s</small>" % (_("Installed"), _("Use %s, %s or %s") % (ibus, uim, fcitx)))
         elif self.methods == "ibus":
             self.installed_label.set_markup("%s\n<small>%s</small>" % (_("Installed"), _("Use %s") % ibus))
         else:
@@ -489,7 +492,7 @@ class MintLocale:
         self.im_languages.append(IMLanguage("zh-hans", _("Simplified Chinese"), "fcitx:ibus", self))
         self.im_languages.append(IMLanguage("zh-hant", _("Traditional Chinese"), "fcitx:ibus", self))
         self.im_languages.append(IMLanguage("ja", _("Japanese"), "fcitx:ibus", self))
-        self.im_languages.append(IMLanguage("ko", _("Korean"), "fcitx:ibus", self))
+        self.im_languages.append(IMLanguage("ko", _("Korean"), "ibus:uim:fcitx", self))
         self.im_languages.append(IMLanguage("vi", _("Vietnamese"), "fcitx:ibus", self))
         self.im_languages.append(IMLanguage("th", _("Thai"), "fcitx:ibus", self))
         self.im_languages.append(IMLanguage("te", _("Telugu"), "ibus", self))
