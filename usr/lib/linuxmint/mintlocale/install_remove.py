@@ -20,6 +20,13 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
+class LanguagePack:
+
+    def __init__(self, category, language, dependency, package):
+        self.category = category
+        self.language = language
+        self.dependency = dependency
+        self.package = package
 
 class MintLocale:
 
@@ -30,7 +37,18 @@ class MintLocale:
         self.selected_language = None
         self.selected_language_packs = None
 
-        self.pack_prefixes = ["language-pack-", "language-pack-gnome-", "firefox-locale-", "firefox-l10n-", "thunderbird-locale-", "thunderbird-l10n-", "libreoffice-l10n-", "hunspell-"]
+        self.language_packs = []
+        with open("/usr/share/linuxmint/mintlocale/language_packs") as f:
+            for line in f:
+                line = line.strip()
+                columns = line.split(":")
+                if len(columns) == 4:
+                    (category, language, dependency, package) = columns
+                    if package.endswith("-"):
+                        self.language_packs.append(LanguagePack(category, language, dependency, "%sLANG" % package))
+                        self.language_packs.append(LanguagePack(category, language, dependency, "%sLANG-COUNTRY" % package))
+                    else:
+                        self.language_packs.append(LanguagePack(category, language, dependency, package))
 
         apt_pkg.init()
         self.cache = apt_pkg.Cache(None)
@@ -73,21 +91,34 @@ class MintLocale:
 
         self.build_lang_list()
 
-    # Checks for minority languages that have a flag and returns the corresponding flag_path or the unchanged flag_path
-    def set_minority_language_flag_path(self, locale_code, flag_path):
-        # Get the language code from the locale_code. For example, Basque's locale code can be eu or eu_es or eu_fr, Welsh's cy or cy_gb...
-        language_code = locale_code.split("_")[0]
+    def split_locale(self, locale_code):
+        if "_" in locale_code:
+            split = locale_code.split("_")
+            language_code = split[0]
+            if language_code in self.languages:
+                language = self.languages[language_code]
+            else:
+                language = language_code
 
-        if language_code == 'ca':
-            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Catalonia.png'
-        elif language_code == 'cy':
-            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Wales.png'
-        elif language_code == 'eu':
-            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Basque Country.png'
-        elif language_code == 'gl':
-            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Galicia.png'
+            country_code = split[1].lower().split('@')[0].strip()
+            if country_code in self.countries:
+                country = self.countries[country_code]
+            else:
+                country = country_code
 
-        return flag_path
+            if '@' in split[1]:
+                language_label = "%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
+            else:
+                language_label = "%s, %s" % (language, country)
+        else:
+            if locale_code in self.languages:
+                language_label = self.languages[locale_code]
+            else:
+                language_label = locale_code
+            language_code = locale_code
+            country_code = ""
+
+        return (language_code, country_code, language_label)
 
     def build_lang_list(self):
         self.cache = apt_pkg.Cache(None)
@@ -126,48 +157,45 @@ class MintLocale:
             if len(line.split(".")) > 1:
                 charmap = line.split(".")[1].strip()
 
-            if "_" in locale_code:
-                split = locale_code.split("_")
-                if len(split) == 2:
-                    language_code = split[0]
-                    if language_code in self.languages:
-                        language = self.languages[language_code]
-                    else:
-                        language = language_code
-
-                    country_code = split[1].lower().split('@')[0].strip()
-                    if country_code in self.countries:
-                        country = self.countries[country_code]
-                    else:
-                        country = country_code
-
-                    if '@' in split[1]:
-                        language_label = "%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
-                    else:
-                        language_label = "%s, %s" % (language, country)
-
-                    flag_path = '/usr/share/linuxmint/mintlocale/flags/16/' + country_code + '.png'
-            else:
-                if locale_code in self.languages:
-                    language_label = self.languages[locale_code]
-                else:
-                    language_label = locale_code
+            language_code, country_code, language_label = self.split_locale(locale_code)
+            if country_code == "":
                 flag_path = '/usr/share/linuxmint/mintlocale/flags/16/languages/%s.png' % locale_code
-                language_code = locale_code
+            else:
+                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/' + country_code + '.png'
 
-            flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
+            # Check for minority languages. Get tje language code from the locale_code.
+            # For example, Basque's locale code can be eu or eu_es or eu_fr, Welsh's cy or cy_gb...
+            if language_code == 'ca':
+                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Catalonia.png'
+            elif language_code == 'cy':
+                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Wales.png'
+            elif language_code == 'eu':
+                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Basque Country.png'
+            elif language_code == 'gl':
+                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Galicia.png'
 
             if charmap is not None:
                 language_label = "%s <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
 
             # Check if the language packs are installed
             missing_packs = []
-            for pkgname in self.pack_prefixes:
-                pkgname = "%s%s" % (pkgname, language_code)
-                if pkgname in self.cache:
-                    pkg = self.cache[pkgname]
-                    if (pkg.has_versions and pkg.current_state != apt_pkg.CURSTATE_INSTALLED):
-                        missing_packs.append(pkg)
+            missing_pack_names = []
+            for language_pack in self.language_packs:
+                if language_pack.language == "" or language_pack.language == language_code:
+                    pkgname = language_pack.package.replace("LANG", language_code).replace("COUNTRY", country_code)
+                    depname = language_pack.dependency
+                    if pkgname in self.cache:
+                        pkg = self.cache[pkgname]
+                        if (pkg.has_versions and pkg.current_state != apt_pkg.CURSTATE_INSTALLED):
+                            if depname != "":
+                                if depname in self.cache and self.cache[depname].current_state == apt_pkg.CURSTATE_INSTALLED:
+                                    if pkgname not in missing_pack_names:
+                                        missing_packs.append(pkg)
+                                        missing_pack_names.append(pkgname)
+                            else:
+                                if pkgname not in missing_pack_names:
+                                    missing_packs.append(pkg)
+                                    missing_pack_names.append(pkgname)
 
             iter = model.append()
             model.set_value(iter, 0, language_label)
@@ -225,19 +253,20 @@ class MintLocale:
 
     def button_remove_clicked(self, button):
         locale = self.selected_language.replace("UTF-8", "utf8")
-        language_code = locale.split("_")[0]
         os.system("localedef --delete-from-archive %s" % locale)
         # If there are no more locales using the language, remove the language packs
+        (language_code, country_code, language_label) = self.split_locale(locale)
         num_locales = commands.getoutput("localedef --list-archive | grep %s_ | wc -l" % language_code)
         # Check if the language packs are installed
         if num_locales == "0":
             installed_packs = []
-            for pkgname in self.pack_prefixes:
-                pkgname = "%s%s" % (pkgname, language_code)
-                if pkgname in self.cache:
-                    pkg = self.cache[pkgname]
-                    if (pkg.has_versions and pkg.current_state == apt_pkg.CURSTATE_INSTALLED):
-                        installed_packs.append(pkg)
+            for prefix in ["language-pack", "language-pack-gnome"]:
+                for pkgname in ["%s-%s" % (prefix, language_code), "%s-%s-%s" % (prefix, language_code, country_code)]:
+                    if pkgname in self.cache:
+                        pkg = self.cache[pkgname]
+                        if (pkg.has_versions and pkg.current_state == apt_pkg.CURSTATE_INSTALLED):
+                            installed_packs.append(pkg)
+                            print pkg
 
             if len(installed_packs) > 0:
                 cmd = ["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % self.builder.get_object("main_window").get_window().get_xid()]

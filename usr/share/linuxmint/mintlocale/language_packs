@@ -1,0 +1,155 @@
+#
+# This file is based on pkg_depends (from language-selector-gnome)
+#
+# File format:
+# Column 1: category (tr: translations, fn: fonts, in: input method, wa: writing assistence)
+# Column 2: languange code for which the package should only be installed. If empty, install for all languages.
+# The language code will be appended in the specified format
+# Column 3: dependency package(s). Only install the package in column 4 when this dependency package is already installed.
+# Column 4: Package to pull. Can contain language codes at the end if column 2 is empty.
+#
+# Format: %LCODE%
+tr:::language-pack-
+tr::gvfs:language-pack-gnome-
+# Format: %LCODE% or %LCODE%-%CCODE%
+tr::libreoffice-common:libreoffice-l10n-
+tr::libreoffice-common:libreoffice-help-
+tr::firefox:firefox-locale-
+tr::firefox:firefox-l10n-
+tr::thunderbird:thunderbird-locale-
+tr::thunderbird:thunderbird-l10n-
+tr::lightning-extension:lightning-extension-locale-
+tr::sunbird:sunbird-locale-
+tr::sword-text-gerlut1545:sword-language-pack-
+tr::gimp:gimp-help-
+tr::evolution:evolution-documentation-
+tr::chromium-browser:chromium-browser-l10n
+tr::sylpheed:sylpheed-i18n
+tr::amarok:amarok-help-
+tr::gnome-getting-started-docs:gnome-getting-started-docs-
+# Format: %LCODE% or %LCODE%%CCODE% or %LCODE%-%VARIANT%
+tr::kdelibs5-data:kde-l10n-
+tr::calligra-libs:calligra-l10n-
+tr::gcompris:gcompris-sound-
+
+# Finnish support for voikko
+wa:fi:firefox:xul-ext-mozvoikko
+wa:fi:thunderbird:xul-ext-mozvoikko
+wa:fi:seahorse:xul-ext-mozvoikko
+wa:fi:epiphany:xul-ext-mozvoikko
+wa:fi:libreoffice-core:libreoffice-voikko
+wa:fi:ispell:tmispell-voikko
+wa:fi::libenchant-voikko
+wa:fi::voikko-fi
+
+# LibreOffice support
+wa::libreoffice-common:hyphen-
+wa::libreoffice-common:mythes-
+wa::libreoffice-common:hunspell-
+# languages which don't provide a hunspell dictionary yet
+wa:eo:libreoffice-common:myspell-eo
+wa:et:libreoffice-common:myspell-et
+wa:fa:libreoffice-common:myspell-fa
+wa:fo:libreoffice-common:myspell-fo
+wa:ga:libreoffice-common:myspell-ga
+wa:gv:libreoffice-common:myspell-gv
+wa:hy:libreoffice-common:myspell-hy
+wa:ku:libreoffice-common:myspell-ku
+wa:lv:libreoffice-common:myspell-lv
+wa:nr:libreoffice-common:myspell-nr
+wa:ns:libreoffice-common:myspell-ns
+wa:ss:libreoffice-common:myspell-ss
+wa:st:libreoffice-common:myspell-st
+wa:tn:libreoffice-common:myspell-tn
+wa:ts:libreoffice-common:myspell-ts
+wa:ve:libreoffice-common:myspell-ve
+wa:xh:libreoffice-common:myspell-xh
+wa:zu:libreoffice-common:myspell-zu
+
+# Package names not matching the locale
+wa:nb:libreoffice-common:hunspell-no
+wa:nb:libreoffice-common:hyphen-no
+wa:nb:libreoffice-common:mythes-no
+wa:nn:libreoffice-common:hunspell-no
+wa:nn:libreoffice-common:hyphen-no
+wa:nn:libreoffice-common:mythes-no
+
+wa:en:libreoffice-common:openoffice.org-hyphenation
+wa:fi:libreoffice-common:openoffice.org-hyphenation
+wa:ga:libreoffice-common:openoffice.org-hyphenation
+wa:id:libreoffice-common:openoffice.org-hyphenation
+
+# Aspell support for Sylpheed and Abiword
+wa::sylpheed:hunspell-
+wa::abiword:aspell-
+wa::gedit:hunspell-
+
+# poppler-data is useful for CJK
+wa::poppler-utils:poppler-data
+
+# word lists
+wa:bg::wbulgarian
+wa:ca::wcatalan
+wa:da::wdanish
+wa:de::wngerman
+wa:de::wogerman
+wa:de::wswiss
+wa:en::wamerican
+wa:en::wbritish
+wa:es::wspanish
+wa:fo::wfaroese
+wa:fr::wfrench
+wa:ga::wirish
+wa:ga::wmanx
+wa:gl::wgalician-minimos
+wa:it::witalian
+wa:nb::wnorwegian
+wa:nl::wdutch
+wa:nn::wnorwegian
+wa:pl::wpolish
+wa:pt::wportuguese
+wa:pt::wbrazilian
+wa:sv::wswedish
+wa:uk::wukrainian
+
+# fonts
+fn:am::fonts-sil-abyssinica
+fn:ar::fonts-arabeyes
+fn:ar::fonts-kacst
+fn:as::fonts-beng
+fn:bn::fonts-beng
+fn:bo::fonts-tibetan-machine
+fn:dz::fonts-tibetan-machine
+fn:el::fonts-mgopen
+fn:fa::fonts-farsiweb
+fn:fa::fonts-sil-scheherazade
+fn:gu::fonts-gujr
+fn:he::fonts-sil-ezra
+fn:hi::fonts-deva
+fn:ii::fonts-sil-nuosusil
+fn:ja::fonts-takao-mincho
+fn:ja::fonts-takao-gothic
+fn:km::fonts-khmeros
+fn:kn::fonts-knda
+fn:lo::fonts-lao
+fn:ml::fonts-mlym
+fn:mn::fonts-manchufont
+fn:mnc::fonts-manchufont
+fn:mr::fonts-deva
+fn:my::fonts-sil-padauk
+fn:ne::fonts-deva
+fn:or::fonts-orya
+fn:pa::fonts-guru
+fn:si::fonts-lklug-sinhala
+fn:ta::fonts-taml
+fn:te::fonts-telu
+fn:th::fonts-thai-tlwg
+fn:ug::fonts-ukij-uyghur
+fn:ur::fonts-nafees
+fn:ur::fonts-sil-scheherazade
+fn:yi::fonts-sil-ezra
+
+# GhostScript CJK resources
+fn:ja:gs-cjk-resource:poppler-data
+fn:ja:gs-cjk-resource:fonts-ipafont-mincho
+fn:ko:gs-cjk-resource:poppler-data
