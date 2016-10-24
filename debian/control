@@ -11,6 +11,7 @@ Depends: python (>= 2.4), python (<< 3),
          gir1.2-accountsservice-1.0,
          synaptic,
          im-config (>= 0.23-1),
+         flags-iso-4x3-svg,
          ${misc:Depends}
 Description: Language selection tool
  Locale selection.

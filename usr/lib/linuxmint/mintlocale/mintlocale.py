@@ -32,6 +32,8 @@ _ = gettext.gettext
 
 GObject.threads_init()
 
+FLAG_PATH = "/usr/share/flags/iso-4x3-svg/%s.svgz"
+FLAG_SIZE = 24
 
 def list_header_func(row, before, user_data):
     if before and not row.get_header():
@@ -179,12 +181,11 @@ class PictureChooserButton (Gtk.Button):
         self.queue_draw()
 
     def set_picture_from_file(self, path):
-        file = Gio.File.new_for_path(path)
-        file_icon = Gio.FileIcon(file=file)
-        self.button_image.set_from_gicon(file_icon, Gtk.IconSize.DIALOG)
-
         if self.menu_pictures_size is not None:
-            self.button_image.set_pixel_size(self.menu_pictures_size)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.menu_pictures_size, self.menu_pictures_size)
+        else:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, FLAG_SIZE, FLAG_SIZE)
+        self.button_image.set_from_pixbuf(pixbuf)
 
     def set_button_label(self, label):
         self.button_label.set_markup(label)
@@ -244,10 +245,11 @@ class PictureChooserButton (Gtk.Button):
 
     def add_picture(self, path, callback, title=None, id=None):
         if os.path.exists(path):
+            print (path)
             if self.button_picture_size is None:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, FLAG_SIZE, FLAG_SIZE)
             else:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, -1, self.button_picture_size, True)
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.button_picture_size, self.button_picture_size)
             image = Gtk.Image.new_from_pixbuf(pixbuf)
             menuitem = Gtk.MenuItem()
             if title is not None:
@@ -427,9 +429,9 @@ class MintLocale:
 
         size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
 
-        self.locale_button = PictureChooserButton(num_cols=2, button_picture_size=16, has_button_label=True)
+        self.locale_button = PictureChooserButton(num_cols=2, button_picture_size=22, has_button_label=True)
         size_group.add_widget(self.locale_button)
-        self.region_button = PictureChooserButton(num_cols=2, button_picture_size=16, has_button_label=True)
+        self.region_button = PictureChooserButton(num_cols=2, button_picture_size=22, has_button_label=True)
         size_group.add_widget(self.region_button)
 
         self.locale_system_wide_button = Gtk.Button()
@@ -657,13 +659,13 @@ class MintLocale:
         language_code = locale_code.split("_")[0]
 
         if language_code == 'ca':
-            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Catalonia.png'
+            flag_path = FLAG_PATH % '_catalonia'
         elif language_code == 'cy':
-            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Wales.png'
+            flag_path = FLAG_PATH % '_wales'
         elif language_code == 'eu':
-            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Basque Country.png'
+            flag_path = FLAG_PATH % '_basque'
         elif language_code == 'gl':
-            flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Galicia.png'
+            flag_path = FLAG_PATH % '_galicia'
 
         return flag_path
 
@@ -816,13 +818,13 @@ class MintLocale:
                     else:
                         language_label = "%s, %s" % (language, country)
 
-                    flag_path = '/usr/share/linuxmint/mintlocale/flags/16/' + country_code + '.png'
+                    flag_path = FLAG_PATH % country_code
             else:
                 if locale_code in self.languages:
                     language_label = self.languages[locale_code]
                 else:
                     language_label = locale_code
-                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/languages/%s.png' % locale_code
+                flag_path = FLAG_PATH % locale_code
 
             flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
 
@@ -832,7 +834,7 @@ class MintLocale:
             if os.path.exists(flag_path):
                 flag = flag_path
             else:
-                flag = '/usr/share/linuxmint/mintlocale/flags/16/generic.png'
+                flag = FLAG_PATH % '_generic'
             locale = Locale(line, language_label)
             self.locale_button.add_picture(flag, self.set_user_locale, title=language_label, id=locale)
             self.region_button.add_picture(flag, self.set_user_region, title=language_label, id=locale)

@@ -20,6 +20,9 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
+FLAG_PATH = "/usr/share/flags/iso-4x3-svg/%s.svgz"
+FLAG_SIZE = 24
+
 class LanguagePack:
 
     def __init__(self, category, language, dependency, package):
@@ -159,20 +162,20 @@ class MintLocale:
 
             language_code, country_code, language_label = self.split_locale(locale_code)
             if country_code == "":
-                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/languages/%s.png' % locale_code
+                flag_path = FLAG_PATH % locale_code
             else:
-                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/' + country_code + '.png'
+                flag_path = FLAG_PATH % country_code
 
             # Check for minority languages. Get tje language code from the locale_code.
             # For example, Basque's locale code can be eu or eu_es or eu_fr, Welsh's cy or cy_gb...
             if language_code == 'ca':
-                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Catalonia.png'
+                flag_path = FLAG_PATH % '_catalonia'
             elif language_code == 'cy':
-                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Wales.png'
+                flag_path = FLAG_PATH % '_wales'
             elif language_code == 'eu':
-                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Basque Country.png'
+                flag_path = FLAG_PATH % '_basque'
             elif language_code == 'gl':
-                flag_path = '/usr/share/linuxmint/mintlocale/flags/16/_Galicia.png'
+                flag_path = FLAG_PATH % '_galicia'
 
             if charmap is not None:
                 language_label = "%s <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
@@ -208,9 +211,9 @@ class MintLocale:
                 model.set_value(iter, 3, "<small><span fgcolor='#4ba048'>%s</span></small>" % _("Fully installed"))
                 model.set_value(iter, 4, True)
             if os.path.exists(flag_path):
-                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file(flag_path))
+                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(flag_path, FLAG_SIZE, FLAG_SIZE))
             else:
-                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file('/usr/share/linuxmint/mintlocale/flags/16/generic.png'))
+                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(FLAG_PATH % '_generic', FLAG_SIZE, FLAG_SIZE))
 
         treeview = self.builder.get_object("treeview_language_list")
         treeview.set_model(model)
