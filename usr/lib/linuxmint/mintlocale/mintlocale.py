@@ -32,8 +32,9 @@ _ = gettext.gettext
 
 GObject.threads_init()
 
-FLAG_PATH = "/usr/share/flags/iso-4x3-svg/%s.svgz"
-FLAG_SIZE = 24
+FLAG_PATH = "/usr/share/iso-flag-png/%s.png"
+FLAG_SIZE = 22
+BUTTON_FLAG_SIZE = 22
 
 def list_header_func(row, before, user_data):
     if before and not row.get_header():
@@ -182,9 +183,9 @@ class PictureChooserButton (Gtk.Button):
 
     def set_picture_from_file(self, path):
         if self.menu_pictures_size is not None:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.menu_pictures_size, self.menu_pictures_size)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, self.menu_pictures_size)
         else:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, FLAG_SIZE, FLAG_SIZE)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, FLAG_SIZE)
         self.button_image.set_from_pixbuf(pixbuf)
 
     def set_button_label(self, label):
@@ -247,9 +248,9 @@ class PictureChooserButton (Gtk.Button):
         if os.path.exists(path):
             print (path)
             if self.button_picture_size is None:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, FLAG_SIZE, FLAG_SIZE)
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, FLAG_SIZE)
             else:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, self.button_picture_size, self.button_picture_size)
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, self.button_picture_size)
             image = Gtk.Image.new_from_pixbuf(pixbuf)
             menuitem = Gtk.MenuItem()
             if title is not None:
@@ -429,9 +430,9 @@ class MintLocale:
 
         size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
 
-        self.locale_button = PictureChooserButton(num_cols=2, button_picture_size=22, has_button_label=True)
+        self.locale_button = PictureChooserButton(num_cols=2, button_picture_size=BUTTON_FLAG_SIZE, has_button_label=True)
         size_group.add_widget(self.locale_button)
-        self.region_button = PictureChooserButton(num_cols=2, button_picture_size=22, has_button_label=True)
+        self.region_button = PictureChooserButton(num_cols=2, button_picture_size=BUTTON_FLAG_SIZE, has_button_label=True)
         size_group.add_widget(self.region_button)
 
         self.locale_system_wide_button = Gtk.Button()

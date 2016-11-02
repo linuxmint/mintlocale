@@ -20,8 +20,8 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
-FLAG_PATH = "/usr/share/flags/iso-4x3-svg/%s.svgz"
-FLAG_SIZE = 24
+FLAG_PATH = "/usr/share/iso-flag-png/%s.png"
+FLAG_SIZE = 22
 
 class LanguagePack:
 
@@ -211,9 +211,9 @@ class MintLocale:
                 model.set_value(iter, 3, "<small><span fgcolor='#4ba048'>%s</span></small>" % _("Fully installed"))
                 model.set_value(iter, 4, True)
             if os.path.exists(flag_path):
-                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(flag_path, FLAG_SIZE, FLAG_SIZE))
+                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(flag_path, -1, FLAG_SIZE))
             else:
-                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(FLAG_PATH % '_generic', FLAG_SIZE, FLAG_SIZE))
+                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(FLAG_PATH % '_generic', -1, FLAG_SIZE))
 
         treeview = self.builder.get_object("treeview_language_list")
         treeview.set_model(model)
