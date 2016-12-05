@@ -246,7 +246,6 @@ class PictureChooserButton (Gtk.Button):
 
     def add_picture(self, path, callback, title=None, id=None):
         if os.path.exists(path):
-            print (path)
             if self.button_picture_size is None:
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, FLAG_SIZE)
             else:
