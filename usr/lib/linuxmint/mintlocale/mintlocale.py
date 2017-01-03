@@ -15,6 +15,7 @@ import subprocess
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AccountsService', '1.0')
+from gi.repository import GdkX11
 from gi.repository import Gtk, GObject, Gio, AccountsService, GLib, GdkPixbuf
 
 from ImConfig.ImConfig import ImConfig
