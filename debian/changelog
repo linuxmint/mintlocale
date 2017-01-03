@@ -1,3 +1,10 @@
+mintlocale (1.3.9) serena; urgency=medium
+
+  * Remove debug print statement
+  * Fix gtk.gdk.X11Window has no attribute get_xid in LMDE
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 03 Jan 2017 14:23:43 +0000
+
 mintlocale (1.3.8) serena; urgency=medium
 
   * IM: Redesigned IM support
