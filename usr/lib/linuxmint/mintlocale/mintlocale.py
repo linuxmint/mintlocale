@@ -120,7 +120,6 @@ class Locale():
         self.id = id
         self.name = name
 
-
 class PictureChooserButton (Gtk.Button):
 
     def __init__(self, num_cols=4, button_picture_size=None, menu_pictures_size=None, has_button_label=False):
@@ -866,16 +865,11 @@ class MintLocale:
             self.dmrc.write(configfile)
         os.system("sed -i 's/ = /=/g' %s" % self.dmrc_path)  # Remove space characters around "="" sign, created by ConfigParser
 
-        # Set it in .pam_environment
-        if os.path.exists(self.pam_environment_path):
-            for lc_variable in ['LANGUAGE', 'LANG']:
-                os.system("sed -i '/^%s=.*/d' %s" % (lc_variable, self.pam_environment_path))
-            for lc_variable in ['LC_TIME']:
-                os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
-        else:
-            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/share/linuxmint/mintlocale/templates/default_pam_environment.template > %s" % (locale.id, self.current_region, self.pam_environment_path))
-
         self.current_language = locale.id
+
+        # Set it in .pam_environment
+        self.set_pam_environment()
+
         self.locale_system_wide_button.set_sensitive(True)
 
         return True
@@ -889,17 +883,61 @@ class MintLocale:
         # Second, it's Ubuntu specific...
         # Third it overwrites LC_TIME in .pam_environment
 
-        # Set it in .pam_environment
-        if os.path.exists(self.pam_environment_path):
-            for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
-                os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, locale.id, self.pam_environment_path))
-        else:
-            os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/share/linuxmint/mintlocale/templates/default_pam_environment.template > %s" % (self.current_language, locale.id, self.pam_environment_path))
-
         self.current_region = locale.id
+
+        # Set it in .pam_environment
+        self.set_pam_environment()
+
         self.locale_system_wide_button.set_sensitive(True)
 
         return True
+
+    def set_pam_environment(self):
+        shortlocale = self.current_language
+        if "." in self.current_language:
+            shortlocale = self.current_language.split(".")[0]
+
+        if os.path.exists(self.pam_environment_path):
+
+            # Replace values for present fields
+            for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
+                os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, self.current_region, self.pam_environment_path))
+            for lc_variable in ['LC_TIME', 'LANG']:
+                os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, self.current_language, self.pam_environment_path))
+            for lc_variable in ['LANGUAGE']:
+                os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, shortlocale, self.pam_environment_path))
+
+            # Check missing fields
+            with open(self.pam_environment_path, 'r') as file:
+                content = file.read()
+
+            for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
+                if not (("%s=" % lc_variable) in content or ("%s =" % lc_variable) in content):
+                    os.system("echo '%s=%s' >> %s" % (lc_variable, self.current_region, self.pam_environment_path))
+            if not ("LC_TIME=" in content or "LC_TIME =" in content):
+                os.system("echo 'LC_TIME=%s' >> %s" % (self.current_language, self.pam_environment_path))
+
+            if ("XDG_SEAT_PATH" in os.environ):
+                # LightDM
+                if not ("PAPERSIZE=" in content or "PAPERSIZE =" in content):
+                    os.system("echo 'PAPERSIZE=a4' >> %s" % self.pam_environment_path)
+                if not ("LANGUAGE=" in content or "LANGUAGE =" in content):
+                    os.system("echo 'LANGUAGE=%s' >> %s" % (shortlocale, self.pam_environment_path))
+                if not ("LANG=" in content or "LANG =" in content):
+                    os.system("echo 'LANG=%s' >> %s" % (self.current_language, self.pam_environment_path))
+            else:
+                # MDM
+                for lc_variable in ['LANGUAGE', 'LANG']:
+                    os.system("sed -i '/^%s=.*/d' %s" % (lc_variable, self.pam_environment_path))
+
+        else:
+            if ("XDG_SEAT_PATH" in os.environ):
+                # LightDM
+                os.system("sed -e 's/$locale/%s/g' -e 's/$shortlocale/%s/g' -e 's/$region/%s/g' /usr/share/linuxmint/mintlocale/templates/lightdm_pam_environment.template > %s" % (self.current_language, shortlocale, self.current_region, self.pam_environment_path))
+            else:
+                # MDM
+                os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/share/linuxmint/mintlocale/templates/mdm_pam_environment.template > %s" % (self.current_language, self.current_region, self.pam_environment_path))
+
 
 if __name__ == "__main__":
 

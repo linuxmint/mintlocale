@@ -7,3 +7,4 @@ LC_NAME=$region
 LC_ADDRESS=$region
 LC_TELEPHONE=$region
 LC_MEASUREMENT=$region
+PAPERSIZE=a4

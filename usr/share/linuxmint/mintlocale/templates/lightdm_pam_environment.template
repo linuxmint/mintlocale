@@ -1,0 +1,12 @@
+LC_NUMERIC=$region
+LC_TIME=$locale
+LC_MONETARY=$region
+LC_PAPER=$region
+LC_IDENTIFICATION=$region
+LC_NAME=$region
+LC_ADDRESS=$region
+LC_TELEPHONE=$region
+LC_MEASUREMENT=$region
+PAPERSIZE=a4
+LANGUAGE=$shortlocale
+LANG=$locale
