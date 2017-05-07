@@ -7,7 +7,6 @@ import gettext
 import ConfigParser
 import grp
 import locale
-import apt
 import tempfile
 import thread
 import subprocess
@@ -22,6 +21,9 @@ from ImConfig.ImConfig import ImConfig
 
 # Used to detect Debian derivatives (we don't want to show APT features in other distros)
 IS_DEBIAN = os.path.exists("/etc/debian_version")
+
+if IS_DEBIAN:
+    import apt
 
 # i18n
 APP = 'mintlocale'
@@ -391,7 +393,8 @@ class MintLocale:
     def __init__(self, show_input_methods):
 
         # Prepare the APT cache
-        self.cache = apt.Cache()
+        if IS_DEBIAN:
+            self.cache = apt.Cache()
         self.cache_updated = False
 
         # load our glade ui file in
@@ -575,7 +578,7 @@ class MintLocale:
         groups = grp.getgrall()
         for group in groups:
             (name, pw, gid, mem) = group
-            if name in ("adm", "sudo"):
+            if name in ("adm", "sudo", "wheel", "root"):
                 for user in mem:
                     if current_user == user:
                         self.system_row.set_no_show_all(False)
@@ -590,9 +593,17 @@ class MintLocale:
             page.show()
             stack.set_visible_child(page)
 
+        # Determine path to system locale-config
+        self.locale_path=''
+
+        if os.path.exists('/etc/default/locale'):
+            self.locale_path='/etc/default/locale'
+        else:
+            self.locale_path='/etc/locale.conf'
+
     def button_system_language_clicked(self, button):
         print "Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region)
-        subprocess.call(['gksu', 'set-default-locale', self.current_language, self.current_region])
+        subprocess.call(['gksu', 'set-default-locale', self.locale_path, self.current_language, self.current_region])
         self.set_system_locale()
         pass
 
@@ -678,9 +689,9 @@ class MintLocale:
         region_str = _("No locale defined")
 
         # Get system locale
-        if os.path.exists("/etc/default/locale"):
+        if os.path.exists(self.locale_path):
             vars = dict()
-            with open("/etc/default/locale") as f:
+            with open(self.locale_path) as f:
                 for line in f:
                     eq_index = line.find('=')
                     var_name = line[:eq_index].strip()
