@@ -392,6 +392,14 @@ class MintLocale:
 
     def __init__(self, show_input_methods):
 
+        # Determine path to system locale-config
+        self.locale_path=''
+
+        if os.path.exists('/etc/default/locale'):
+            self.locale_path='/etc/default/locale'
+        else:
+            self.locale_path='/etc/locale.conf'
+
         # Prepare the APT cache
         if IS_DEBIAN:
             self.cache = apt.Cache()
@@ -592,14 +600,6 @@ class MintLocale:
         if (show_input_methods):
             page.show()
             stack.set_visible_child(page)
-
-        # Determine path to system locale-config
-        self.locale_path=''
-
-        if os.path.exists('/etc/default/locale'):
-            self.locale_path='/etc/default/locale'
-        else:
-            self.locale_path='/etc/locale.conf'
 
     def button_system_language_clicked(self, button):
         print "Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region)
