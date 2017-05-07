@@ -1,3 +1,10 @@
+mintlocale (1.4.2) sonya; urgency=medium
+
+  [ Björn Esser ]
+  * Changes for red hat based OS (#44)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 07 May 2017 16:49:41 +0100
+
 mintlocale (1.4.1) sonya; urgency=medium
 
   * l10n: Generate desktop files
