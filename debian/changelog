@@ -1,3 +1,11 @@
+mintlocale (1.4.1) sonya; urgency=medium
+
+  * l10n: Generate desktop files
+  * Don't show IM section if Imconfig.available() returns FALSE
+  * Don't show APT features in non-Debian derivatives
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 07 May 2017 12:50:20 +0100
+
 mintlocale (1.4.0) sonya; urgency=medium
 
   * Improve support for LightDM
