@@ -404,9 +404,9 @@ class MintLocale:
         # set up larger components.
         self.builder.get_object("main_window").set_title(_("Language Settings"))
 
-        toolbar = Gtk.Toolbar()
-        toolbar.get_style_context().add_class("primary-toolbar")
-        self.builder.get_object("box1").pack_start(toolbar, False, False, 0)
+        self.toolbar = Gtk.Toolbar()
+        self.toolbar.get_style_context().add_class("primary-toolbar")
+        self.builder.get_object("box1").pack_start(self.toolbar, False, False, 0)
 
         stack = Gtk.Stack()
         stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
@@ -419,13 +419,13 @@ class MintLocale:
         tool_item = Gtk.ToolItem()
         tool_item.set_expand(True)
         tool_item.get_style_context().add_class("raised")
-        toolbar.insert(tool_item, 0)
+        self.toolbar.insert(tool_item, 0)
         switch_holder = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         switch_holder.set_border_width(1)
         tool_item.add(switch_holder)
         switch_holder.pack_start(stack_switcher, True, True, 0)
         stack_switcher.set_halign(Gtk.Align.CENTER)
-        toolbar.show_all()
+        self.toolbar.show_all()
 
         size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
 
@@ -602,6 +602,7 @@ class MintLocale:
     def check_input_methods(self):
         if not self.ImConfig.available():
             self.im_combo.set_sensitive(False)
+            self.toolbar.hide()
             return
 
         if not self.im_combo.get_model():
