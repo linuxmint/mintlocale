@@ -20,6 +20,8 @@ from gi.repository import Gtk, GObject, Gio, AccountsService, GLib, GdkPixbuf
 
 from ImConfig.ImConfig import ImConfig
 
+# Used to detect Debian derivatives (we don't want to show APT features in other distros)
+IS_DEBIAN = os.path.exists("/etc/debian_version")
 
 # i18n
 APP = 'mintlocale'
@@ -468,7 +470,8 @@ class MintLocale:
 
         self.install_row = SettingsRow(self.install_label, self.locale_install_button)
         self.install_row.set_no_show_all(True)
-        language_settings.add_row(self.install_row)
+        if IS_DEBIAN:
+            language_settings.add_row(self.install_row)
 
         page = SettingsPage()
         stack.add_titled(page, "input settings", _("Input method"))
@@ -505,12 +508,12 @@ class MintLocale:
         row = SettingsRow(label, self.im_combo)
         self.input_settings.add_row(row)
 
-        self.input_settings = page.add_section(_("Language support"))
-
-        for im_language in self.im_languages:
-            size_group.add_widget(im_language.button)
-            size_group.add_widget(im_language.installed_label)
-            self.input_settings.add_row(im_language.settings_row)
+        if IS_DEBIAN:
+            self.input_settings = page.add_section(_("Language support"))
+            for im_language in self.im_languages:
+                size_group.add_widget(im_language.button)
+                size_group.add_widget(im_language.installed_label)
+                self.input_settings.add_row(im_language.settings_row)
 
         self.im_loaded = False  # don't react to im changes until we're fully loaded (we're loading that combo asynchronously)
         self.im_combo.connect("changed", self.on_combobox_input_method_changed)
