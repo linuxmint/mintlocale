@@ -1,3 +1,10 @@
+mintlocale (1.4.3) sonya; urgency=medium
+
+  [ Björn Esser ]
+  * locale_path must be declared first (#45)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 12 May 2017 15:28:50 +0100
+
 mintlocale (1.4.2) sonya; urgency=medium
 
   [ Björn Esser ]
