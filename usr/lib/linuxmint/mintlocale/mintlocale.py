@@ -753,7 +753,7 @@ class MintLocale:
 
     def set_num_installed(self):
         num_installed = int(commands.getoutput("localedef --list-archive | wc -l"))
-        self.install_label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Language support"), _("%d languages installed") % num_installed))
+        self.install_label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Language support"), gettext.ngettext("%d language installed", "%d languages installed", num_installed) % num_installed))
 
     def accountservice_ready(self, user, param):
         self.builder.get_object("main_window").show()
