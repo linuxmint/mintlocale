@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-24 10:09+0100\n"
+"POT-Creation-Date: 2017-07-24 00:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,145 +21,150 @@ msgstr ""
 msgid "Add a New Language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/install_remove.py:69
+#: usr/lib/linuxmint/mintlocale/install_remove.py:70
 msgid "Install / Remove Languages"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/install_remove.py:207
+#: usr/lib/linuxmint/mintlocale/install_remove.py:208
 msgid "Some language packs are missing"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/install_remove.py:211
+#: usr/lib/linuxmint/mintlocale/install_remove.py:212
 msgid "Fully installed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/install_remove.py:279
+#: usr/lib/linuxmint/mintlocale/install_remove.py:280
+#: usr/lib/linuxmint/mintlocale/synaptic-install-packages:30
 msgid "Please wait, this can take some time"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/install_remove.py:281
+#: usr/lib/linuxmint/mintlocale/install_remove.py:282
 msgid "The related language packs were removed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:56
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:62
 #: usr/share/linuxmint/mintlocale/add.ui.h:1
 msgid "Install"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:66
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:68
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:70
 #: usr/lib/linuxmint/mintlocale/mintlocale.py:72
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:74
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:76
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:78
 msgid "Installed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:66
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:72
 #, python-format
 msgid "Use %s or %s"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:68
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:74
 #, python-format
 msgid "Use %s, %s or %s"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:70
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:76
 #, python-format
 msgid "Use %s"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:405
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:418
 msgid "Language Settings"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:438
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:451
 msgid "Apply System-Wide"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:443
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:456
 msgid "Install / Remove Languages..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:451
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:453
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:456
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:464
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:466
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:469
 msgid "Language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:456
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:469
 msgid "Language, interface, date and time..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:461
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:474
 msgid "Region"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:461
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:474
 msgid "Numbers, currency, addresses, measurement..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:474
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:502
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:504 generate_desktop_files:39
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:488
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:516
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:518 generate_desktop_files:39
 msgid "Input method"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:489
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:503
 msgid ""
 "Input methods are used to write symbols and characters which are not present "
 "on the keyboard. They are useful to write in Chinese, Japanese, Korean, "
 "Thai, Vietnamese..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:494
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:508
 msgid "Simplified Chinese"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:495
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:509
 msgid "Traditional Chinese"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:496
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:510
 msgid "Japanese"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:497
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:511
 msgid "Korean"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:498
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:512
 msgid "Vietnamese"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:499
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:513
 msgid "Thai"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:500
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:514
 msgid "Telugu"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:508
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:741
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:523
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:756
 msgid "Language support"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:633
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:648
 msgid "None"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:673
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:674
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:688
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:689
 msgid "No locale defined"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:737
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:752
 msgid "System locale"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:741
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:756
 #, python-format
 msgid "%d languages installed"
+msgstr ""
+
+#: usr/lib/linuxmint/mintlocale/synaptic-install-packages:32
+msgid "Installation is complete"
 msgstr ""
 
 #: usr/share/linuxmint/mintlocale/add.ui.h:2
