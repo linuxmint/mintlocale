@@ -10,8 +10,9 @@ import locale
 
 import gi
 gi.require_version('Gtk', '3.0')
+gi.require_version('XApp', '1.0')
 from gi.repository import GdkX11
-from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gtk, GdkPixbuf, XApp
 
 # i18n
 APP = 'mintlocale'
@@ -58,11 +59,12 @@ class MintLocale:
         self.cache = apt_pkg.Cache(None)
         self.cache_updated = False
 
+
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
         self.builder.add_from_file('/usr/share/linuxmint/mintlocale/install_remove.ui')
         self.window = self.builder.get_object("main_window")
-
+        XApp.set_window_icon_name(self.window, "preferences-desktop-locale")
         self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
 
         self.treeview = self.builder.get_object("treeview_language_list")
