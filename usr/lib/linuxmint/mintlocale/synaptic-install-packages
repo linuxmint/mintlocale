@@ -23,13 +23,7 @@ try:
     if refresh == "yes":
         subprocess.call(["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--update-at-startup", "--parent-window-id", window_id])
 
-    cmd = ["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", window_id]
-    cmd.append("-o")
-    cmd.append("Synaptic::closeZvt=true")
-    cmd.append("--progress-str")
-    cmd.append("\"" + _("Please wait, this can take some time") + "\"")
-    cmd.append("--finish-str")
-    cmd.append("\"" + _("Installation is complete") + "\"")
+    cmd = ["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", window_id, "-o", "Synaptic::closeZvt=true"]
     f = tempfile.NamedTemporaryFile()
     for pkg in packages:
         pkg_line = ("%s\tinstall\n" % pkg)
