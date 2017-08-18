@@ -645,14 +645,18 @@ class MintLocale:
         model.clear()
 
         # find out about the other options
-        names = dict(xim=_('None'), ibus='IBus', scim='SCIM', fcitx='Fcitx', uim='UIM', gcin='gcin', hangul='Hangul', thai='Thai')
+        names = dict(xim=_('XIM'), ibus='IBus', scim='SCIM', fcitx='Fcitx', uim='UIM', gcin='gcin', hangul='Hangul', thai='Thai')
+        iter = model.append()
+        model.set_value(iter, IM_CHOICE, "none")
+        model.set_value(iter, IM_NAME, _("None"))
+        self.im_combo.set_active_iter(iter)
         for (i, IM) in enumerate(availableIM):
             name = names[IM] if IM in names else IM
             iter = model.append()
             model.set_value(iter, IM_CHOICE, IM)
             model.set_value(iter, IM_NAME, name)
             if IM == currentIM:
-                self.im_combo.set_active(i)
+                self.im_combo.set_active_iter(iter)
 
         self.input_settings.show_all()
         self.im_loaded = True
