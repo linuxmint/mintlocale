@@ -275,13 +275,7 @@ class MintLocale:
                             print pkg
 
             if len(installed_packs) > 0:
-                cmd = ["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % self.builder.get_object("main_window").get_window().get_xid()]
-                cmd.append("-o")
-                cmd.append("Synaptic::closeZvt=true")
-                cmd.append("--progress-str")
-                cmd.append("\"" + _("Please wait, this can take some time") + "\"")
-                cmd.append("--finish-str")
-                cmd.append("\"" + _("The related language packs were removed") + "\"")
+                cmd = ["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % self.builder.get_object("main_window").get_window().get_xid(), "-o", "Synaptic::closeZvt=true"]
                 f = tempfile.NamedTemporaryFile()
                 for pkg in installed_packs:
                     f.write("%s\tdeinstall\n" % pkg.name)
