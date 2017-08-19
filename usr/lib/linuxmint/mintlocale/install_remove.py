@@ -64,7 +64,7 @@ class MintLocale:
         self.builder.set_translation_domain("mintlocale")
         self.builder.add_from_file('/usr/share/linuxmint/mintlocale/install_remove.ui')
         self.window = self.builder.get_object("main_window")
-        XApp.set_window_icon_name(self.window, "preferences-desktop-locale")
+        self.window.set_icon_name("preferences-desktop-locale")
         self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
 
         self.treeview = self.builder.get_object("treeview_language_list")
