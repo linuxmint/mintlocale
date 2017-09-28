@@ -1,10 +1,11 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import os
-import commands
+import subprocess
 import sys
 import gettext
 import locale
+import codecs
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -82,26 +83,29 @@ class MintLocale:
 
         # Load countries into memory
         self.countries = {}
-        file = open('/usr/share/linuxmint/mintlocale/countries', "r")
-        for line in file:
-            line = line.strip()
-            split = line.split("=")
-            if len(split) == 2:
-                self.countries[split[0]] = split[1]
-        file.close()
+        with codecs.open('/usr/share/linuxmint/mintlocale/countries', "r", encoding='utf-8') as file:
+            for line in file:
+                line = line.strip()
+                split = line.split("=")
+                if len(split) == 2:
+                    self.countries[split[0]] = split[1]
 
         # Load languages into memory
         self.languages = {}
-        file = open('/usr/share/linuxmint/mintlocale/languages', "r")
-        for line in file:
-            line = line.strip()
-            split = line.split("=")
-            if len(split) == 2:
-                self.languages[split[0]] = split[1]
-        file.close()
+        with codecs.open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
+            for line in file:
+                line = line.strip()
+                split = line.split("=")
+                if len(split) == 2:
+                    self.languages[split[0]] = split[1]
 
-        locales = commands.getoutput("cat /usr/share/i18n/SUPPORTED")
-        installed = commands.getoutput("localedef --list-archive | sed s/utf8/UTF-8/g").split("\n")
+        if os.path.exists("/usr/share/i18n/SUPPORTED"):
+            with codecs.open("/usr/share/i18n/SUPPORTED", "r", encoding="utf-8") as file:
+                locales = file.read()
+        else:
+            locales = u""
+
+        installed = subprocess.check_output("localedef --list-archive | sed s/utf8/UTF-8/g", shell=True).decode("utf-8").split("\n")
         for line in locales.split("\n"):
             line = line.strip()
             if line == '' or line.startswith('#'):
@@ -186,10 +190,10 @@ class MintLocale:
         short_locale = locale.split(".")[0].strip()
         if len(parts) > 1:
             charmap = parts[1].strip()
-            print "localedef -f %s -i %s %s" % (charmap, short_locale, locale)
+            print("localedef -f %s -i %s %s" % (charmap, short_locale, locale))
             os.system("localedef -f %s -i %s %s" % (charmap, short_locale, locale))
         else:
-            print "localedef -i %s %s" % (short_locale, locale)
+            print("localedef -i %s %s" % (short_locale, locale))
             os.system("localedef -i %s %s" % (short_locale, locale))
         if os.path.exists("/var/lib/locales/supported.d"):
             os.system("localedef --list-archive | sed 's/utf8/UTF-8 UTF-8/g' > /var/lib/locales/supported.d/mintlocale")

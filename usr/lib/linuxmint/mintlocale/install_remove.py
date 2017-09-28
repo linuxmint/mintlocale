@@ -1,12 +1,12 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import os
-import commands
 import gettext
 import apt_pkg
 import subprocess
 import tempfile
 import locale
+import codecs
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -43,7 +43,7 @@ class MintLocale:
         self.selected_language_packs = None
 
         self.language_packs = []
-        with open("/usr/share/linuxmint/mintlocale/language_packs") as f:
+        with codecs.open("/usr/share/linuxmint/mintlocale/language_packs", 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
                 columns = line.split(":")
@@ -137,25 +137,24 @@ class MintLocale:
 
         # Load countries into memory
         self.countries = {}
-        file = open('/usr/share/linuxmint/mintlocale/countries', "r")
-        for line in file:
-            line = line.strip()
-            split = line.split("=")
-            if len(split) == 2:
-                self.countries[split[0]] = split[1]
-        file.close()
+        with codecs.open('/usr/share/linuxmint/mintlocale/countries', "r", encoding="utf-8") as file:
+            for line in file:
+                line = line.strip()
+                split = line.split("=")
+                if len(split) == 2:
+                    self.countries[split[0]] = split[1]
 
         # Load languages into memory
         self.languages = {}
-        file = open('/usr/share/linuxmint/mintlocale/languages', "r")
-        for line in file:
-            line = line.strip()
-            split = line.split("=")
-            if len(split) == 2:
-                self.languages[split[0]] = split[1]
-        file.close()
+        with codecs.open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
+            for line in file:
+                line = line.strip()
+                split = line.split("=")
+                if len(split) == 2:
+                    self.languages[split[0]] = split[1]
 
-        locales = commands.getoutput("localedef --list-archive")
+        locales = subprocess.check_output("localedef --list-archive", shell=True)
+        locales = locales.decode('utf-8')
         for line in locales.split("\n"):
             line = line.replace("utf8", "UTF-8")
             locale_code = line.split(".")[0].strip()
@@ -262,7 +261,8 @@ class MintLocale:
         os.system("localedef --delete-from-archive %s" % locale)
         # If there are no more locales using the language, remove the language packs
         (language_code, country_code, language_label) = self.split_locale(locale)
-        num_locales = commands.getoutput("localedef --list-archive | grep %s_ | wc -l" % language_code)
+        num_locales = subprocess.check_output("localedef --list-archive | grep %s_ | wc -l" % language_code, shell=True)
+        num_locales = num_locales.decode('utf-8')
         # Check if the language packs are installed
         if num_locales == "0":
             installed_packs = []
@@ -272,7 +272,7 @@ class MintLocale:
                         pkg = self.cache[pkgname]
                         if (pkg.has_versions and pkg.current_state == apt_pkg.CURSTATE_INSTALLED):
                             installed_packs.append(pkg)
-                            print pkg
+                            print(pkg)
 
             if len(installed_packs) > 0:
                 cmd = ["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % self.builder.get_object("main_window").get_window().get_xid(), "-o", "Synaptic::closeZvt=true"]
