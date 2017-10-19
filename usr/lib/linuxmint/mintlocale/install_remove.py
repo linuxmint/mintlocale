@@ -154,9 +154,10 @@ class MintLocale:
                     self.languages[split[0]] = split[1]
 
         locales = subprocess.check_output("localedef --list-archive", shell=True)
-        locales = locales.decode('utf-8')
+        locales = locales.decode('utf-8').strip()
         for line in locales.split("\n"):
-            line = line.replace("utf8", "UTF-8")
+            line = line.replace("utf8", "UTF-8").strip()
+
             locale_code = line.split(".")[0].strip()
             charmap = None
             if len(line.split(".")) > 1:
@@ -262,7 +263,7 @@ class MintLocale:
         # If there are no more locales using the language, remove the language packs
         (language_code, country_code, language_label) = self.split_locale(locale)
         num_locales = subprocess.check_output("localedef --list-archive | grep %s_ | wc -l" % language_code, shell=True)
-        num_locales = num_locales.decode('utf-8')
+        num_locales = num_locales.decode('utf-8').strip()
         # Check if the language packs are installed
         if num_locales == "0":
             installed_packs = []
