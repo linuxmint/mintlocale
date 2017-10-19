@@ -1,15 +1,23 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import os
-import commands
 import sys
 import gettext
-import ConfigParser
 import grp
 import locale
 import tempfile
-import thread
 import subprocess
+import codecs
+
+try:
+    import _thread as thread
+except ImportError as err:
+    import thread
+
+try:
+    import configparser
+except ImportError as err:
+    import ConfigParser as configparser
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -33,7 +41,7 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
-(IM_CHOICE, IM_NAME) = range(2)
+(IM_CHOICE, IM_NAME) = list(range(2))
 
 GObject.threads_init()
 
@@ -85,7 +93,7 @@ class IMLanguage():
         for input_method in self.methods.split(":"):
             info_paths.append("/usr/share/linuxmint/mintlocale/iminfo/%s.info" % input_method)
         for info_path in info_paths:
-            with open(info_path) as f:
+            with codecs.open(info_path, encoding='utf-8') as f:
                 for line in f:
                     line = line.strip()
                     if line.startswith("#") or line == "":
@@ -330,9 +338,11 @@ class SettingsBox(Gtk.Frame):
         separator_context = toolbar_separator.get_style_context()
         frame_color = frame_style.get_border_color(Gtk.StateFlags.NORMAL).to_string()
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(".separator { -GtkWidget-wide-separators: 0; \
-                                                   color: %s;                    \
-                                                }" % frame_color)
+        css_vals = ".separator { -GtkWidget-wide-separators: 0;    \
+                                                      color: %s;   \
+                                                }" % frame_color
+
+        css_provider.load_from_data(css_vals.encode('utf-8'))
         separator_context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
         self.list_box = Gtk.ListBox()
@@ -533,7 +543,7 @@ class MintLocale:
 
         self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
         self.dmrc_path = os.path.join(GLib.get_home_dir(), ".dmrc")
-        self.dmrc = ConfigParser.ConfigParser()
+        self.dmrc = configparser.ConfigParser()
         self.dmrc.optionxform = str  # force case sensitivity on ConfigParser
         self.dmrc.read(self.dmrc_path)
         if not self.dmrc.has_section('Desktop'):
@@ -553,9 +563,9 @@ class MintLocale:
         else:
             self.current_language = env_language
 
-        print "User language in .dmrc: %s" % dmrc_language
-        print "User language in $LANG: %s" % env_language
-        print "Current language: %s" % self.current_language
+        print("User language in .dmrc: %s" % dmrc_language)
+        print("User language in $LANG: %s" % env_language)
+        print("Current language: %s" % self.current_language)
 
         if 'LC_NUMERIC' in os.environ:
             self.current_region = os.environ['LC_NUMERIC']
@@ -563,13 +573,13 @@ class MintLocale:
             self.current_region = self.current_language
 
         if os.path.exists(self.pam_environment_path):
-            with open(self.pam_environment_path, 'r') as pam_file:
+            with codecs.open(self.pam_environment_path, 'r', encoding='UTF-8') as pam_file:
                 for line in pam_file:
                     line = line.strip()
                     if line.startswith("LC_NUMERIC="):
                         self.current_region = line.split("=")[1].replace("\"", "").replace("'", "").strip()
 
-        print "Current region: %s" % self.current_region
+        print("Current region: %s" % self.current_region)
 
         # Replace utf8 with UTF-8 (lightDM GTK greeter messes that up)
         self.current_language = self.current_language.replace(".utf8", ".UTF-8")
@@ -602,7 +612,7 @@ class MintLocale:
             stack.set_visible_child(page)
 
     def button_system_language_clicked(self, button):
-        print "Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region)
+        print("Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region))
         subprocess.call(['gksu', 'set-default-locale', self.locale_path, self.current_language, self.current_region])
         self.set_system_locale()
         pass
@@ -620,7 +630,7 @@ class MintLocale:
             return
 
         if not self.im_combo.get_model():
-            print "no model"
+            print("no model")
             return
 
         thread.start_new_thread(self.check_input_methods_async, ())
@@ -717,7 +727,7 @@ class MintLocale:
                             country = self.countries[country_code]
                         else:
                             country = country_code
-                        language_label = "%s, %s" % (language, country)
+                        language_label = u"%s, %s" % (language, country)
                 else:
                     if locale in self.languages:
                         language_label = self.languages[locale]
@@ -742,7 +752,7 @@ class MintLocale:
                             country = self.countries[country_code]
                         else:
                             country = country_code
-                        language_label = "%s, %s" % (language, country)
+                        language_label = u"%s, %s" % (language, country)
                 else:
                     if locale in self.languages:
                         language_label = self.languages[locale]
@@ -756,14 +766,14 @@ class MintLocale:
         self.system_label.set_markup("<b>%s</b>\n<small>%s <i>%s</i>\n%s <i>%s</i></small>" % (_("System locale"), language_prefix, language_str, region_prefix, region_str))
 
     def set_num_installed(self):
-        num_installed = int(commands.getoutput("localedef --list-archive | wc -l"))
+        num_installed = int(subprocess.check_output("localedef --list-archive | wc -l", shell=True))
         self.install_label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Language support"), gettext.ngettext("%d language installed", "%d languages installed", num_installed) % num_installed))
 
     def accountservice_ready(self, user, param):
         self.builder.get_object("main_window").show()
 
     def accountservice_changed(self, user):
-        print "AccountsService language is: '%s'" % user.get_language()
+        print("AccountsService language is: '%s'" % user.get_language())
 
     def build_lang_list(self):
 
@@ -774,26 +784,25 @@ class MintLocale:
 
         # Load countries into memory
         self.countries = {}
-        file = open('/usr/share/linuxmint/mintlocale/countries', "r")
-        for line in file:
-            line = line.strip()
-            split = line.split("=")
-            if len(split) == 2:
-                self.countries[split[0]] = split[1]
-        file.close()
+        with codecs.open('/usr/share/linuxmint/mintlocale/countries', "r", encoding='utf-8') as file:
+            for line in file:
+                line = line.strip()
+                split = line.split("=")
+                if len(split) == 2:
+                    self.countries[split[0]] = split[1]
 
         # Load languages into memory
         self.languages = {}
-        file = open('/usr/share/linuxmint/mintlocale/languages', "r")
-        for line in file:
-            line = line.strip()
-            split = line.split("=")
-            if len(split) == 2:
-                self.languages[split[0]] = split[1]
-        file.close()
+        with codecs.open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
+            for line in file:
+                line = line.strip()
+                split = line.split("=")
+                if len(split) == 2:
+                    self.languages[split[0]] = split[1]
 
         cur_index = -1  # find the locale :P
-        locales = commands.getoutput("localedef --list-archive")
+        locales = subprocess.check_output("localedef --list-archive", shell=True)
+        locales = locales.decode('utf-8')
 
         all_locales_are_utf8 = True
         for line in locales.split("\n"):
@@ -833,9 +842,9 @@ class MintLocale:
                         country = country_code
 
                     if '@' in split[1]:
-                        language_label = "%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
+                        language_label = u"%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
                     else:
-                        language_label = "%s, %s" % (language, country)
+                        language_label = u"%s, %s" % (language, country)
 
                     flag_path = FLAG_PATH % country_code
             else:
@@ -848,7 +857,7 @@ class MintLocale:
             flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
 
             if charmap is not None and not all_locales_are_utf8:
-                language_label = "%s  <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
+                language_label = u"%s  <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
 
             if os.path.exists(flag_path):
                 flag = flag_path
@@ -871,7 +880,7 @@ class MintLocale:
 
     def set_user_locale(self, path, locale):
         self.locale_button.set_button_label(locale.name)
-        print "Setting language to %s" % locale.id
+        print(u"Setting language to %s" % locale.id)
         # Set it in Accounts Service
         try:
             self.accountService.set_language(locale.id)
@@ -880,7 +889,7 @@ class MintLocale:
 
         # Set it in .dmrc
         self.dmrc.set('Desktop', 'Language', locale.id)
-        with open(self.dmrc_path, 'wb') as configfile:
+        with codecs.open(self.dmrc_path, 'w', encoding='utf-8') as configfile:
             self.dmrc.write(configfile)
         os.system("sed -i 's/ = /=/g' %s" % self.dmrc_path)  # Remove space characters around "="" sign, created by ConfigParser
 
@@ -895,7 +904,7 @@ class MintLocale:
 
     def set_user_region(self, path, locale):
         self.region_button.set_button_label(locale.name)
-        print "Setting region to %s" % locale.id
+        print("Setting region to %s" % locale.id)
 
         # We don't call self.accountService.set_formats_locale(locale.id) here...
         # First, we don't really use AccountsService, we're only doing this to be nice to LightDM and all..
@@ -927,7 +936,7 @@ class MintLocale:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, shortlocale, self.pam_environment_path))
 
             # Check missing fields
-            with open(self.pam_environment_path, 'r') as file:
+            with codecs.open(self.pam_environment_path, 'r', encoding='utf-8') as file:
                 content = file.read()
 
             for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
