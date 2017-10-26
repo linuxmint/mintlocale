@@ -1,3 +1,27 @@
+mintlocale (1.4.4) sylvia; urgency=medium
+
+  [ Michael Webster ]
+  * install_remove.py: Use xapp to set an icon name for the window.
+
+  [ NikoKrause ]
+  * add missing file to makepot and update translation template (#46)
+
+  [ Clement Lefebvre ]
+  * Synaptic: Don't specify string messages
+  * IM: Fix confusion between None and XIM
+  * Synaptic: Don't specify progress strings
+
+  [ Michael Webster ]
+  * install_remove: Use an XAppGtkWindow from the builder file.
+
+  [ Troy Curtis ]
+  * Transition python2 scripts to python3. (#49)
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT file
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 26 Oct 2017 13:25:11 +0100
+
 mintlocale (1.4.3) sonya; urgency=medium
 
   [ Björn Esser ]
