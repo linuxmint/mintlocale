@@ -817,7 +817,8 @@ class MintLocale:
                 all_locales_are_utf8 = False
                 break
 
-        for line in locales.split("\n"):
+        built_locales = {}
+        for line in locales.rstrip().split("\n"):
             line = line.replace("utf8", "UTF-8")
             cur_index += 1
             locale_code = line.split(".")[0].strip()
@@ -863,6 +864,10 @@ class MintLocale:
                 flag = flag_path
             else:
                 flag = FLAG_PATH % '_generic'
+
+            built_locales[language_label] = (line, flag)
+
+        for language_label, (line, flag) in sorted(built_locales.items()):
             locale = Locale(line, language_label)
             self.locale_button.add_picture(flag, self.set_user_locale, title=language_label, id=locale)
             self.region_button.add_picture(flag, self.set_user_region, title=language_label, id=locale)
