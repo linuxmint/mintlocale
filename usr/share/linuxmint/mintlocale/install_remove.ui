@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.20.2 -->
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <requires lib="gtk+" version="3.0"/>
+  <requires lib="xapp" version="0.0"/>
   <object class="XAppGtkWindow" id="main_window">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
@@ -8,7 +10,6 @@
     <property name="default_width">800</property>
     <property name="default_height">600</property>
     <property name="icon_name">preferences-desktop-locale</property>
-    <property name="has_resize_grip">False</property>
     <child>
       <object class="GtkBox" id="box2">
         <property name="visible">True</property>
@@ -29,6 +30,9 @@
                 <property name="headers_visible">False</property>
                 <property name="rules_hint">True</property>
                 <property name="enable_tree_lines">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection"/>
+                </child>
               </object>
             </child>
           </object>
@@ -123,11 +127,10 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button_close">
-                <property name="label">gtk-close</property>
+                <property name="label" translatable="yes">Close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -143,6 +146,9 @@
           </packing>
         </child>
       </object>
+    </child>
+    <child type="titlebar">
+      <placeholder/>
     </child>
   </object>
 </interface>
