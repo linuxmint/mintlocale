@@ -8,6 +8,7 @@ import locale
 import tempfile
 import subprocess
 import codecs
+import mintcommon
 
 try:
     import _thread as thread
@@ -63,6 +64,7 @@ class IMLanguage():
         self.app = app
         self.packages = []
         self.missing_packages = []
+        self.apt = mintcommon.APT(self.app.window)
 
         self.label = Gtk.Label()
         self.label.set_markup(name)
@@ -103,16 +105,21 @@ class IMLanguage():
                         self.packages.append(line)
 
     def install(self, widget):
-        xid = str(self.app.window.get_window().get_xid())
         if len(self.missing_packages) > 0:
-            refresh = "no"
-            if not self.app.cache_updated:
-                refresh = "yes"
-                self.app.cache_updated = True
-            cmd = ["gksu", "/usr/lib/linuxmint/mintlocale/synaptic-install-packages", refresh, xid]
-            cmd = cmd + self.missing_packages
-            comnd = subprocess.Popen(cmd)
-            returnCode = comnd.wait()
+            self.app.lock_input_methods()
+            if self.app.cache_updated:
+                self.apt.set_callbacks(None, self.on_install_finished, None)
+                self.apt.install_packages(self.missing_packages)
+            else:
+                self.apt.set_callbacks(None, self.on_update_finished, None)
+                self.apt.update_cache()
+
+    def on_update_finished(self):
+        self.app.cache_updated = True
+        self.apt.set_callbacks(None, self.on_install_finished, None)
+        self.apt.install_packages(self.missing_packages)
+
+    def on_install_finished(self):
         self.app.check_input_methods()
 
     def update_status(self, cache):
@@ -122,6 +129,7 @@ class IMLanguage():
                 self.missing_packages.append(package)
         if len(self.missing_packages) > 0:
             self.button.show()
+            self.button.set_sensitive(True)
             self.button.set_tooltip_text("\n".join(self.missing_packages))
         else:
             self.settings_row.show_alternative_widget()
@@ -611,11 +619,19 @@ class MintLocale:
         self.set_system_locale()
         self.set_num_installed()
 
+    def lock_input_methods(self):
+        # lock all buttons while we install packages
+        for im in self.im_languages:
+            im.button.set_sensitive(False)
+        self.im_combo.set_sensitive(False)
+
     def check_input_methods(self):
         if not self.ImConfig.available():
             self.im_combo.set_sensitive(False)
             self.toolbar.hide()
             return
+        else:
+            self.im_combo.set_sensitive(True)
 
         if not self.im_combo.get_model():
             print("no model")

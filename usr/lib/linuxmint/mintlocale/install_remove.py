@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 import locale
 import codecs
+import mintcommon
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -96,6 +97,8 @@ class MintLocale:
         self.treeview.append_column(column)
 
         self.build_lang_list()
+
+        self.apt = mintcommon.APT(self.window)
 
     def split_locale(self, locale_code):
         if "_" in locale_code:
@@ -206,10 +209,10 @@ class MintLocale:
             iter = model.append()
             model.set_value(iter, 0, language_label)
             model.set_value(iter, 1, line)
-            if len(missing_packs) > 0:
+            if len(missing_pack_names) > 0:
                 model.set_value(iter, 3, "<small><span fgcolor='#a04848'>%s</span></small>" % _("Some language packs are missing"))
                 model.set_value(iter, 4, False)
-                model.set_value(iter, 5, missing_packs)
+                model.set_value(iter, 5, missing_pack_names)
             else:
                 model.set_value(iter, 3, "<small><span fgcolor='#4ba048'>%s</span></small>" % _("Fully installed"))
                 model.set_value(iter, 4, True)
@@ -241,17 +244,20 @@ class MintLocale:
 
     def button_install_clicked(self, button):
         if self.selected_language_packs is not None:
-            refresh = "no"
-            if not self.cache_updated:
-                refresh = "yes"
-                self.cache_updated = True
-            xid = str(self.builder.get_object("main_window").get_window().get_xid())
-            cmd = ["/usr/lib/linuxmint/mintlocale/synaptic-install-packages", refresh, xid]
-            for pkg in self.selected_language_packs:
-                cmd.append(pkg.name)
-            comnd = subprocess.Popen(cmd)
-            returnCode = comnd.wait()
-            self.build_lang_list()
+            if self.cache_updated:
+                self.apt.set_callbacks(None, self.on_install_finished, None)
+                self.apt.install_packages(self.selected_language_packs)
+            else:
+                self.apt.set_callbacks(None, self.on_update_finished, None)
+                self.apt.update_cache()
+
+    def on_update_finished(self):
+        self.cache_updated = True
+        self.apt.set_callbacks(None, self.on_install_finished, None)
+        self.apt.install_packages(self.selected_language_packs)
+
+    def on_install_finished(self):
+        self.build_lang_list()
 
     def button_add_clicked(self, button):
         os.system("/usr/lib/linuxmint/mintlocale/add.py")
@@ -272,20 +278,12 @@ class MintLocale:
                     if pkgname in self.cache:
                         pkg = self.cache[pkgname]
                         if (pkg.has_versions and pkg.current_state == apt_pkg.CURSTATE_INSTALLED):
-                            installed_packs.append(pkg)
-                            print(pkg)
+                            installed_packs.append(pkgname)
+                            print(pkgname)
 
             if len(installed_packs) > 0:
-                cmd = ["/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % self.builder.get_object("main_window").get_window().get_xid(), "-o", "Synaptic::closeZvt=true"]
-                f = tempfile.NamedTemporaryFile()
-                for pkg in installed_packs:
-                    f.write("%s\tdeinstall\n" % pkg.name)
-                cmd.append("--set-selections-file")
-                cmd.append("%s" % f.name)
-                f.flush()
-                comnd = subprocess.Popen(' '.join(cmd), shell=True)
-                returnCode = comnd.wait()
-                f.close()
+                self.apt.set_callbacks(None, self.on_install_finished, None)
+                self.apt.remove_packages(installed_packs)
 
         self.build_lang_list()
 

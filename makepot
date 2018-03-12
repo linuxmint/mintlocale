@@ -2,5 +2,5 @@
 intltool-extract --type=gettext/glade usr/share/linuxmint/mintlocale/mintlocale.ui
 intltool-extract --type=gettext/glade usr/share/linuxmint/mintlocale/install_remove.ui
 intltool-extract --type=gettext/glade usr/share/linuxmint/mintlocale/add.ui
-xgettext --language=Python --keyword=_ --keyword=N_ --output=mintlocale.pot usr/lib/linuxmint/mintlocale/*.py usr/lib/linuxmint/mintlocale/synaptic-install-packages usr/share/linuxmint/mintlocale/*.ui.h generate_desktop_files
+xgettext --language=Python --keyword=_ --keyword=N_ --output=mintlocale.pot usr/lib/linuxmint/mintlocale/*.py usr/share/linuxmint/mintlocale/*.ui.h generate_desktop_files
 rm -f usr/share/linuxmint/mintlocale/*.ui.h
