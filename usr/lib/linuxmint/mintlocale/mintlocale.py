@@ -609,12 +609,12 @@ class MintLocale:
 
     def button_system_language_clicked(self, button):
         print("Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region))
-        subprocess.call(['gksu', 'set-default-locale', self.locale_path, self.current_language, self.current_region])
+        subprocess.call(['pkexec', 'set-default-locale', self.locale_path, self.current_language, self.current_region])
         self.set_system_locale()
         pass
 
     def button_install_remove_clicked(self, button):
-        os.system("gksu add-remove-locales")
+        os.system("pkexec add-remove-locales")
         self.build_lang_list()
         self.set_system_locale()
         self.set_num_installed()
