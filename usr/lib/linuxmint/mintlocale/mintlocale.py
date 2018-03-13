@@ -108,18 +108,21 @@ class IMLanguage():
         if len(self.missing_packages) > 0:
             self.app.lock_input_methods()
             if self.app.cache_updated:
-                self.apt.set_callbacks(None, self.on_install_finished, None)
+                self.apt.set_finished_callback(self.on_install_finished)
+                self.apt.set_cancelled_callback(self.on_install_finished)
                 self.apt.install_packages(self.missing_packages)
             else:
-                self.apt.set_callbacks(None, self.on_update_finished, None)
+                self.apt.set_finished_callback(self.on_update_finished)
                 self.apt.update_cache()
 
-    def on_update_finished(self):
+    def on_update_finished(self, transaction=None, exit_state=None):
         self.app.cache_updated = True
-        self.apt.set_callbacks(None, self.on_install_finished, None)
+        self.apt.set_finished_callback(self.on_install_finished)
+        self.apt.set_cancelled_callback(self.on_install_finished)
         self.apt.install_packages(self.missing_packages)
 
-    def on_install_finished(self):
+    def on_install_finished(self, transaction=None, exit_state=None):
+        print("Finished")
         self.app.check_input_methods()
 
     def update_status(self, cache):
