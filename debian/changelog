@@ -1,3 +1,20 @@
+mintlocale (1.4.5) tara; urgency=medium
+
+  [ Vincent Vermeulen ]
+  * Show sorted locales in language and region picker (#51)
+
+  [ JosephMcc ]
+  * mintlocale.py: Remove some broken and hardcoded theming (#53)
+  * Stop using stock buttons (#52)
+
+  [ Clement Lefebvre ]
+  * Switch from synaptic to mint-common's APTDaemon
+  * Migrate to Pkexec
+  * Aptdaemon: Differentiate between finished/cancelled callbacks
+  * l10n: Update files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 07 May 2018 12:13:33 +0100
+
 mintlocale (1.4.4) sylvia; urgency=medium
 
   [ Michael Webster ]
