@@ -2,18 +2,23 @@
 
 import os
 import gettext
-import apt_pkg
 import subprocess
 import tempfile
 import locale
 import codecs
-import mintcommon
 
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('XApp', '1.0')
 from gi.repository import GdkX11
 from gi.repository import Gtk, GdkPixbuf, XApp
+
+# Used to detect Debian derivatives (we don't want to show APT features in other distros)
+IS_DEBIAN = os.path.exists("/etc/debian_version")
+
+if IS_DEBIAN:
+    import apt_pkg
+    import mintcommon
 
 # i18n
 APP = 'mintlocale'
@@ -98,7 +103,9 @@ class MintLocale:
 
         self.build_lang_list()
 
-        self.apt = mintcommon.APT(self.window)
+
+        if IS_DEBIAN:
+            self.apt = mintcommon.APT(self.window)
 
     def split_locale(self, locale_code):
         if "_" in locale_code:
@@ -244,22 +251,25 @@ class MintLocale:
 
     def button_install_clicked(self, button):
         if self.selected_language_packs is not None:
-            if self.cache_updated:
-                self.apt.set_finished_callback(self.on_install_finished)
-                self.apt.set_cancelled_callback(self.on_install_finished)
-                self.apt.install_packages(self.selected_language_packs)
-            else:
-                self.apt.set_finished_callback(self.on_update_finished)
-                self.apt.update_cache()
+            if IS_DEBIAN:
+                if self.cache_updated:
+                    self.apt.set_finished_callback(self.on_install_finished)
+                    self.apt.set_cancelled_callback(self.on_install_finished)
+                    self.apt.install_packages(self.selected_language_packs)
+                else:
+                    self.apt.set_finished_callback(self.on_update_finished)
+                    self.apt.update_cache()
 
-    def on_update_finished(self, transaction=None, exit_state=None):
-        self.cache_updated = True
-        self.apt.set_finished_callback(self.on_install_finished)
-        self.apt.set_cancelled_callback(self.on_install_finished)
-        self.apt.install_packages(self.selected_language_packs)
+    if IS_DEBIAN:
+        def on_update_finished(self, transaction=None, exit_state=None):
+            self.cache_updated = True
+            self.apt.set_finished_callback(self.on_install_finished)
+            self.apt.set_cancelled_callback(self.on_install_finished)
+            self.apt.install_packages(self.selected_language_packs)
 
-    def on_install_finished(self, transaction=None, exit_state=None):
-        self.build_lang_list()
+    if IS_DEBIAN:
+        def on_install_finished(self, transaction=None, exit_state=None):
+            self.build_lang_list()
 
     def button_add_clicked(self, button):
         os.system("/usr/lib/linuxmint/mintlocale/add.py")
@@ -284,8 +294,9 @@ class MintLocale:
                             print(pkgname)
 
             if len(installed_packs) > 0:
-                self.apt.set_finished_callback(self.on_install_finished)
-                self.apt.remove_packages(installed_packs)
+                if IS_DEBIAN:
+                    self.apt.set_finished_callback(self.on_install_finished)
+                    self.apt.remove_packages(installed_packs)
 
         self.build_lang_list()
 
