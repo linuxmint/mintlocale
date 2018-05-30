@@ -37,3 +37,50 @@ StartupNotify=false
 """
 
 additionalfiles.generate(DOMAIN, PATH, "usr/share/applications/mintlocale-im.desktop", prefix, _("Input method"), _("Language settings"), suffix)
+
+prefix = """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+
+  <vendor>Linux Mint</vendor>
+  <vendor_url>https://linuxmint.com/</vendor_url>
+
+  <action id="com.linuxmint.mintlocale.add-remove">
+    <icon_name>preferences-desktop-locale</icon_name>
+"""
+
+suffix="""
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/add-remove-locales</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+"""
+
+additionalfiles.generate_polkit_policy(DOMAIN, PATH, "usr/share/polkit-1/actions/com.linuxmint.mintlocale.policy", prefix, _("Languages"), suffix)
+
+
+prefix="""
+    <action id="com.linuxmint.mintlocale.set-locale">
+    <icon_name>preferences-desktop-locale</icon_name>
+"""
+
+suffix="""
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/set-default-locale</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">false</annotate>
+  </action>
+
+</policyconfig>
+"""
+
+additionalfiles.generate_polkit_policy(DOMAIN, PATH, "usr/share/polkit-1/actions/com.linuxmint.mintlocale.policy", prefix, _("Languages"), suffix, append=True)
