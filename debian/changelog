@@ -1,3 +1,13 @@
+mintlocale (1.4.7) tara; urgency=medium
+
+  [ monsta ]
+  * properly clean obsolete adjustments file from /etc (#58)
+
+  [ Clement Lefebvre ]
+  * Add messages in polkit policies
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 30 May 2018 17:08:29 +0100
+
 mintlocale (1.4.6) tara; urgency=medium
 
   [ monsta ]
