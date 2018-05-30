@@ -1,0 +1,1 @@
+rm_conffile /etc/linuxmint/adjustments/15-mintlocale.menu 1.4.7~
