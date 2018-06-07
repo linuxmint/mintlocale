@@ -1,3 +1,16 @@
+mintlocale (1.4.8) tara; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Use mint-common to generate polkit policy
+
+  [ monsta ]
+  * fix runtime dependencies (#59)
+
+  [ Clement Lefebvre ]
+  * Fix missing UI icon in MATE/Xfce
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 07 Jun 2018 12:43:25 +0100
+
 mintlocale (1.4.7) tara; urgency=medium
 
   [ monsta ]
