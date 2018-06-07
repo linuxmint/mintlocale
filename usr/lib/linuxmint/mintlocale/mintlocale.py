@@ -421,10 +421,10 @@ class MintLocale:
 
         self.window = self.builder.get_object("main_window")
 
-        self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
+        self.window.connect("destroy", Gtk.main_quit)
 
         # set up larger components.
-        self.builder.get_object("main_window").set_title(_("Language Settings"))
+        self.window.set_title(_("Language Settings"))
 
         self.toolbar = Gtk.Toolbar()
         self.toolbar.get_style_context().add_class("primary-toolbar")
@@ -609,6 +609,9 @@ class MintLocale:
         if (show_input_methods):
             page.show()
             stack.set_visible_child(page)
+            self.window.set_icon_name("im-chooser")
+        else:
+            self.window.set_icon_name("preferences-desktop-locale")
 
     def button_system_language_clicked(self, button):
         print("Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region))
@@ -777,7 +780,7 @@ class MintLocale:
         self.install_label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Language support"), gettext.ngettext("%d language installed", "%d languages installed", num_installed) % num_installed))
 
     def accountservice_ready(self, user, param):
-        self.builder.get_object("main_window").show()
+        self.window.show()
 
     def accountservice_changed(self, user):
         print("AccountsService language is: '%s'" % user.get_language())
