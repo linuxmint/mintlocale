@@ -609,7 +609,7 @@ class MintLocale:
         if (show_input_methods):
             page.show()
             stack.set_visible_child(page)
-            self.window.set_icon_name("im-chooser")
+            self.window.set_icon_name("mintlocale-im")
         else:
             self.window.set_icon_name("preferences-desktop-locale")
 
