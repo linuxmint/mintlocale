@@ -1,3 +1,9 @@
+mintlocale (1.4.9) tara; urgency=medium
+
+  * Provide app icon for mintlocale-im
+
+ -- Clement Lefebvre <root@linuxmint.com>  Mon, 18 Jun 2018 10:02:40 +0200
+
 mintlocale (1.4.8) tara; urgency=medium
 
   [ Clement Lefebvre ]
