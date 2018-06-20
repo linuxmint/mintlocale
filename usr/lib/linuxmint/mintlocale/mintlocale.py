@@ -8,7 +8,6 @@ import locale
 import tempfile
 import subprocess
 import codecs
-import mintcommon
 
 try:
     import _thread as thread
@@ -33,6 +32,7 @@ IS_DEBIAN = os.path.exists("/etc/debian_version")
 
 if IS_DEBIAN:
     import apt
+    import mintcommon
 
 # i18n
 APP = 'mintlocale'
@@ -64,7 +64,8 @@ class IMLanguage():
         self.app = app
         self.packages = []
         self.missing_packages = []
-        self.apt = mintcommon.APT(self.app.window)
+        if IS_DEBIAN:
+            self.apt = mintcommon.APT(self.app.window)
 
         self.label = Gtk.Label()
         self.label.set_markup(name)
@@ -107,13 +108,14 @@ class IMLanguage():
     def install(self, widget):
         if len(self.missing_packages) > 0:
             self.app.lock_input_methods()
-            if self.app.cache_updated:
-                self.apt.set_finished_callback(self.on_install_finished)
-                self.apt.set_cancelled_callback(self.on_install_finished)
-                self.apt.install_packages(self.missing_packages)
-            else:
-                self.apt.set_finished_callback(self.on_update_finished)
-                self.apt.update_cache()
+            if IS_DEBIAN:
+                if self.app.cache_updated:
+                    self.apt.set_finished_callback(self.on_install_finished)
+                    self.apt.set_cancelled_callback(self.on_install_finished)
+                    self.apt.install_packages(self.missing_packages)
+                else:
+                    self.apt.set_finished_callback(self.on_update_finished)
+                    self.apt.update_cache()
 
     def on_update_finished(self, transaction=None, exit_state=None):
         self.app.cache_updated = True
