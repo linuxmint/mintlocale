@@ -27,7 +27,7 @@ additionalfiles.generate(DOMAIN, PATH, "usr/share/applications/mintlocale.deskto
 
 prefix = "[Desktop Entry]\n"
 
-suffix = """Exec=mintlocale im
+suffix = """Exec=mintlocale-im
 Icon=mintlocale-im
 Terminal=false
 Type=Application

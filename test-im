@@ -2,4 +2,4 @@
 
 sudo rm -rf /usr/lib/linuxmint/mintlocale
 sudo cp -R usr /
-mintlocale
+mintlocale-im
