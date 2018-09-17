@@ -11,11 +11,6 @@ import codecs
 import mintcommon
 
 try:
-    import _thread as thread
-except ImportError as err:
-    import thread
-
-try:
     import configparser
 except ImportError as err:
     import ConfigParser as configparser
@@ -24,7 +19,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AccountsService', '1.0')
 from gi.repository import GdkX11
-from gi.repository import Gtk, GObject, Gio, AccountsService, GLib, GdkPixbuf
+from gi.repository import Gtk, Gio, AccountsService, GLib, GdkPixbuf, XApp
 
 from ImConfig.ImConfig import ImConfig
 
@@ -42,10 +37,6 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
-(IM_CHOICE, IM_NAME) = list(range(2))
-
-GObject.threads_init()
-
 FLAG_PATH = "/usr/share/iso-flag-png/%s.png"
 FLAG_SIZE = 22
 BUTTON_FLAG_SIZE = 22
@@ -53,89 +44,6 @@ BUTTON_FLAG_SIZE = 22
 def list_header_func(row, before, user_data):
     if before and not row.get_header():
         row.set_header(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
-
-
-class IMLanguage():
-
-    def __init__(self, codename, name, methods, app):
-        self.codename = codename
-        self.name = name
-        self.methods = methods
-        self.app = app
-        self.packages = []
-        self.missing_packages = []
-        self.apt = mintcommon.APT(self.app.window)
-
-        self.label = Gtk.Label()
-        self.label.set_markup(name)
-        self.label.set_line_wrap(True)
-        self.button = Gtk.Button(_("Install"))
-        self.button.connect('clicked', self.install)
-        self.button.hide()
-
-        fcitx = "<a href='https://fcitx-im.org'>Fcitx</a>"
-        ibus = "<a href='https://en.wikipedia.org/wiki/Intelligent_Input_Bus'>IBus</a>"
-        uim = "<a href='https://en.wikipedia.org/wiki/Uim'>UIM</a>"
-        self.installed_label = Gtk.Label()
-        self.installed_label.set_justify(Gtk.Justification.CENTER)
-        if self.methods == "fcitx:ibus":
-            self.installed_label.set_markup("%s\n<small>%s</small>" % (_("Installed"), _("Use %s or %s") % (fcitx, ibus)))
-        elif self.methods == "ibus:uim:fcitx":
-            self.installed_label.set_markup("%s\n<small>%s</small>" % (_("Installed"), _("Use %s, %s or %s") % (ibus, uim, fcitx)))
-        elif self.methods == "ibus":
-            self.installed_label.set_markup("%s\n<small>%s</small>" % (_("Installed"), _("Use %s") % ibus))
-        else:
-            self.installed_label.set_markup("%s\n<small>%s</small>" % _("Installed"))
-
-        self.settings_row = SettingsRow(self.label, self.button, self.installed_label)
-
-        # load package list
-        info_paths = []
-        info_paths.append("/usr/share/linuxmint/mintlocale/iminfo/locale/%s.info" % self.codename)
-        for input_method in self.methods.split(":"):
-            info_paths.append("/usr/share/linuxmint/mintlocale/iminfo/%s.info" % input_method)
-        for info_path in info_paths:
-            with codecs.open(info_path, encoding='utf-8') as f:
-                for line in f:
-                    line = line.strip()
-                    if line.startswith("#") or line == "":
-                        # skip empty lines and comments
-                        continue
-                    if line not in self.packages:
-                        self.packages.append(line)
-
-    def install(self, widget):
-        if len(self.missing_packages) > 0:
-            self.app.lock_input_methods()
-            if self.app.cache_updated:
-                self.apt.set_finished_callback(self.on_install_finished)
-                self.apt.set_cancelled_callback(self.on_install_finished)
-                self.apt.install_packages(self.missing_packages)
-            else:
-                self.apt.set_finished_callback(self.on_update_finished)
-                self.apt.update_cache()
-
-    def on_update_finished(self, transaction=None, exit_state=None):
-        self.app.cache_updated = True
-        self.apt.set_finished_callback(self.on_install_finished)
-        self.apt.set_cancelled_callback(self.on_install_finished)
-        self.apt.install_packages(self.missing_packages)
-
-    def on_install_finished(self, transaction=None, exit_state=None):
-        print("Finished")
-        self.app.check_input_methods()
-
-    def update_status(self, cache):
-        self.missing_packages = []
-        for package in self.packages:
-            if package in cache and not cache[package].is_installed:
-                self.missing_packages.append(package)
-        if len(self.missing_packages) > 0:
-            self.button.show()
-            self.button.set_sensitive(True)
-            self.button.set_tooltip_text("\n".join(self.missing_packages))
-        else:
-            self.settings_row.show_alternative_widget()
 
 class Locale():
 
@@ -399,7 +307,7 @@ class MintLocale:
 
     ''' Create the UI '''
 
-    def __init__(self, show_input_methods):
+    def __init__(self):
 
         # Determine path to system locale-config
         self.locale_path=''
@@ -420,34 +328,14 @@ class MintLocale:
         self.builder.add_from_file('/usr/share/linuxmint/mintlocale/mintlocale.ui')
 
         self.window = self.builder.get_object("main_window")
-
-        self.window.connect("destroy", Gtk.main_quit)
-
-        # set up larger components.
         self.window.set_title(_("Language Settings"))
+        self.window.connect("destroy", Gtk.main_quit)
+        XApp.set_window_icon_name(self.window, "preferences-desktop-locale")
 
         self.toolbar = Gtk.Toolbar()
         self.toolbar.get_style_context().add_class("primary-toolbar")
         self.builder.get_object("box1").pack_start(self.toolbar, False, False, 0)
 
-        stack = Gtk.Stack()
-        stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
-        stack.set_transition_duration(150)
-        self.builder.get_object("box1").pack_start(stack, True, True, 0)
-
-        stack_switcher = Gtk.StackSwitcher()
-        stack_switcher.set_stack(stack)
-
-        tool_item = Gtk.ToolItem()
-        tool_item.set_expand(True)
-        tool_item.get_style_context().add_class("raised")
-        self.toolbar.insert(tool_item, 0)
-        switch_holder = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        switch_holder.set_border_width(1)
-        tool_item.add(switch_holder)
-        switch_holder.pack_start(stack_switcher, True, True, 0)
-        stack_switcher.set_halign(Gtk.Align.CENTER)
-        self.toolbar.show_all()
 
         size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
 
@@ -470,7 +358,7 @@ class MintLocale:
         self.install_label = Gtk.Label()
 
         page = SettingsPage()
-        stack.add_titled(page, "language", _("Language"))
+        self.builder.get_object("box1").pack_start(page, True, True, 0)
 
         language_settings = page.add_section(_("Language"))
 
@@ -492,53 +380,6 @@ class MintLocale:
         self.install_row.set_no_show_all(True)
         if IS_DEBIAN:
             language_settings.add_row(self.install_row)
-
-        page = SettingsPage()
-        stack.add_titled(page, "input settings", _("Input method"))
-
-        size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
-
-        self.im_combo = Gtk.ComboBox()
-        model = Gtk.ListStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
-        cell = Gtk.CellRendererText()
-        self.im_combo.pack_start(cell, True)
-        self.im_combo.add_attribute(cell, 'text', IM_NAME)
-        self.im_combo.set_model(model)
-        size_group.add_widget(self.im_combo)
-
-        self.ImConfig = ImConfig()
-
-        label = Gtk.Label()
-        label.set_markup("<small><i>%s</i></small>" % (_("Input methods are used to write symbols and characters which are not present on the keyboard. They are useful to write in Chinese, Japanese, Korean, Thai, Vietnamese...")))
-        label.set_line_wrap(True)
-        page.add(label)
-
-        self.im_languages = []
-        self.im_languages.append(IMLanguage("zh-hans", _("Simplified Chinese"), "fcitx:ibus", self))
-        self.im_languages.append(IMLanguage("zh-hant", _("Traditional Chinese"), "fcitx:ibus", self))
-        self.im_languages.append(IMLanguage("ja", _("Japanese"), "fcitx:ibus", self))
-        self.im_languages.append(IMLanguage("ko", _("Korean"), "ibus:uim:fcitx", self))
-        self.im_languages.append(IMLanguage("vi", _("Vietnamese"), "fcitx:ibus", self))
-        self.im_languages.append(IMLanguage("th", _("Thai"), "fcitx:ibus", self))
-        self.im_languages.append(IMLanguage("te", _("Telugu"), "ibus", self))
-
-        self.input_settings = page.add_section(_("Input method"))
-
-        label = Gtk.Label(_("Input method"))
-        row = SettingsRow(label, self.im_combo)
-        self.input_settings.add_row(row)
-
-        if IS_DEBIAN:
-            self.input_settings = page.add_section(_("Language support"))
-            for im_language in self.im_languages:
-                size_group.add_widget(im_language.button)
-                size_group.add_widget(im_language.installed_label)
-                self.input_settings.add_row(im_language.settings_row)
-
-        self.im_loaded = False  # don't react to im changes until we're fully loaded (we're loading that combo asynchronously)
-        self.im_combo.connect("changed", self.on_combobox_input_method_changed)
-
-        stack.show_all()
 
         self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
         self.dmrc_path = os.path.join(GLib.get_home_dir(), ".dmrc")
@@ -601,17 +442,9 @@ class MintLocale:
                         self.system_row.set_no_show_all(False)
                         self.install_row.set_no_show_all(False)
                         language_settings.show_all()
-                        self.input_settings.hide()
                         break
 
-        self.check_input_methods()
-
-        if (show_input_methods):
-            page.show()
-            stack.set_visible_child(page)
-            self.window.set_icon_name("mintlocale-im")
-        else:
-            self.window.set_icon_name("preferences-desktop-locale")
+        self.window.show_all()
 
     def button_system_language_clicked(self, button):
         print("Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region))
@@ -624,73 +457,6 @@ class MintLocale:
         self.build_lang_list()
         self.set_system_locale()
         self.set_num_installed()
-
-    def lock_input_methods(self):
-        # lock all buttons while we install packages
-        for im in self.im_languages:
-            im.button.set_sensitive(False)
-        self.im_combo.set_sensitive(False)
-
-    def check_input_methods(self):
-        if not self.ImConfig.available():
-            self.im_combo.set_sensitive(False)
-            self.toolbar.hide()
-            return
-        else:
-            self.im_combo.set_sensitive(True)
-
-        if not self.im_combo.get_model():
-            print("no model")
-            return
-
-        thread.start_new_thread(self.check_input_methods_async, ())
-
-    def check_input_methods_async(self):
-        self.im_loaded = False
-
-        # slow operations
-        currentIM = self.ImConfig.getCurrentInputMethod()
-        availableIM = self.ImConfig.getAvailableInputMethods()
-        allIM = self.ImConfig.getAllInputMethods()
-        GObject.idle_add(self.check_input_methods_update_ui, currentIM, availableIM, allIM)
-
-    def check_input_methods_update_ui(self, currentIM, availableIM, allIM):
-
-        self.cache.open(None)
-
-        for im_language in self.im_languages:
-            im_language.update_status(self.cache)
-
-        model = self.im_combo.get_model()
-        model.clear()
-
-        # find out about the other options
-        names = dict(xim=_('XIM'), ibus='IBus', scim='SCIM', fcitx='Fcitx', uim='UIM', gcin='gcin', hangul='Hangul', thai='Thai')
-        iter = model.append()
-        model.set_value(iter, IM_CHOICE, "none")
-        model.set_value(iter, IM_NAME, _("None"))
-        self.im_combo.set_active_iter(iter)
-        for (i, IM) in enumerate(availableIM):
-            name = names[IM] if IM in names else IM
-            iter = model.append()
-            model.set_value(iter, IM_CHOICE, IM)
-            model.set_value(iter, IM_NAME, name)
-            if IM == currentIM:
-                self.im_combo.set_active_iter(iter)
-
-        self.input_settings.show_all()
-        self.im_loaded = True
-
-    def on_combobox_input_method_changed(self, widget):
-        if not self.im_loaded:
-            # IM info not fully loaded yet, so ignore the signal
-            return
-
-        model = self.im_combo.get_model()
-        if self.im_combo.get_active() < 0:
-            return
-        (IM_choice, IM_name) = model[self.im_combo.get_active()]
-        self.ImConfig.setInputMethod(IM_choice)
 
     # Checks for minority languages that have a flag and returns the corresponding flag_path or the unchanged flag_path
     def set_minority_language_flag_path(self, locale_code, flag_path):
@@ -984,12 +750,5 @@ class MintLocale:
 
 if __name__ == "__main__":
 
-    if len(sys.argv) > 1 and sys.argv[1] == "im":
-        print ("Starting mintlocale in IM mode")
-        show_input_methods = True
-    else:
-        print ("Starting mintlocale")
-        show_input_methods = False
-
-    MintLocale(show_input_methods)
+    MintLocale()
     Gtk.main()
