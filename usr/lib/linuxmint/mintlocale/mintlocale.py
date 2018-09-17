@@ -221,8 +221,8 @@ class SettingsPage(Gtk.Box):
         self.set_margin_top(15)
         self.set_margin_bottom(15)
 
-    def add_section(self, title):
-        section = SettingsBox(title)
+    def add_section(self):
+        section = SettingsBox()
         self.pack_start(section, False, False, 0)
 
         return section
@@ -230,7 +230,7 @@ class SettingsPage(Gtk.Box):
 
 class SettingsBox(Gtk.Frame):
 
-    def __init__(self, title):
+    def __init__(self):
         Gtk.Frame.__init__(self)
         self.set_shadow_type(Gtk.ShadowType.IN)
         frame_style = self.get_style_context()
@@ -240,17 +240,6 @@ class SettingsBox(Gtk.Frame):
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.add(self.box)
-
-        toolbar = Gtk.Toolbar.new()
-        toolbar_context = toolbar.get_style_context()
-        Gtk.StyleContext.add_class(Gtk.Widget.get_style_context(toolbar), "cs-header")
-
-        label = Gtk.Label.new()
-        label.set_markup("<b>%s</b>" % title)
-        title_holder = Gtk.ToolItem()
-        title_holder.add(label)
-        toolbar.add(title_holder)
-        self.box.add(toolbar)
 
         self.list_box = Gtk.ListBox()
         self.list_box.set_selection_mode(Gtk.SelectionMode.NONE)
@@ -360,7 +349,7 @@ class MintLocale:
         page = SettingsPage()
         self.builder.get_object("box1").pack_start(page, True, True, 0)
 
-        language_settings = page.add_section(_("Language"))
+        language_settings = page.add_section()
 
         label = Gtk.Label.new()
         label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Language"), _("Language, interface, date and time...")))
