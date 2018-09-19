@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-17 16:58+0100\n"
+"POT-Creation-Date: 2018-09-19 12:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,12 +31,10 @@ msgid "Input Method"
 msgstr ""
 
 #: usr/lib/linuxmint/mintlocale/im.py:187
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:668
 msgid "XIM"
 msgstr ""
 
 #: usr/lib/linuxmint/mintlocale/im.py:190
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:671
 msgid "None"
 msgstr ""
 
@@ -52,128 +50,48 @@ msgstr ""
 msgid "Fully installed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:72
-#: usr/share/linuxmint/mintlocale/add.ui.h:2
-#: usr/share/linuxmint/mintlocale/im.ui.h:8
-msgid "Install"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:82
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:84
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:86
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:88
-msgid "Installed"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:82
-#, python-format
-msgid "Use %s or %s"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:84
-#, python-format
-msgid "Use %s, %s or %s"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:86
-#, python-format
-msgid "Use %s"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:427
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:320
 msgid "Language Settings"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:460
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:337
 msgid "Apply System-Wide"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:465
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:342
 msgid "Install / Remove Languages..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:473
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:475
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:478
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:355
 msgid "Language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:478
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:355
 msgid "Language, interface, date and time..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:483
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:360
 msgid "Region"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:483
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:360
 msgid "Numbers, currency, addresses, measurement..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:497
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:525
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:527 generate_desktop_files:39
-msgid "Input method"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:512
-#: usr/share/linuxmint/mintlocale/im.ui.h:3
-msgid ""
-"Input methods are used to write symbols and characters which are not present "
-"on the keyboard. They are useful to write in Chinese, Japanese, Korean, "
-"Thai, Vietnamese..."
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:517
-#: usr/share/linuxmint/mintlocale/im.ui.h:15
-msgid "Simplified Chinese"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:518
-#: usr/share/linuxmint/mintlocale/im.ui.h:18
-msgid "Traditional Chinese"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:519
-#: usr/share/linuxmint/mintlocale/im.ui.h:23
-msgid "Japanese"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:520
-#: usr/share/linuxmint/mintlocale/im.ui.h:28
-msgid "Korean"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:521
-#: usr/share/linuxmint/mintlocale/im.ui.h:38
-msgid "Vietnamese"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:522
-#: usr/share/linuxmint/mintlocale/im.ui.h:33
-msgid "Thai"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:523
-#: usr/share/linuxmint/mintlocale/im.ui.h:45
-msgid "Telugu"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:532
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:780
-msgid "Language support"
-msgstr ""
-
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:712
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:713
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:467
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:468
 msgid "No locale defined"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:776
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:531
 msgid "System locale"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:780
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:535
+msgid "Language support"
+msgstr ""
+
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:535
 #, python-format
 msgid "%d language installed"
 msgid_plural "%d languages installed"
@@ -184,16 +102,28 @@ msgstr[1] ""
 msgid "Cancel"
 msgstr ""
 
+#: usr/share/linuxmint/mintlocale/add.ui.h:2
+#: usr/share/linuxmint/mintlocale/im.ui.h:8
+msgid "Install"
+msgstr ""
+
 #: usr/share/linuxmint/mintlocale/add.ui.h:3
 msgid "Install the selected language"
 msgstr ""
 
 #: usr/share/linuxmint/mintlocale/im.ui.h:1
-msgid "Input Method:"
+msgid "Input method framework:"
 msgstr ""
 
 #: usr/share/linuxmint/mintlocale/im.ui.h:2
 msgid "Welcome"
+msgstr ""
+
+#: usr/share/linuxmint/mintlocale/im.ui.h:3
+msgid ""
+"Input methods are used to write symbols and characters which are not present "
+"on the keyboard. They are useful to write in Chinese, Japanese, Korean, "
+"Thai, Vietnamese..."
 msgstr ""
 
 #: usr/share/linuxmint/mintlocale/im.ui.h:4
@@ -215,33 +145,34 @@ msgid "- Install the language support packages: "
 msgstr ""
 
 #: usr/share/linuxmint/mintlocale/im.ui.h:9
-msgid "- Change the input method to <b>Fcitx</b>."
-msgstr ""
-
-#: usr/share/linuxmint/mintlocale/im.ui.h:10
 msgid "- Log out and log back in."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:11
+#: usr/share/linuxmint/mintlocale/im.ui.h:10
 msgid ""
-"- Right-click the Fcitx applet in the system tray and choose \"Configure "
-"Fcitx\"."
+"- Right-click the Fcitx applet in the system tray and choose \"Configure\"."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:12
+#: usr/share/linuxmint/mintlocale/im.ui.h:11
 msgid ""
 "- In the Fcitx configuration screen, add the <b>Pinyin</b> input method "
 "(uncheck \"Only Show Current Language\" if necessary)."
 msgstr ""
 
+#: usr/share/linuxmint/mintlocale/im.ui.h:12
+msgid "- Switch between input methods with <b>Ctrl+Space</b>."
+msgstr ""
+
 #: usr/share/linuxmint/mintlocale/im.ui.h:13
-msgid ""
-"- Switch between Pinyin and your normal keyboard layout with <b>Ctrl+Space</"
-"b>."
+msgid "- Change the input method framework to <b>Fcitx</b>."
 msgstr ""
 
 #: usr/share/linuxmint/mintlocale/im.ui.h:14
 msgid "Note: SunPinyin can also be used (either with Fcitx or IBus)."
+msgstr ""
+
+#: usr/share/linuxmint/mintlocale/im.ui.h:15
+msgid "Simplified Chinese"
 msgstr ""
 
 #: usr/share/linuxmint/mintlocale/im.ui.h:16
@@ -250,6 +181,10 @@ msgstr ""
 
 #: usr/share/linuxmint/mintlocale/im.ui.h:17
 msgid "Note: Chewing can also be used (either with Fcitx or IBus)."
+msgstr ""
+
+#: usr/share/linuxmint/mintlocale/im.ui.h:18
+msgid "Traditional Chinese"
 msgstr ""
 
 #: usr/share/linuxmint/mintlocale/im.ui.h:19
@@ -263,100 +198,96 @@ msgid ""
 msgstr ""
 
 #: usr/share/linuxmint/mintlocale/im.ui.h:21
-msgid ""
-"- Switch between Mozc and your normal keyboard layout with <b>Ctrl+Space</b>."
-msgstr ""
-
-#: usr/share/linuxmint/mintlocale/im.ui.h:22
 msgid "Note: Mozc can also be used with the IBus input method."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:24
+#: usr/share/linuxmint/mintlocale/im.ui.h:22
+msgid "Japanese"
+msgstr ""
+
+#: usr/share/linuxmint/mintlocale/im.ui.h:23
 msgid "To write in Hangul follow the steps below:"
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:25
+#: usr/share/linuxmint/mintlocale/im.ui.h:24
 msgid ""
 "- In the Fcitx configuration screen, add the <b>Hangul</b> input method "
 "(uncheck \"Only Show Current Language\" if necessary)."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:26
-msgid ""
-"- Switch between Hangul and your normal keyboard layout with <b>Ctrl+Space</"
-"b>."
-msgstr ""
-
-#: usr/share/linuxmint/mintlocale/im.ui.h:27
+#: usr/share/linuxmint/mintlocale/im.ui.h:25
 msgid "Note: Hangul can also be used with the IBus input method."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:29
+#: usr/share/linuxmint/mintlocale/im.ui.h:26
+msgid "Korean"
+msgstr ""
+
+#: usr/share/linuxmint/mintlocale/im.ui.h:27
 msgid "To write in Thai follow the steps below:"
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:30
+#: usr/share/linuxmint/mintlocale/im.ui.h:28
 msgid ""
 "- In the Fcitx configuration screen, add the <b>Thai</b> input method "
 "(uncheck \"Only Show Current Language\" if necessary)."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:31
-msgid ""
-"- Switch between Thai and your normal keyboard layout with <b>Ctrl+Space</b>."
-msgstr ""
-
-#: usr/share/linuxmint/mintlocale/im.ui.h:32
+#: usr/share/linuxmint/mintlocale/im.ui.h:29
 msgid ""
 "Note: You can also use iBus or define a Thai keyboard layout without using "
 "any input method."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:34
+#: usr/share/linuxmint/mintlocale/im.ui.h:30
+msgid "Thai"
+msgstr ""
+
+#: usr/share/linuxmint/mintlocale/im.ui.h:31
 msgid "To write in Vietnamese follow the steps below:"
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:35
+#: usr/share/linuxmint/mintlocale/im.ui.h:32
 msgid ""
 "- In the Fcitx configuration screen, add the <b>Unikey</b> input method "
 "(uncheck \"Only Show Current Language\" if necessary)."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:36
-msgid ""
-"- Switch between Unikey and your normal keyboard layout with <b>Ctrl+Space</"
-"b>."
-msgstr ""
-
-#: usr/share/linuxmint/mintlocale/im.ui.h:37
+#: usr/share/linuxmint/mintlocale/im.ui.h:33
 msgid "Note: Unikey can also be used with the IBus input method."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:39
+#: usr/share/linuxmint/mintlocale/im.ui.h:34
+msgid "Vietnamese"
+msgstr ""
+
+#: usr/share/linuxmint/mintlocale/im.ui.h:35
 msgid "To write in Telugu follow the steps below:"
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:40
-msgid "- Change the input method to <b>IBus</b>."
+#: usr/share/linuxmint/mintlocale/im.ui.h:36
+msgid "- Change the input method framework to <b>IBus</b>."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:41
+#: usr/share/linuxmint/mintlocale/im.ui.h:37
 msgid ""
 "- Right-click the IBus applet in the system tray and choose \"Preferences\"."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:42
+#: usr/share/linuxmint/mintlocale/im.ui.h:38
 msgid "- In the IBus configuration screen, add the <b>Telugu</b> input method."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:43
-msgid ""
-"- Switch between Telugu and your normal keyboard layout with <b>Super+Space</"
-"b>."
+#: usr/share/linuxmint/mintlocale/im.ui.h:39
+msgid "- Switch between input methods with <b>Super+Space</b>."
 msgstr ""
 
-#: usr/share/linuxmint/mintlocale/im.ui.h:44
+#: usr/share/linuxmint/mintlocale/im.ui.h:40
 msgid "Note: Telugu can also be used with Fcitx."
+msgstr ""
+
+#: usr/share/linuxmint/mintlocale/im.ui.h:41
+msgid "Telugu"
 msgstr ""
 
 #: usr/share/linuxmint/mintlocale/install_remove.ui.h:1
@@ -402,4 +333,8 @@ msgstr ""
 
 #: generate_desktop_files:26 generate_desktop_files:39
 msgid "Language settings"
+msgstr ""
+
+#: generate_desktop_files:39
+msgid "Input method"
 msgstr ""
