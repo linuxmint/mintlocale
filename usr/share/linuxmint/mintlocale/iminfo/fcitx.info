@@ -19,9 +19,6 @@ fcitx-module-x11
 fcitx-modules
 fcitx-tools
 fcitx-ui-classic
-fcitx-ui-kimpanel
-fcitx-ui-light
-fcitx-ui-qimpanel
 gir1.2-fcitx-1.0
 im-config
 poppler-data
