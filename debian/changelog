@@ -1,3 +1,13 @@
+mintlocale (1.5.0) tessa; urgency=medium
+
+  * Rewrite IM tool
+  * Remove IM from mintlocale.py
+  * Remove section header
+  * Fcitx: Drop Qimpanel UI
+  * IM: Generate POT and rephrase a few msgids
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 21 Sep 2018 13:09:11 +0100
+
 mintlocale (1.4.9) tara; urgency=medium
 
   * Provide app icon for mintlocale-im
