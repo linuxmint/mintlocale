@@ -1,3 +1,9 @@
+mintlocale (1.5.1) tessa; urgency=medium
+
+  * Add support for Kabyle
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 11 Dec 2018 17:23:20 +0000
+
 mintlocale (1.5.0) tessa; urgency=medium
 
   * Rewrite IM tool
