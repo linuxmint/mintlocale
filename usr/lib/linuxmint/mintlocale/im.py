@@ -1,9 +1,10 @@
 #!/usr/bin/python3
+
 import apt
 import codecs
 import gettext
 import locale
-import mintcommon
+import mintcommon.aptdaemon
 import os
 
 try:
@@ -14,8 +15,8 @@ except ImportError as err:
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AccountsService', '1.0')
-from gi.repository import GdkX11
-from gi.repository import Gtk, GObject, Gio, AccountsService, GLib, Gdk, GdkPixbuf, XApp
+gi.require_version('XApp', '1.0')
+from gi.repository import Gtk, GObject, Gdk, XApp
 
 from ImConfig.ImConfig import ImConfig
 
@@ -37,7 +38,7 @@ class IMLanguage():
         self.app = app
         self.packages = []
         self.missing_packages = []
-        self.apt = mintcommon.APT(self.app.window)
+        self.apt = mintcommon.aptdaemon.APT(self.app.window)
         self.button = button
         self.button.connect('clicked', self.install)
         self.button.set_sensitive(False)

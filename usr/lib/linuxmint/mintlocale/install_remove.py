@@ -4,16 +4,13 @@ import os
 import gettext
 import apt_pkg
 import subprocess
-import tempfile
 import locale
 import codecs
-import mintcommon
+import mintcommon.aptdaemon
 
 import gi
 gi.require_version('Gtk', '3.0')
-gi.require_version('XApp', '1.0')
-from gi.repository import GdkX11
-from gi.repository import Gtk, GdkPixbuf, XApp
+from gi.repository import Gtk, GdkPixbuf
 
 # i18n
 APP = 'mintlocale'
@@ -98,7 +95,7 @@ class MintLocale:
 
         self.build_lang_list()
 
-        self.apt = mintcommon.APT(self.window)
+        self.apt = mintcommon.aptdaemon.APT(self.window)
 
     def split_locale(self, locale_code):
         if "_" in locale_code:
