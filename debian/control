@@ -16,7 +16,7 @@ Depends: python3,
          gir1.2-xapp-1.0,
          im-config (>= 0.23-1),
          iso-flag-png,
-         mint-common (>= 1.3.0),
+         mint-common (>= 2),
          ${misc:Depends}
 Description: Language selection tool
  Locale selection.
