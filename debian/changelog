@@ -1,3 +1,14 @@
+mintlocale (1.5.2) tina; urgency=medium
+
+  [ gm10 ]
+  * Switch to mintcommon v2 and remove unused imports (#66)
+
+  [ Clement Lefebvre ]
+  * set-default-locale: Use templates instead of sed
+  * l10n: Generate files
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 30 Jun 2019 15:25:43 +0200
+
 mintlocale (1.5.1) tessa; urgency=medium
 
   * Add support for Kabyle
