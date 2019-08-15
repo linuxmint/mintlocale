@@ -328,6 +328,8 @@ class MintLocale:
         size_group.add_widget(self.locale_button)
         self.region_button = PictureChooserButton(num_cols=2, button_picture_size=BUTTON_FLAG_SIZE, has_button_label=True)
         size_group.add_widget(self.region_button)
+        self.time_button = PictureChooserButton(num_cols=2, button_picture_size=BUTTON_FLAG_SIZE, has_button_label=True)
+        size_group.add_widget(self.time_button)
 
         self.locale_system_wide_button = Gtk.Button()
         self.locale_system_wide_button.set_label(_("Apply System-Wide"))
@@ -348,13 +350,18 @@ class MintLocale:
         language_settings = page.add_section()
 
         label = Gtk.Label.new()
-        label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Language"), _("Language, interface, date and time...")))
+        label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Language"), _("Language, interface...")))
         row = SettingsRow(label, self.locale_button)
         language_settings.add_row(row)
 
         label = Gtk.Label.new()
         label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Region"), _("Numbers, currency, addresses, measurement...")))
         row = SettingsRow(label, self.region_button)
+        language_settings.add_row(row)
+
+        label = Gtk.Label.new()
+        label.set_markup("<b>%s</b>\n<small>%s</small>" % (_("Time format"), _("Date and time...")))
+        row = SettingsRow(label, self.time_button)
         language_settings.add_row(row)
 
         self.system_row = SettingsRow(self.system_label, self.locale_system_wide_button)
@@ -397,18 +404,27 @@ class MintLocale:
         else:
             self.current_region = self.current_language
 
+        if 'LC_TIME' in os.environ:
+            self.current_time = os.environ['LC_TIME']
+        else:
+            self.current_time = self.current_language
+
         if os.path.exists(self.pam_environment_path):
             with codecs.open(self.pam_environment_path, 'r', encoding='UTF-8') as pam_file:
                 for line in pam_file:
                     line = line.strip()
                     if line.startswith("LC_NUMERIC="):
                         self.current_region = line.split("=")[1].replace("\"", "").replace("'", "").strip()
+                    if line.startswith("LC_TIME="):
+                        self.current_time = line.split("=")[1].replace("\"", "").replace("'", "").strip()
 
         print("Current region: %s" % self.current_region)
+        print("Current time: %s" % self.current_time)
 
         # Replace utf8 with UTF-8 (lightDM GTK greeter messes that up)
         self.current_language = self.current_language.replace(".utf8", ".UTF-8")
         self.current_region = self.current_region.replace(".utf8", ".UTF-8")
+        self.current_time = self.current_time.replace(".utf8", ".UTF-8")
 
         self.build_lang_list()
         self.set_system_locale()
@@ -432,8 +448,8 @@ class MintLocale:
         self.window.show_all()
 
     def button_system_language_clicked(self, button):
-        print("Setting system locale: language '%s', region '%s'" % (self.current_language, self.current_region))
-        subprocess.call(['pkexec', 'set-default-locale', self.locale_path, self.current_language, self.current_region])
+        print("Setting system locale: language '%s', region '%s', time '%s'" % (self.current_language, self.current_region, self.current_time))
+        subprocess.call(['pkexec', 'set-default-locale', self.locale_path, self.current_language, self.current_region, self.current_time])
         self.set_system_locale()
         pass
 
@@ -462,6 +478,7 @@ class MintLocale:
     def set_system_locale(self):
         language_str = _("No locale defined")
         region_str = _("No locale defined")
+        time_str = _("No locale defined")
 
         # Get system locale
         if os.path.exists(self.locale_path):
@@ -522,9 +539,36 @@ class MintLocale:
 
                 region_str = language_label
 
-        language_prefix = ("Language:")
-        region_prefix = ("Region:")
-        self.system_label.set_markup("<b>%s</b>\n<small>%s <i>%s</i>\n%s <i>%s</i></small>" % (_("System locale"), language_prefix, language_str, region_prefix, region_str))
+            if "LC_TIME" in vars:
+                locale = vars['LC_TIME'].replace('"', '').replace("'", "")
+                locale = locale.split(".")[0].strip()
+                if "_" in locale:
+                    split = locale.split("_")
+                    if len(split) == 2:
+                        language_code = split[0]
+                        if language_code in self.languages:
+                            language = self.languages[language_code]
+                        else:
+                            language = language_code
+                        country_code = split[1].lower()
+                        if country_code in self.countries:
+                            country = self.countries[country_code]
+                        else:
+                            country = country_code
+                        language_label = u"%s, %s" % (language, country)
+                else:
+                    if locale in self.languages:
+                        language_label = self.languages[locale]
+                    else:
+                        language_label = locale
+
+                time_str = language_label
+
+
+        language_prefix = (_("Language:"))
+        region_prefix = (_("Region:"))
+        time_prefix = (_("Time format:"))
+        self.system_label.set_markup("<b>%s</b>\n<small>%s <i>%s</i>\n%s <i>%s</i>\n %s<i>%s</i></small>" % (_("System locale"), language_prefix, language_str, region_prefix, region_str, time_prefix, time_str))
 
     def set_num_installed(self):
         num_installed = int(subprocess.check_output("localedef --list-archive | wc -l", shell=True))
@@ -540,8 +584,10 @@ class MintLocale:
 
         self.locale_button.clear_menu()
         self.region_button.clear_menu()
+        self.time_button.clear_menu()
         self.locale_button.set_button_label(self.current_language)
         self.region_button.set_button_label(self.current_region)
+        self.time_button.set_button_label(self.current_time)
 
         # Load countries into memory
         self.countries = {}
@@ -632,6 +678,7 @@ class MintLocale:
             locale = Locale(line, language_label)
             self.locale_button.add_picture(flag, self.set_user_locale, title=language_label, id=locale)
             self.region_button.add_picture(flag, self.set_user_region, title=language_label, id=locale)
+            self.time_button.add_picture(flag, self.set_user_time, title=language_label, id=locale)
 
             if (line == self.current_language):
                 self.locale_button.set_picture_from_file(flag)
@@ -641,8 +688,13 @@ class MintLocale:
                 self.region_button.set_picture_from_file(flag)
                 self.region_button.set_button_label(language_label)
 
+            if (line == self.current_time):
+                self.time_button.set_picture_from_file(flag)
+                self.time_button.set_button_label(language_label)
+
         self.locale_button.show_all()
         self.region_button.show_all()
+        self.time_button.show_all()
 
     def set_user_locale(self, path, locale):
         self.locale_button.set_button_label(locale.name)
@@ -686,6 +738,24 @@ class MintLocale:
 
         return True
 
+    def set_user_time(self, path, locale):
+        self.time_button.set_button_label(locale.name)
+        print("Setting time to %s" % locale.id)
+
+        # We don't call self.accountService.set_formats_locale(locale.id) here...
+        # First, we don't really use AccountsService, we're only doing this to be nice to LightDM and all..
+        # Second, it's Ubuntu specific...
+        # Third it overwrites LC_TIME in .pam_environment
+
+        self.current_time = locale.id
+
+        # Set it in .pam_environment
+        self.set_pam_environment()
+
+        self.locale_system_wide_button.set_sensitive(True)
+
+        return True
+
     def set_pam_environment(self):
         shortlocale = self.current_language
         if "." in self.current_language:
@@ -696,8 +766,10 @@ class MintLocale:
             # Replace values for present fields
             for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, self.current_region, self.pam_environment_path))
-            for lc_variable in ['LC_TIME', 'LANG']:
+            for lc_variable in ['LANG']:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, self.current_language, self.pam_environment_path))
+            for lc_variable in ['LC_TIME']:
+                os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, self.current_time, self.pam_environment_path))
             for lc_variable in ['LANGUAGE']:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, shortlocale, self.pam_environment_path))
 
@@ -709,7 +781,7 @@ class MintLocale:
                 if not (("%s=" % lc_variable) in content or ("%s =" % lc_variable) in content):
                     os.system("echo '%s=%s' >> %s" % (lc_variable, self.current_region, self.pam_environment_path))
             if not ("LC_TIME=" in content or "LC_TIME =" in content):
-                os.system("echo 'LC_TIME=%s' >> %s" % (self.current_language, self.pam_environment_path))
+                os.system("echo 'LC_TIME=%s' >> %s" % (self.current_time, self.pam_environment_path))
 
             if ("XDG_SEAT_PATH" in os.environ):
                 # LightDM
@@ -727,10 +799,10 @@ class MintLocale:
         else:
             if ("XDG_SEAT_PATH" in os.environ):
                 # LightDM
-                os.system("sed -e 's/$locale/%s/g' -e 's/$shortlocale/%s/g' -e 's/$region/%s/g' /usr/share/linuxmint/mintlocale/templates/lightdm_pam_environment.template > %s" % (self.current_language, shortlocale, self.current_region, self.pam_environment_path))
+                os.system("sed -e 's/$locale/%s/g' -e 's/$shortlocale/%s/g' -e 's/$region/%s/g' -e 's/$time/%s/g' /usr/share/linuxmint/mintlocale/templates/lightdm_pam_environment.template > %s" % (self.current_language, shortlocale, self.current_region, self.current_time, self.pam_environment_path))
             else:
                 # MDM
-                os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/share/linuxmint/mintlocale/templates/mdm_pam_environment.template > %s" % (self.current_language, self.current_region, self.pam_environment_path))
+                os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' -e 's/$time/%s/g' /usr/share/linuxmint/mintlocale/templates/mdm_pam_environment.template > %s" % (self.current_language, self.current_region, self.current_time, self.pam_environment_path))
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 LANG=$locale
 LANGUAGE=$info:$language
 LC_NUMERIC=$region
-LC_TIME=$locale
+LC_TIME=$time
 LC_MONETARY=$region
 LC_PAPER=$region
 LC_IDENTIFICATION=$region
