@@ -16,7 +16,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AccountsService', '1.0')
 gi.require_version('XApp', '1.0')
-from gi.repository import Gtk, AccountsService, GLib, GdkPixbuf, XApp
+from gi.repository import Gtk, AccountsService, GLib, Gdk, GdkPixbuf, XApp
 
 
 # Used to detect Debian derivatives (we don't want to show APT features in other distros)
@@ -49,11 +49,10 @@ class Locale():
 
 class PictureChooserButton (Gtk.Button):
 
-    def __init__(self, num_cols=4, button_picture_size=None, menu_pictures_size=None, has_button_label=False):
+    def __init__(self, num_cols=4, has_button_label=False, scale=1):
         super(PictureChooserButton, self).__init__()
+        self.scale = scale
         self.num_cols = num_cols
-        self.button_picture_size = button_picture_size
-        self.menu_pictures_size = menu_pictures_size
         self.row = 0
         self.col = 0
         self.menu = Gtk.Menu()
@@ -109,11 +108,9 @@ class PictureChooserButton (Gtk.Button):
         self.queue_draw()
 
     def set_picture_from_file(self, path):
-        if self.menu_pictures_size is not None:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, self.menu_pictures_size)
-        else:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, FLAG_SIZE)
-        self.button_image.set_from_pixbuf(pixbuf)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, FLAG_SIZE * self.scale)
+        surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, self.scale)
+        self.button_image.set_from_surface(surface)
 
     def set_button_label(self, label):
         self.button_label.set_markup(label)
@@ -173,11 +170,9 @@ class PictureChooserButton (Gtk.Button):
 
     def add_picture(self, path, callback, title=None, id=None):
         if os.path.exists(path):
-            if self.button_picture_size is None:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, FLAG_SIZE)
-            else:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, self.button_picture_size)
-            image = Gtk.Image.new_from_pixbuf(pixbuf)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(path, -1, FLAG_SIZE * self.scale)
+            surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, self.scale)
+            image = Gtk.Image.new_from_surface(surface)
             menuitem = Gtk.MenuItem()
             if title is not None:
                 vbox = Gtk.VBox()
@@ -317,6 +312,8 @@ class MintLocale:
         self.window.connect("destroy", Gtk.main_quit)
         XApp.set_window_icon_name(self.window, "preferences-desktop-locale")
 
+        self.scale = self.window.get_scale_factor()
+
         self.toolbar = Gtk.Toolbar()
         self.toolbar.get_style_context().add_class("primary-toolbar")
         self.builder.get_object("box1").pack_start(self.toolbar, False, False, 0)
@@ -324,11 +321,11 @@ class MintLocale:
 
         size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
 
-        self.locale_button = PictureChooserButton(num_cols=2, button_picture_size=BUTTON_FLAG_SIZE, has_button_label=True)
+        self.locale_button = PictureChooserButton(num_cols=2, has_button_label=True, scale=self.scale)
         size_group.add_widget(self.locale_button)
-        self.region_button = PictureChooserButton(num_cols=2, button_picture_size=BUTTON_FLAG_SIZE, has_button_label=True)
+        self.region_button = PictureChooserButton(num_cols=2, has_button_label=True, scale=self.scale)
         size_group.add_widget(self.region_button)
-        self.time_button = PictureChooserButton(num_cols=2, button_picture_size=BUTTON_FLAG_SIZE, has_button_label=True)
+        self.time_button = PictureChooserButton(num_cols=2, has_button_label=True, scale=self.scale)
         size_group.add_widget(self.time_button)
 
         self.locale_system_wide_button = Gtk.Button()
