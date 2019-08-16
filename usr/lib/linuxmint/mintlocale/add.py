@@ -9,7 +9,7 @@ import codecs
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 # i18n
 APP = 'mintlocale'
@@ -34,6 +34,7 @@ class MintLocale:
         self.builder.set_translation_domain("mintlocale")
         self.builder.add_from_file('/usr/share/linuxmint/mintlocale/add.ui')
         self.window = self.builder.get_object("main_window")
+        self.scale = self.window.get_scale_factor()
 
         self.builder.get_object("main_window").connect("destroy", Gtk.main_quit)
 
@@ -48,6 +49,7 @@ class MintLocale:
         ren = Gtk.CellRendererPixbuf()
         column = Gtk.TreeViewColumn("Flags", ren)
         column.add_attribute(ren, "pixbuf", 2)
+        column.set_cell_data_func(ren, self.data_func_surface)
         ren.set_property('ypad', 5)
         ren.set_property('xpad', 10)
         self.treeview.append_column(column)
@@ -58,6 +60,11 @@ class MintLocale:
         self.treeview.append_column(column)
 
         self.build_lang_list()
+
+    def data_func_surface(self, column, cell, model, iter_, *args):
+        pixbuf = model.get_value(iter_, 2)
+        surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, self.scale)
+        cell.set_property("surface", surface)
 
     # Checks for minority languages that have a flag and returns the corresponding flag_path or the unchanged flag_path
     def set_minority_language_flag_path(self, locale_code, flag_path):
@@ -162,9 +169,9 @@ class MintLocale:
                 model.set_value(iter, 0, language_label)
                 model.set_value(iter, 1, line)
                 if os.path.exists(flag_path):
-                    model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(flag_path, -1, FLAG_SIZE))
+                    model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(flag_path, -1, FLAG_SIZE * self.scale))
                 else:
-                    model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(FLAG_PATH % '_generic', -1, FLAG_SIZE))
+                    model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(FLAG_PATH % '_generic', -1, FLAG_SIZE * self.scale))
 
         treeview = self.builder.get_object("treeview_language_list")
         treeview.set_model(model)
