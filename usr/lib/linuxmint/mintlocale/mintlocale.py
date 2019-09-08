@@ -566,7 +566,7 @@ class MintLocale:
         language_prefix = (_("Language:"))
         region_prefix = (_("Region:"))
         time_prefix = (_("Time format:"))
-        self.system_label.set_markup("<b>%s</b>\n<small>%s <i>%s</i>\n%s <i>%s</i>\n %s<i>%s</i></small>" % (_("System locale"), language_prefix, language_str, region_prefix, region_str, time_prefix, time_str))
+        self.system_label.set_markup("<b>%s</b>\n<small>%s <i>%s</i>\n%s <i>%s</i>\n%s <i>%s</i></small>" % (_("System locale"), language_prefix, language_str, region_prefix, region_str, time_prefix, time_str))
 
     def set_num_installed(self):
         num_installed = int(subprocess.check_output("localedef --list-archive | wc -l", shell=True))
