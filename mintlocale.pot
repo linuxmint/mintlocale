@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-19 12:39+0100\n"
+"POT-Creation-Date: 2019-11-13 13:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,80 +18,101 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: usr/lib/linuxmint/mintlocale/add.py:42
+#: usr/lib/linuxmint/mintlocale/add.py:43
 msgid "Add a New Language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/im.py:90
+#: usr/lib/linuxmint/mintlocale/im.py:91
 msgid "Already installed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/im.py:117
+#: usr/lib/linuxmint/mintlocale/im.py:118
 msgid "Input Method"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/im.py:187
+#: usr/lib/linuxmint/mintlocale/im.py:188
 msgid "XIM"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/im.py:190
+#: usr/lib/linuxmint/mintlocale/im.py:191
 msgid "None"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/install_remove.py:73
+#: usr/lib/linuxmint/mintlocale/install_remove.py:71
 msgid "Install / Remove Languages"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/install_remove.py:213
+#: usr/lib/linuxmint/mintlocale/install_remove.py:217
 msgid "Some language packs are missing"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/install_remove.py:217
+#: usr/lib/linuxmint/mintlocale/install_remove.py:221
 msgid "Fully installed"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:320
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:311
 msgid "Language Settings"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:337
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:332
 msgid "Apply System-Wide"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:342
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:337
 msgid "Install / Remove Languages..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:355
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:350
 msgid "Language"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:355
-msgid "Language, interface, date and time..."
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:350
+msgid "Language, interface..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:360
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:355
 msgid "Region"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:360
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:355
 msgid "Numbers, currency, addresses, measurement..."
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:467
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:468
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:360
+msgid "Time format"
+msgstr ""
+
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:360
+msgid "Date and time..."
+msgstr ""
+
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:477
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:478
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:479
 msgid "No locale defined"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:531
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:566
+msgid "Language:"
+msgstr ""
+
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:567
+msgid "Region:"
+msgstr ""
+
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:568
+msgid "Time format:"
+msgstr ""
+
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:569
 msgid "System locale"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:535
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:573
 msgid "Language support"
 msgstr ""
 
-#: usr/lib/linuxmint/mintlocale/mintlocale.py:535
+#: usr/lib/linuxmint/mintlocale/mintlocale.py:573
 #, python-format
 msgid "%d language installed"
 msgid_plural "%d languages installed"
@@ -326,15 +347,15 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: generate_desktop_files:26 generate_desktop_files:65
-#: generate_desktop_files:86
+#: generate_desktop_files:24 generate_desktop_files:63
+#: generate_desktop_files:84
 msgid "Languages"
 msgstr ""
 
-#: generate_desktop_files:26 generate_desktop_files:39
+#: generate_desktop_files:24 generate_desktop_files:37
 msgid "Language settings"
 msgstr ""
 
-#: generate_desktop_files:39
+#: generate_desktop_files:37
 msgid "Input method"
 msgstr ""
