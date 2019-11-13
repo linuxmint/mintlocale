@@ -1,3 +1,19 @@
+mintlocale (1.5.3) tricia; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Add support for LC_TIME configuration
+  * Fix flags in HiDPI
+  * Fix flags in HiDPI in add/remove windows
+  * Set variables in ~.xsessionrc
+
+  [ JosephMcc ]
+  * ui: Fix a small label spacing issues (#70)
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 13 Nov 2019 13:08:24 +0100
+
 mintlocale (1.5.2) tina; urgency=medium
 
   [ gm10 ]
