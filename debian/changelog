@@ -1,3 +1,9 @@
+mintlocale (1.5.2.1) cindy; urgency=medium
+
+  * Set variables in ~.xsessionrc
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 13 Nov 2019 13:19:34 +0100
+
 mintlocale (1.5.2) tina; urgency=medium
 
   [ gm10 ]
