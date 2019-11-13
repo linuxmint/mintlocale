@@ -367,6 +367,7 @@ class MintLocale:
             language_settings.add_row(self.install_row)
 
         self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
+        self.xsessionrc_path = os.path.join(GLib.get_home_dir(), ".xsessionrc")
         self.dmrc_path = os.path.join(GLib.get_home_dir(), ".dmrc")
         self.dmrc = configparser.ConfigParser()
         self.dmrc.optionxform = str  # force case sensitivity on ConfigParser
@@ -661,8 +662,9 @@ class MintLocale:
 
         self.current_language = locale.id
 
-        # Set it in .pam_environment
+        # Set it in .pam_environment and .xsessionrc
         self.set_pam_environment()
+        self.set_xsessionrc()
 
         self.locale_system_wide_button.set_sensitive(True)
 
@@ -679,8 +681,9 @@ class MintLocale:
 
         self.current_region = locale.id
 
-        # Set it in .pam_environment
+        # Set it in .pam_environment and .xsessionrc
         self.set_pam_environment()
+        self.set_xsessionrc()
 
         self.locale_system_wide_button.set_sensitive(True)
 
@@ -731,6 +734,38 @@ class MintLocale:
             else:
                 # MDM
                 os.system("sed -e 's/$locale/%s/g' -e 's/$region/%s/g' /usr/share/linuxmint/mintlocale/templates/mdm_pam_environment.template > %s" % (self.current_language, self.current_region, self.pam_environment_path))
+
+    def set_xsessionrc(self):
+        shortlocale = self.current_language
+        if "." in self.current_language:
+            shortlocale = self.current_language.split(".")[0]
+
+        if not os.path.exists(self.xsessionrc_path):
+            os.mknod(self.xsessionrc_path)
+
+        # Replace values for present fields
+        for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
+            os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, self.current_region, self.xsessionrc_path))
+        for lc_variable in ['LC_TIME', 'LANG']:
+            os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, self.current_language, self.xsessionrc_path))
+        for lc_variable in ['LANGUAGE']:
+            os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, shortlocale, self.xsessionrc_path))
+
+        # Check missing fields
+        with codecs.open(self.xsessionrc_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+
+        for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
+            if not (("%s=" % lc_variable) in content or ("%s =" % lc_variable) in content):
+                os.system("echo '%s=%s' >> %s" % (lc_variable, self.current_region, self.xsessionrc_path))
+        if not ("LC_TIME=" in content or "LC_TIME =" in content):
+            os.system("echo 'LC_TIME=%s' >> %s" % (self.current_language, self.xsessionrc_path))
+        if not ("PAPERSIZE=" in content or "PAPERSIZE =" in content):
+            os.system("echo 'PAPERSIZE=a4' >> %s" % self.xsessionrc_path)
+        if not ("LANGUAGE=" in content or "LANGUAGE =" in content):
+            os.system("echo 'LANGUAGE=%s' >> %s" % (shortlocale, self.xsessionrc_path))
+        if not ("LANG=" in content or "LANG =" in content):
+            os.system("echo 'LANG=%s' >> %s" % (self.current_language, self.xsessionrc_path))
 
 
 if __name__ == "__main__":
