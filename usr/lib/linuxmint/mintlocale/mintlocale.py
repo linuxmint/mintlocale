@@ -430,7 +430,7 @@ class MintLocale:
 
         self.accountService = AccountsService.UserManager.get_default().get_user(current_user)
         self.accountService.connect('notify::is-loaded', self.accountservice_ready)
-        self.accountService.connect('changed::', self.accountservice_changed)
+        self.accountService.connect('changed', self.accountservice_changed)
 
         groups = grp.getgrall()
         for group in groups:
