@@ -1,3 +1,13 @@
+mintlocale (1.5.4) debbie; urgency=medium
+
+  [ Michael Webster ]
+  * mintlocale.py: Fix signal name typo.
+
+  [ Clement Lefebvre ]
+  * Only show UTF-8 locales
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 21 Jan 2020 10:13:25 +0000
+
 mintlocale (1.5.3) tricia; urgency=medium
 
   [ Clement Lefebvre ]
