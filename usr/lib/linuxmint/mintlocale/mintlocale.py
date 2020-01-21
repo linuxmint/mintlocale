@@ -609,22 +609,14 @@ class MintLocale:
         locales = subprocess.check_output("localedef --list-archive", shell=True)
         locales = locales.decode('utf-8')
 
-        all_locales_are_utf8 = True
-        for line in locales.split("\n"):
-            line = line.replace("utf8", "UTF-8")
-            charmap = None
-            if len(line.split(".")) > 1:
-                charmap = line.split(".")[1].strip()
-                if charmap != "UTF-8":
-                    all_locales_are_utf8 = False
-                    break
-            else:
-                all_locales_are_utf8 = False
-                break
-
         built_locales = {}
         for line in locales.rstrip().split("\n"):
             line = line.replace("utf8", "UTF-8")
+
+            # Only allow UTF-8 locales
+            if "UTF-8" not in line:
+                continue
+
             cur_index += 1
             locale_code = line.split(".")[0].strip()
             charmap = None
@@ -662,7 +654,7 @@ class MintLocale:
 
             flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
 
-            if charmap is not None and not all_locales_are_utf8:
+            if charmap is not None and charmap != "UTF-8":
                 language_label = u"%s  <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
 
             if os.path.exists(flag_path):

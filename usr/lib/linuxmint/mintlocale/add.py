@@ -117,6 +117,9 @@ class MintLocale:
             line = line.strip()
             if line == '' or line.startswith('#'):
                 continue
+            # Only allow UTF-8 locales
+            if "UTF-8" not in line:
+                continue
             parts = line.split(" ")
             locale = parts[0].strip()
             lcharmap = None
@@ -162,7 +165,7 @@ class MintLocale:
 
                 flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
 
-                if lcharmap is not None:
+                if lcharmap is not None and lcharmap != "UTF-8":
                     language_label = "%s <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, lcharmap)
 
                 iter = model.append()

@@ -165,6 +165,10 @@ class MintLocale:
         for line in locales.split("\n"):
             line = line.replace("utf8", "UTF-8").strip()
 
+            # Only allow UTF-8 locales
+            if "UTF-8" not in line:
+                continue
+
             locale_code = line.split(".")[0].strip()
             charmap = None
             if len(line.split(".")) > 1:
@@ -187,7 +191,7 @@ class MintLocale:
             elif language_code == 'gl':
                 flag_path = FLAG_PATH % '_galicia'
 
-            if charmap is not None:
+            if charmap is not None and charmap != "UTF-8":
                 language_label = "%s <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
 
             # Check if the language packs are installed
