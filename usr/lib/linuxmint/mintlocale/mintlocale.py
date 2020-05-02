@@ -430,7 +430,6 @@ class MintLocale:
 
         self.accountService = AccountsService.UserManager.get_default().get_user(current_user)
         self.accountService.connect('notify::is-loaded', self.accountservice_ready)
-        self.accountService.connect('changed', self.accountservice_changed)
 
         groups = grp.getgrall()
         for group in groups:
@@ -574,9 +573,6 @@ class MintLocale:
 
     def accountservice_ready(self, user, param):
         self.window.show()
-
-    def accountservice_changed(self, user):
-        print("AccountsService language is: '%s'" % user.get_language())
 
     def build_lang_list(self):
 
