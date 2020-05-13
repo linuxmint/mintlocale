@@ -23,6 +23,7 @@
 <message xml:lang="da">Sprog</message>
 <message xml:lang="de">Sprachen</message>
 <message xml:lang="el">Γλώσσες</message>
+<message xml:lang="eo">Lingvoj</message>
 <message xml:lang="es">Idiomas</message>
 <message xml:lang="et">Keeled</message>
 <message xml:lang="eu">Hizkuntzak</message>
@@ -39,6 +40,7 @@
 <message xml:lang="hu">Nyelvek</message>
 <message xml:lang="ia">Linguas</message>
 <message xml:lang="id">Bahasa</message>
+<message xml:lang="ie">Lingues</message>
 <message xml:lang="is">Tungumál</message>
 <message xml:lang="it">Lingue</message>
 <message xml:lang="ja">言語</message>
@@ -64,7 +66,6 @@
 <message xml:lang="pl">Języki</message>
 <message xml:lang="pt">Idiomas</message>
 <message xml:lang="pt_BR">Idiomas</message>
-<message xml:lang="pt_PT">Idiomas</message>
 <message xml:lang="ro">Limbi</message>
 <message xml:lang="ru">Языки</message>
 <message xml:lang="sc">Limbas</message>
@@ -112,6 +113,7 @@
 <message xml:lang="da">Sprog</message>
 <message xml:lang="de">Sprachen</message>
 <message xml:lang="el">Γλώσσες</message>
+<message xml:lang="eo">Lingvoj</message>
 <message xml:lang="es">Idiomas</message>
 <message xml:lang="et">Keeled</message>
 <message xml:lang="eu">Hizkuntzak</message>
@@ -128,6 +130,7 @@
 <message xml:lang="hu">Nyelvek</message>
 <message xml:lang="ia">Linguas</message>
 <message xml:lang="id">Bahasa</message>
+<message xml:lang="ie">Lingues</message>
 <message xml:lang="is">Tungumál</message>
 <message xml:lang="it">Lingue</message>
 <message xml:lang="ja">言語</message>
@@ -153,7 +156,6 @@
 <message xml:lang="pl">Języki</message>
 <message xml:lang="pt">Idiomas</message>
 <message xml:lang="pt_BR">Idiomas</message>
-<message xml:lang="pt_PT">Idiomas</message>
 <message xml:lang="ro">Limbi</message>
 <message xml:lang="ru">Языки</message>
 <message xml:lang="sc">Limbas</message>
