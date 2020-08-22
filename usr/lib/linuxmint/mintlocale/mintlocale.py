@@ -122,10 +122,10 @@ class PictureChooserButton (Gtk.Button):
         widget = args[-1]
 
         window = widget.get_window()
-        screen = window.get_screen()
-        monitor = screen.get_monitor_at_window(window)
+        display = Gdk.Display.get_default()
+        monitor = display.get_monitor_at_window(window)
 
-        warea = screen.get_monitor_workarea(monitor)
+        warea = monitor.get_workarea()
         wrect = widget.get_allocation()
         mrect = menu.get_allocation()
 
@@ -207,8 +207,8 @@ class SettingsPage(Gtk.Box):
         Gtk.Box.__init__(self)
         self.set_orientation(Gtk.Orientation.VERTICAL)
         self.set_spacing(15)
-        self.set_margin_left(80)
-        self.set_margin_right(80)
+        self.set_margin_start(80)
+        self.set_margin_end(80)
         self.set_margin_top(15)
         self.set_margin_bottom(15)
 
@@ -226,8 +226,7 @@ class SettingsBox(Gtk.Frame):
         self.set_shadow_type(Gtk.ShadowType.IN)
         frame_style = self.get_style_context()
         frame_style.add_class("view")
-        self.size_group = Gtk.SizeGroup()
-        self.size_group.set_mode(Gtk.SizeGroupMode.VERTICAL)
+        self.size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.VERTICAL)
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.add(self.box)
@@ -260,8 +259,8 @@ class SettingsRow(Gtk.ListBoxRow):
 
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         hbox.set_border_width(5)
-        hbox.set_margin_left(20)
-        hbox.set_margin_right(20)
+        hbox.set_margin_start(20)
+        hbox.set_margin_end(20)
         self.add(hbox)
 
         grid = Gtk.Grid()
