@@ -1,3 +1,13 @@
+mintlocale (1.5.6) ulyana; urgency=medium
+
+  [ okaestne ]
+  * fix DeprecationWarnings
+
+  [ Clement Lefebvre ]
+  * Packages: Remove chromium-browser
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 05 Nov 2020 10:03:45 +0000
+
 mintlocale (1.5.5) ulyana; urgency=medium
 
   * Remove connection to AC changed signal
