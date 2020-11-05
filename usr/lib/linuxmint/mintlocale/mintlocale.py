@@ -6,6 +6,7 @@ import grp
 import locale
 import subprocess
 import codecs
+import sys
 
 try:
     import configparser
@@ -603,6 +604,9 @@ class MintLocale:
         cur_index = -1  # find the locale :P
         locales = subprocess.check_output("localedef --list-archive", shell=True)
         locales = locales.decode('utf-8')
+        if len(locales) == 0:
+            print("Locale archive not found. Regenerate it with 'sudo locale-gen'.")
+            sys.exit(1)
 
         built_locales = {}
         for line in locales.rstrip().split("\n"):
