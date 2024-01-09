@@ -1,3 +1,9 @@
+mintlocale (1.5.9) virginia; urgency=medium
+
+  * langpacks: Remove openoffice.org-hyphenation
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 09 Jan 2024 09:26:57 +0000
+
 mintlocale (1.5.8) uma; urgency=medium
 
   [ Vincent Vermeulen ]
