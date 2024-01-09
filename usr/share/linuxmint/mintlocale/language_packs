@@ -74,11 +74,6 @@ wa:nn:libreoffice-common:hunspell-no
 wa:nn:libreoffice-common:hyphen-no
 wa:nn:libreoffice-common:mythes-no
 
-wa:en:libreoffice-common:openoffice.org-hyphenation
-wa:fi:libreoffice-common:openoffice.org-hyphenation
-wa:ga:libreoffice-common:openoffice.org-hyphenation
-wa:id:libreoffice-common:openoffice.org-hyphenation
-
 # Aspell support for Sylpheed and Abiword
 wa::sylpheed:hunspell-
 wa::abiword:aspell-
