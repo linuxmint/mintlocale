@@ -97,14 +97,6 @@ class IM:
 
     def __init__(self):
 
-        # Determine path to system locale-config
-        self.locale_path=''
-
-        if os.path.exists('/etc/default/locale'):
-            self.locale_path='/etc/default/locale'
-        else:
-            self.locale_path='/etc/locale.conf'
-
         # Prepare the APT cache
         self.cache = apt.Cache()
         self.cache_updated = False
