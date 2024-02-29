@@ -1,3 +1,10 @@
+mintlocale (1.6.1) wilma; urgency=medium
+
+  * Provide a data/pkg_depends for check-language-support.
+  * Update language_packs info
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 29 Feb 2024 14:13:14 +0000
+
 mintlocale (1.6.0) wilma; urgency=medium
 
   * Use /etc/locale.conf if it exists
