@@ -25,52 +25,53 @@ tr::gimp:gimp-help-
 tr::evolution:evolution-documentation-
 tr::sylpheed:sylpheed-i18n
 tr::amarok:amarok-help-
-tr::gnome-getting-started-docs:gnome-getting-started-docs-
 # Format: %LCODE% or %LCODE%%CCODE% or %LCODE%-%VARIANT%
 tr::kdelibs5-data:kde-l10n-
 tr::calligra-libs:calligra-l10n-
 tr::gcompris:gcompris-sound-
-tr::k3b:k3b-i18n
 
 # Finnish support for voikko
-wa:fi:firefox:xul-ext-mozvoikko
-wa:fi:thunderbird:xul-ext-mozvoikko
-wa:fi:seahorse:xul-ext-mozvoikko
-wa:fi:epiphany:xul-ext-mozvoikko
 wa:fi:libreoffice-core:libreoffice-voikko
 wa:fi:ispell:tmispell-voikko
 wa:fi::libenchant-voikko
+wa:fi::libenchant-2-voikko
 wa:fi::voikko-fi
+
+# North Saami support for voikko (universe package)
+wa:se::libenchant-2-voikko
+wa:se::giella-sme
 
 # LibreOffice support
 wa::libreoffice-common:hyphen-
 wa::libreoffice-common:mythes-
-wa::libreoffice-common:hunspell-
+wa:::hunspell-
 # languages which don't provide a hunspell dictionary yet
-wa:eo:libreoffice-common:myspell-eo
-wa:et:libreoffice-common:myspell-et
-wa:fa:libreoffice-common:myspell-fa
-wa:fo:libreoffice-common:myspell-fo
-wa:ga:libreoffice-common:myspell-ga
-wa:gv:libreoffice-common:myspell-gv
-wa:hy:libreoffice-common:myspell-hy
-wa:ku:libreoffice-common:myspell-ku
-wa:lv:libreoffice-common:myspell-lv
-wa:nr:libreoffice-common:myspell-nr
-wa:ns:libreoffice-common:myspell-ns
-wa:ss:libreoffice-common:myspell-ss
-wa:st:libreoffice-common:myspell-st
-wa:tn:libreoffice-common:myspell-tn
-wa:ts:libreoffice-common:myspell-ts
-wa:ve:libreoffice-common:myspell-ve
-wa:xh:libreoffice-common:myspell-xh
-wa:zu:libreoffice-common:myspell-zu
+wa:eo::myspell-eo
+wa:et::myspell-et
+wa:fa::myspell-fa
+wa:fo::myspell-fo
+wa:ga::myspell-ga
+wa:gv::myspell-gv
+wa:hy::myspell-hy
+wa:ku::myspell-ku
+wa:nr::myspell-nr
+wa:ns::myspell-ns
+wa:ss::myspell-ss
+wa:st::myspell-st
+wa:tn::myspell-tn
+wa:ts::myspell-ts
+wa:ve::myspell-ve
+wa:xh::myspell-xh
+wa:zu::myspell-zu
 
 # Package names not matching the locale
-wa:nb:libreoffice-common:hunspell-no
+wa:de::hunspell-de-at-frami
+wa:de::hunspell-de-ch-frami
+wa:de::hunspell-de-de-frami
+wa:nb::hunspell-no
 wa:nb:libreoffice-common:hyphen-no
 wa:nb:libreoffice-common:mythes-no
-wa:nn:libreoffice-common:hunspell-no
+wa:nn::hunspell-no
 wa:nn:libreoffice-common:hyphen-no
 wa:nn:libreoffice-common:mythes-no
 
@@ -96,6 +97,7 @@ wa:fo::wfaroese
 wa:fr::wfrench
 wa:ga::wirish
 wa:ga::wmanx
+wa:gd::wgaelic
 wa:gl::wgalician-minimos
 wa:it::witalian
 wa:nb::wnorwegian
@@ -148,3 +150,5 @@ fn:yi::fonts-sil-ezra
 fn:ja:gs-cjk-resource:poppler-data
 fn:ja:gs-cjk-resource:fonts-ipafont-mincho
 fn:ko:gs-cjk-resource:poppler-data
+fn:zh-hans:gs-cjk-resource:poppler-data
+fn:zh-hant:gs-cjk-resource:poppler-data
