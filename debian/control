@@ -9,6 +9,7 @@ Package: mintlocale
 Architecture: all
 Depends: python3,
          python3-gi,
+         aptkit,
          gir1.2-accountsservice-1.0,
          gir1.2-gdkpixbuf-2.0,
          gir1.2-glib-2.0,
@@ -16,7 +17,6 @@ Depends: python3,
          gir1.2-xapp-1.0,
          im-config (>= 0.23-1),
          iso-flag-png,
-         mint-common (>= 2),
          ${misc:Depends}
 Description: Language selection tool
  Locale selection.

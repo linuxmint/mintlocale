@@ -4,7 +4,7 @@ import apt
 import codecs
 import gettext
 import locale
-import mintcommon.aptdaemon
+import aptkit.simpleclient
 import os
 
 try:
@@ -38,7 +38,7 @@ class IMLanguage():
         self.app = app
         self.packages = []
         self.missing_packages = []
-        self.apt = mintcommon.aptdaemon.APT(self.app.window)
+        self.apt = aptkit.simpleclient.SimpleAPTClient(self.app.window)
         self.button = button
         self.button.connect('clicked', self.install)
         self.button.set_sensitive(False)

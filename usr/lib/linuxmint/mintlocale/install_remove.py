@@ -3,10 +3,10 @@
 import os
 import gettext
 import apt_pkg
+import aptkit.simpleclient
 import subprocess
 import locale
 import codecs
-import mintcommon.aptdaemon
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -97,7 +97,7 @@ class MintLocale:
 
         self.build_lang_list()
 
-        self.apt = mintcommon.aptdaemon.APT(self.window)
+        self.apt = aptkit.simpleclient.SimpleAPTClient(self.window)
 
     def data_func_surface(self, column, cell, model, iter_, *args):
         pixbuf = model.get_value(iter_, 2)
