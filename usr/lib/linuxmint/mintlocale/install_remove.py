@@ -201,6 +201,10 @@ class MintLocale:
                 if language_pack.language == "" or language_pack.language == language_code:
                     pkgname = language_pack.package.replace("LANG", language_code).replace("COUNTRY", country_code)
                     depname = language_pack.dependency
+                    if pkgname in ["hunspell-de-de", "hunspell-de-at", "hunspell-de-ch"]:
+                        # Skip hunspell for German, hunspell-de-xx-frami is prefered instead and conflicts with it
+                        print(f"Skipping {pkgname}, frami version is preferred.")
+                        continue
                     if pkgname in self.cache:
                         pkg = self.cache[pkgname]
                         if (pkg.has_versions and pkg.current_state != apt_pkg.CURSTATE_INSTALLED):
