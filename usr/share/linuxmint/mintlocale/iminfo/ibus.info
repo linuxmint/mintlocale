@@ -3,7 +3,7 @@ ibus
 ibus-clutter
 ibus-gtk
 ibus-gtk3
-ibus-qt4
+ibus-gtk4
 ibus-table
 im-config
 poppler-data
