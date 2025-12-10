@@ -1,3 +1,18 @@
+mintlocale (1.6.5) zena; urgency=medium
+
+  [ Clement Lefebvre ]
+  * Switch to XApp symbolic icons
+  * Switch to XSI
+
+  [ Michael Webster ]
+  * ibus.info: Add ibus-gtk4, remove ibus-qt4 (does not exist).
+  * Add ibus-pinyin to Simplified Chinese packages. (#86)
+
+  [ Clement Lefebvre ]
+  * Add ibus-cangjie to Traditional Chinese packages (#86)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 10 Dec 2025 16:10:01 +0000
+
 mintlocale (1.6.4) xia; urgency=medium
 
   * Skip hunspell-de-xx, prefer hunspell-de-xx-frami
