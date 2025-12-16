@@ -86,7 +86,7 @@ class IMLanguage():
         if len(self.missing_packages) > 0:
             self.button.show()
             self.button.set_sensitive(True)
-            self.button.set_tooltip_text("\n".join(self.missing_packages))
+            self.button.set_tooltip_text("\n".join(sorted(self.missing_packages)))
         else:
             self.button.set_label(_("Already installed"))
             self.button.set_tooltip_text("")
