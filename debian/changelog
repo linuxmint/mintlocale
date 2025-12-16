@@ -1,3 +1,9 @@
+mintlocale (1.6.6) zena; urgency=medium
+
+  * im: Sort list of missing pkgs in tooltip text
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 16 Dec 2025 15:22:35 +0000
+
 mintlocale (1.6.5) zena; urgency=medium
 
   [ Clement Lefebvre ]
