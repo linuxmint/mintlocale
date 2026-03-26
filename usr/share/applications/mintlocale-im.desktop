@@ -154,3 +154,4 @@ Type=Application
 Encoding=UTF-8
 Categories=GNOME;GTK;Settings;DesktopSettings;XFCE;X-XFCE-SettingsDialog;X-XFCE-SystemSettings;
 StartupNotify=false
+StartupWMClass=mintlocale-im

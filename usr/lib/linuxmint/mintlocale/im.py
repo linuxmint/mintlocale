@@ -16,7 +16,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AccountsService', '1.0')
 gi.require_version('XApp', '1.0')
-from gi.repository import Gtk, GObject, Gdk, XApp
+from gi.repository import Gtk, GObject, Gdk, XApp, GLib
 
 from ImConfig.ImConfig import ImConfig
 
@@ -27,7 +27,8 @@ locale.bindtextdomain(APP, LOCALE_DIR)
 gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-
+GLib.set_prgname("mintlocale-im")
+Gdk.set_program_class("Mintlocale-im")
 (IM_CHOICE, IM_NAME) = list(range(2))
 
 GObject.threads_init()
