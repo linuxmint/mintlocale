@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import apt
-import codecs
 import gettext
 import locale
 import aptkit.simpleclient
@@ -16,7 +15,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AccountsService', '1.0')
 gi.require_version('XApp', '1.0')
-from gi.repository import Gtk, GObject, Gdk, XApp
+from gi.repository import Gtk, GObject, GLib, Gdk, XApp
 
 from ImConfig.ImConfig import ImConfig
 
@@ -29,8 +28,6 @@ gettext.textdomain(APP)
 _ = gettext.gettext
 
 (IM_CHOICE, IM_NAME) = list(range(2))
-
-GObject.threads_init()
 
 class IMLanguage():
 
@@ -49,7 +46,7 @@ class IMLanguage():
         for input_method in methods.split(":"):
             info_paths.append("/usr/share/linuxmint/mintlocale/iminfo/%s.info" % input_method)
         for info_path in info_paths:
-            with codecs.open(info_path, encoding='utf-8') as f:
+            with open(info_path, encoding='utf-8') as f:
                 for line in f:
                     line = line.strip()
                     if line.startswith("#") or line == "":
@@ -164,7 +161,7 @@ class IM:
         currentIM = self.ImConfig.getCurrentInputMethod()
         availableIM = self.ImConfig.getAvailableInputMethods()
         allIM = self.ImConfig.getAllInputMethods()
-        GObject.idle_add(self.check_input_methods_update_ui, currentIM, availableIM, allIM)
+        GLib.idle_add(self.check_input_methods_update_ui, currentIM, availableIM, allIM)
 
     def check_input_methods_update_ui(self, currentIM, availableIM, allIM):
 

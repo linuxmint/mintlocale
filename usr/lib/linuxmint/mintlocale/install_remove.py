@@ -6,7 +6,6 @@ import apt_pkg
 import aptkit.simpleclient
 import subprocess
 import locale
-import codecs
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -41,7 +40,7 @@ class MintLocale:
         self.selected_language_packs = None
 
         self.language_packs = []
-        with codecs.open("/usr/share/linuxmint/mintlocale/language_packs", 'r', encoding='utf-8') as f:
+        with open("/usr/share/linuxmint/mintlocale/language_packs", 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
                 columns = line.split(":")
@@ -144,7 +143,7 @@ class MintLocale:
 
         # Load countries into memory
         self.countries = {}
-        with codecs.open('/usr/share/linuxmint/mintlocale/countries', "r", encoding="utf-8") as file:
+        with open('/usr/share/linuxmint/mintlocale/countries', "r", encoding="utf-8") as file:
             for line in file:
                 line = line.strip()
                 split = line.split("=")
@@ -153,7 +152,7 @@ class MintLocale:
 
         # Load languages into memory
         self.languages = {}
-        with codecs.open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
+        with open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
             for line in file:
                 line = line.strip()
                 split = line.split("=")

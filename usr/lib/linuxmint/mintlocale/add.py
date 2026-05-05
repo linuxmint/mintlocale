@@ -5,7 +5,6 @@ import subprocess
 import sys
 import gettext
 import locale
-import codecs
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -90,7 +89,7 @@ class MintLocale:
 
         # Load countries into memory
         self.countries = {}
-        with codecs.open('/usr/share/linuxmint/mintlocale/countries', "r", encoding='utf-8') as file:
+        with open('/usr/share/linuxmint/mintlocale/countries', "r", encoding='utf-8') as file:
             for line in file:
                 line = line.strip()
                 split = line.split("=")
@@ -99,7 +98,7 @@ class MintLocale:
 
         # Load languages into memory
         self.languages = {}
-        with codecs.open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
+        with open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
             for line in file:
                 line = line.strip()
                 split = line.split("=")
@@ -107,7 +106,7 @@ class MintLocale:
                     self.languages[split[0]] = split[1]
 
         if os.path.exists("/usr/share/i18n/SUPPORTED"):
-            with codecs.open("/usr/share/i18n/SUPPORTED", "r", encoding="utf-8") as file:
+            with open("/usr/share/i18n/SUPPORTED", "r", encoding="utf-8") as file:
                 locales = file.read()
         else:
             locales = u""

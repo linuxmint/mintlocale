@@ -5,7 +5,6 @@ import gettext
 import grp
 import locale
 import subprocess
-import codecs
 import sys
 
 try:
@@ -405,7 +404,7 @@ class MintLocale:
             self.current_time = self.current_language
 
         if os.path.exists(self.pam_environment_path):
-            with codecs.open(self.pam_environment_path, 'r', encoding='UTF-8') as pam_file:
+            with open(self.pam_environment_path, 'r', encoding='UTF-8') as pam_file:
                 for line in pam_file:
                     line = line.strip()
                     if line.startswith("LC_NUMERIC="):
@@ -582,7 +581,7 @@ class MintLocale:
 
         # Load countries into memory
         self.countries = {}
-        with codecs.open('/usr/share/linuxmint/mintlocale/countries', "r", encoding='utf-8') as file:
+        with open('/usr/share/linuxmint/mintlocale/countries', "r", encoding='utf-8') as file:
             for line in file:
                 line = line.strip()
                 split = line.split("=")
@@ -591,7 +590,7 @@ class MintLocale:
 
         # Load languages into memory
         self.languages = {}
-        with codecs.open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
+        with open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
             for line in file:
                 line = line.strip()
                 split = line.split("=")
@@ -693,7 +692,7 @@ class MintLocale:
 
         # Set it in .dmrc
         self.dmrc.set('Desktop', 'Language', locale.id)
-        with codecs.open(self.dmrc_path, 'w', encoding='utf-8') as configfile:
+        with open(self.dmrc_path, 'w', encoding='utf-8') as configfile:
             self.dmrc.write(configfile)
         os.system("sed -i 's/ = /=/g' %s" % self.dmrc_path)  # Remove space characters around "="" sign, created by ConfigParser
 
@@ -763,7 +762,7 @@ class MintLocale:
                 os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, shortlocale, self.pam_environment_path))
 
             # Check missing fields
-            with codecs.open(self.pam_environment_path, 'r', encoding='utf-8') as file:
+            with open(self.pam_environment_path, 'r', encoding='utf-8') as file:
                 content = file.read()
 
             for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
@@ -812,7 +811,7 @@ class MintLocale:
             os.system("sed -i 's/^%s=.*/%s=%s/g' %s" % (lc_variable, lc_variable, shortlocale, self.xsessionrc_path))
 
         # Check missing fields
-        with codecs.open(self.xsessionrc_path, 'r', encoding='utf-8') as file:
+        with open(self.xsessionrc_path, 'r', encoding='utf-8') as file:
             content = file.read()
 
         for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT', 'LC_IDENTIFICATION']:
