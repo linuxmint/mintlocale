@@ -174,7 +174,7 @@ class IM:
         model.clear()
 
         # find out about the other options
-        names = dict(xim=_('XIM'), ibus='IBus', scim='SCIM', fcitx='Fcitx', uim='UIM', gcin='gcin', hangul='Hangul', thai='Thai')
+        names = dict(xim=_('XIM'), ibus='IBus', scim='SCIM', fcitx='Fcitx', fcitx5='Fcitx 5', uim='UIM', gcin='gcin', hangul='Hangul', thai='Thai')
         iter = model.append()
         model.set_value(iter, IM_CHOICE, "none")
         model.set_value(iter, IM_NAME, _("None"))
