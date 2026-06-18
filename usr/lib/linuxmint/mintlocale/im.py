@@ -39,6 +39,7 @@ class IMLanguage():
         self.button = button
         self.button.connect('clicked', self.install)
         self.button.set_sensitive(False)
+        GLib.set_prgname("mintlocale")
 
         # load package list
         info_paths = []
@@ -93,6 +94,8 @@ class IM:
     ''' Create the UI '''
 
     def __init__(self):
+
+        GLib.set_prgname("mintlocale-im")
 
         # Prepare the APT cache
         self.cache = apt.Cache()
