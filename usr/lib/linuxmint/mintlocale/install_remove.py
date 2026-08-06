@@ -94,7 +94,7 @@ class MintLocale:
         ren.set_property('xpad', 10)
         self.treeview.append_column(column)
 
-        self.build_lang_list()
+        self.build_lang_list(refresh_cache=False)
 
         self.apt = aptkit.simpleclient.SimpleAPTClient(self.window)
 
@@ -132,8 +132,9 @@ class MintLocale:
 
         return (language_code, country_code, language_label)
 
-    def build_lang_list(self):
-        self.cache = apt_pkg.Cache(None)
+    def build_lang_list(self, refresh_cache=True):
+        if refresh_cache:
+            self.cache = apt_pkg.Cache(None)
 
         self.builder.get_object('button_install').set_sensitive(False)
         self.builder.get_object('button_remove').set_sensitive(False)
