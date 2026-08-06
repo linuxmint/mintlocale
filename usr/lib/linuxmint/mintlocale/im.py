@@ -3,7 +3,6 @@
 import apt
 import gettext
 import locale
-import aptkit.simpleclient
 import os
 
 try:
@@ -11,12 +10,16 @@ try:
 except ImportError as err:
     import thread
 
+from gi.repository import GLib
+GLib.set_prgname("mintlocale-im")
+
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AccountsService', '1.0')
 gi.require_version('XApp', '1.0')
-from gi.repository import Gtk, GObject, GLib, Gdk, XApp
+from gi.repository import Gtk, GObject, Gdk, XApp
 
+import aptkit.simpleclient
 from ImConfig.ImConfig import ImConfig
 
 # i18n
@@ -39,7 +42,6 @@ class IMLanguage():
         self.button = button
         self.button.connect('clicked', self.install)
         self.button.set_sensitive(False)
-        GLib.set_prgname("mintlocale")
 
         # load package list
         info_paths = []
@@ -94,9 +96,6 @@ class IM:
     ''' Create the UI '''
 
     def __init__(self):
-
-        GLib.set_prgname("mintlocale-im")
-
         # Prepare the APT cache
         self.cache = apt.Cache()
         self.cache_updated = False
