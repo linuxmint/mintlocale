@@ -160,6 +160,7 @@ class IM:
         self.im_loaded = False
 
         # slow operations
+        self.ImConfig.init()
         currentIM = self.ImConfig.getCurrentInputMethod()
         availableIM = self.ImConfig.getAvailableInputMethods()
         allIM = self.ImConfig.getAllInputMethods()
