@@ -10,6 +10,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
+import localegen
+
 # i18n
 APP = 'mintlocale'
 LOCALE_DIR = "/usr/share/linuxmint/locale"
@@ -194,18 +196,8 @@ class MintLocale:
                     self.builder.get_object("button_install").set_sensitive(True)
 
     def button_install_clicked(self, button):
-        parts = self.selected_language.split(" ")
-        locale = parts[0].strip()
-        short_locale = locale.split(".")[0].strip()
-        if len(parts) > 1:
-            charmap = parts[1].strip()
-            print("localedef -f %s -i %s %s" % (charmap, short_locale, locale))
-            os.system("localedef -f %s -i %s %s" % (charmap, short_locale, locale))
-        else:
-            print("localedef -i %s %s" % (short_locale, locale))
-            os.system("localedef -i %s %s" % (short_locale, locale))
-        if os.path.exists("/var/lib/locales/supported.d"):
-            os.system("localedef --list-archive | sed 's/utf8/UTF-8 UTF-8/g' > /var/lib/locales/supported.d/mintlocale")
+        print("Installing locale %s" % self.selected_language)
+        localegen.install_locale(self.selected_language)
         sys.exit(0)
 
 if __name__ == "__main__":
