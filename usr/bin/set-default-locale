@@ -1,7 +1,36 @@
 #!/usr/bin/python3
 
 from string import Template
+import os
+import subprocess
 import sys
+
+PAPERSIZE_PATH = "/etc/papersize"
+PAPERCONFIG_PATH = "/usr/sbin/paperconfig"
+
+def set_paper_size(paper_size):
+    if paper_size not in ("a4", "letter"):
+        return
+
+    # libpaper stopped creating this file with its version 2, which reads the
+    # locale instead, so one which is not there is left alone
+    try:
+        with open(PAPERSIZE_PATH, "r") as paper_size_file:
+            if paper_size_file.read().strip().lower() == paper_size:
+                return
+    except OSError:
+        return
+
+    if os.path.exists(PAPERCONFIG_PATH):
+        # It also runs the hooks in /etc/libpaper.d
+        subprocess.call([PAPERCONFIG_PATH, "--paper", paper_size])
+    else:
+        with open(PAPERSIZE_PATH, "w") as output_file:
+            output_file.write("%s\n" % paper_size)
+
+if sys.argv[1] == "--paper-size-only":
+    set_paper_size(sys.argv[2])
+    sys.exit(0)
 
 locale_path = sys.argv[1]
 locale = sys.argv[2]
@@ -19,3 +48,6 @@ text = template.substitute(substitutions)
 
 with open(locale_path, "w") as output_file:
 	output_file.write(text)
+
+if len(sys.argv) > 5:
+    set_paper_size(sys.argv[5])

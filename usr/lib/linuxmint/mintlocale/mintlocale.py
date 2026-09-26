@@ -34,6 +34,7 @@ gettext.textdomain(APP)
 _ = gettext.gettext
 
 FLAG_PATH = "/usr/share/iso-flag-png/%s.png"
+PAPERSIZE_PATH = "/etc/papersize"
 FLAG_SIZE = 22
 BUTTON_FLAG_SIZE = 22
 
@@ -444,6 +445,10 @@ class MintLocale:
         print("Setting system locale: language '%s', region '%s', time '%s'" % (self.current_language, self.current_region, self.current_time))
 
         if os.path.isdir("/run/systemd/system"):
+            # The paper size is not a locale variable and localed has nowhere to
+            # put it, so it goes on its own and asks for its own authentication
+            self.set_system_paper_size()
+
             # localed refuses a LANGUAGE holding the usual "it_IT:it" fallback
             # list, and gettext drops the territory by itself anyway
             variables = {'LANG': self.current_language,
@@ -461,8 +466,20 @@ class MintLocale:
                 GLib.Variant('(asb)', (["%s=%s" % item for item in variables.items()], True)),
                 None, Gio.DBusCallFlags.NONE, GLib.MAXINT32, None, self.on_system_locale_set, None)
         else:
-            subprocess.call(['pkexec', 'set-default-locale', self.locale_path, self.current_language, self.current_region, self.current_time])
+            subprocess.call(['pkexec', 'set-default-locale', self.locale_path, self.current_language, self.current_region, self.current_time, self.get_paper_size()])
             self.set_system_locale()
+
+    def set_system_paper_size(self):
+        paper_size = self.get_paper_size()
+        try:
+            with open(PAPERSIZE_PATH, 'r', encoding='utf-8') as paper_size_file:
+                # Nothing to change means nobody has to authenticate anything
+                if paper_size_file.read().strip().lower() == paper_size:
+                    return
+        except OSError:
+            return
+
+        subprocess.call(['pkexec', 'set-default-locale', '--paper-size-only', paper_size])
 
     def on_system_locale_set(self, connection, result, data):
         try:
@@ -789,12 +806,22 @@ class MintLocale:
         variables['LC_TIME'] = self.current_time
         variables['LANGUAGE'] = shortlocale
         variables['LANG'] = self.current_language
+        variables['PAPERSIZE'] = self.get_paper_size()
         return variables
 
-    def get_locale_defaults(self):
-        return {'PAPERSIZE': "a4"}
+    def get_paper_size(self):
+        environment = dict(os.environ, LC_PAPER=self.current_region)
+        # LC_ALL would answer for the current locale instead of the region
+        environment.pop("LC_ALL", None)
+        try:
+            # Letter is the only size glibc measures 279 by 216 millimetres
+            height, width = subprocess.check_output(['locale', 'height', 'width'], env=environment, stderr=subprocess.DEVNULL).decode().split()
+        except (OSError, subprocess.CalledProcessError, ValueError):
+            return "a4"
 
-    def write_env_file(self, path, variables, defaults, prefix="", dropped=()):
+        return "letter" if (height, width) == ("279", "216") else "a4"
+
+    def write_env_file(self, path, variables, prefix="", dropped=()):
         lines = []
         if os.path.exists(path):
             with open(path, 'r', encoding='utf-8') as env_file:
@@ -810,15 +837,11 @@ class MintLocale:
                 continue
             if name in variables:
                 content.append("%s%s=%s" % (prefix, name, variables[name]))
-            elif name in defaults:
-                # A default only fills the variable in, the value already there is the user's
-                value = line.split("=", 1)[1].strip() if "=" in line else defaults[name]
-                content.append("%s%s=%s" % (prefix, name, value))
             else:
                 content.append(line)
             present.append(name)
 
-        for name, value in list(variables.items()) + list(defaults.items()):
+        for name, value in variables.items():
             if name not in present:
                 content.append("%s%s=%s" % (prefix, name, value))
 
@@ -834,12 +857,12 @@ class MintLocale:
             for lc_variable in dropped:
                 del variables[lc_variable]
 
-        self.write_env_file(self.pam_environment_path, variables, self.get_locale_defaults(), dropped=dropped)
+        self.write_env_file(self.pam_environment_path, variables, dropped=dropped)
 
     def set_xsessionrc(self):
         # Xsession sources this file without "set -a", so plain assignments would
         # stay shell local and never reach the session
-        self.write_env_file(self.xsessionrc_path, self.get_locale_variables(), self.get_locale_defaults(), prefix="export ")
+        self.write_env_file(self.xsessionrc_path, self.get_locale_variables(), prefix="export ")
 
 if __name__ == "__main__":
 
