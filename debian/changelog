@@ -1,3 +1,13 @@
+mintlocale (1.6.8) adrien; urgency=medium
+
+  [ Fabio Fantoni ]
+  * debian: fix and improve the packaging (#98)
+  * Export the locale variables written to ~/.xsessionrc (#100)
+  * Set the system locale through localed where it runs (#102)
+  * Support the option set of im-config 1.0 and later (#99)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 13 Oct 2026 15:03:22 +0100
+
 mintlocale (1.6.7) alfa; urgency=medium
 
   [ Michael Webster ]
