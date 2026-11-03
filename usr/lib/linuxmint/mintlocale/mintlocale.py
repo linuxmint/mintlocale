@@ -34,6 +34,8 @@ gettext.textdomain(APP)
 _ = gettext.gettext
 
 FLAG_PATH = "/usr/share/iso-flag-png/%s.png"
+# libpaper takes the paper size from LC_PAPER, and PAPERSIZE would override it
+DROPPED_VARIABLES = ('PAPERSIZE',)
 FLAG_SIZE = 22
 BUTTON_FLAG_SIZE = 22
 
@@ -791,10 +793,7 @@ class MintLocale:
         variables['LANG'] = self.current_language
         return variables
 
-    def get_locale_defaults(self):
-        return {'PAPERSIZE': "a4"}
-
-    def write_env_file(self, path, variables, defaults, prefix="", dropped=()):
+    def write_env_file(self, path, variables, prefix="", dropped=()):
         lines = []
         if os.path.exists(path):
             with open(path, 'r', encoding='utf-8') as env_file:
@@ -810,15 +809,11 @@ class MintLocale:
                 continue
             if name in variables:
                 content.append("%s%s=%s" % (prefix, name, variables[name]))
-            elif name in defaults:
-                # A default only fills the variable in, the value already there is the user's
-                value = line.split("=", 1)[1].strip() if "=" in line else defaults[name]
-                content.append("%s%s=%s" % (prefix, name, value))
             else:
                 content.append(line)
             present.append(name)
 
-        for name, value in list(variables.items()) + list(defaults.items()):
+        for name, value in variables.items():
             if name not in present:
                 content.append("%s%s=%s" % (prefix, name, value))
 
@@ -827,19 +822,19 @@ class MintLocale:
 
     def set_pam_environment(self):
         variables = self.get_locale_variables()
-        dropped = ()
+        dropped = DROPPED_VARIABLES
         if "XDG_SEAT_PATH" not in os.environ:
             # MDM takes the language from .dmrc, having it here as well confuses it
-            dropped = ('LANGUAGE', 'LANG')
-            for lc_variable in dropped:
+            for lc_variable in ('LANGUAGE', 'LANG'):
                 del variables[lc_variable]
+            dropped += ('LANGUAGE', 'LANG')
 
-        self.write_env_file(self.pam_environment_path, variables, self.get_locale_defaults(), dropped=dropped)
+        self.write_env_file(self.pam_environment_path, variables, dropped=dropped)
 
     def set_xsessionrc(self):
         # Xsession sources this file without "set -a", so plain assignments would
         # stay shell local and never reach the session
-        self.write_env_file(self.xsessionrc_path, self.get_locale_variables(), self.get_locale_defaults(), prefix="export ")
+        self.write_env_file(self.xsessionrc_path, self.get_locale_variables(), prefix="export ", dropped=DROPPED_VARIABLES)
 
 if __name__ == "__main__":
 
