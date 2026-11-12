@@ -1,3 +1,11 @@
+mintlocale (1.6.9) adrien; urgency=medium
+
+  [ Fabio Fantoni ]
+  * Stop writing PAPERSIZE so that libpaper follows the region (#105)
+  * Make removing a language undo what adding it did (#101)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 12 Nov 2026 14:19:13 +0000
+
 mintlocale (1.6.8) adrien; urgency=medium
 
   [ Fabio Fantoni ]
