@@ -11,6 +11,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
+import localegen
+
 # i18n
 APP = 'mintlocale'
 LOCALE_DIR = "/usr/share/linuxmint/locale"
@@ -132,6 +134,29 @@ class MintLocale:
 
         return (language_code, country_code, language_label)
 
+    def get_language_packs(self, language_code, country_code, specific_only=False):
+        """The packages providing support for a language, as (package, dependency) pairs
+
+        With specific_only, the packages every language shares, such as poppler-data,
+        are left out: they are still needed by the languages which remain installed.
+        """
+        packs = []
+        names = []
+        for language_pack in self.language_packs:
+            if language_pack.language not in ("", language_code):
+                continue
+            if specific_only and language_pack.language == "" and "LANG" not in language_pack.package:
+                continue
+            pkgname = language_pack.package.replace("LANG", language_code).replace("COUNTRY", country_code)
+            if pkgname in ["hunspell-de-de", "hunspell-de-at", "hunspell-de-ch"]:
+                # hunspell-de-xx-frami is preferred instead, and conflicts with it
+                continue
+            if pkgname in names or pkgname not in self.cache:
+                continue
+            names.append(pkgname)
+            packs.append((pkgname, language_pack.dependency))
+        return packs
+
     def build_lang_list(self, refresh_cache=True):
         if refresh_cache:
             self.cache = apt_pkg.Cache(None)
@@ -195,28 +220,16 @@ class MintLocale:
                 language_label = "%s <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
 
             # Check if the language packs are installed
-            missing_packs = []
             missing_pack_names = []
-            for language_pack in self.language_packs:
-                if language_pack.language == "" or language_pack.language == language_code:
-                    pkgname = language_pack.package.replace("LANG", language_code).replace("COUNTRY", country_code)
-                    depname = language_pack.dependency
-                    if pkgname in ["hunspell-de-de", "hunspell-de-at", "hunspell-de-ch"]:
-                        # Skip hunspell for German, hunspell-de-xx-frami is prefered instead and conflicts with it
-                        print(f"Skipping {pkgname}, frami version is preferred.")
-                        continue
-                    if pkgname in self.cache:
-                        pkg = self.cache[pkgname]
-                        if (pkg.has_versions and pkg.current_state != apt_pkg.CURSTATE_INSTALLED):
-                            if depname != "":
-                                if depname in self.cache and self.cache[depname].current_state == apt_pkg.CURSTATE_INSTALLED:
-                                    if pkgname not in missing_pack_names:
-                                        missing_packs.append(pkg)
-                                        missing_pack_names.append(pkgname)
-                            else:
-                                if pkgname not in missing_pack_names:
-                                    missing_packs.append(pkg)
-                                    missing_pack_names.append(pkgname)
+            for (pkgname, depname) in self.get_language_packs(language_code, country_code):
+                pkg = self.cache[pkgname]
+                if not pkg.has_versions or pkg.current_state == apt_pkg.CURSTATE_INSTALLED:
+                    continue
+                # Packages which only make sense along with another one, such as
+                # the translations of an application, need that one installed
+                if depname != "" and not (depname in self.cache and self.cache[depname].current_state == apt_pkg.CURSTATE_INSTALLED):
+                    continue
+                missing_pack_names.append(pkgname)
 
             iter = model.append()
             model.set_value(iter, 0, language_label)
@@ -278,24 +291,21 @@ class MintLocale:
         self.build_lang_list()
 
     def button_remove_clicked(self, button):
-        locale = self.selected_language.replace("UTF-8", "utf8")
-        os.system("localedef --delete-from-archive %s" % locale)
+        print("Removing locale %s" % self.selected_language)
+        localegen.remove_locale(self.selected_language)
+
         # If there are no more locales using the language, remove the language packs
-        (language_code, country_code, language_label) = self.split_locale(locale)
-        num_locales = subprocess.check_output("localedef --list-archive | grep %s_ | wc -l" % language_code, shell=True)
-        num_locales = num_locales.decode('utf-8').strip()
-        # Check if the language packs are installed
-        if num_locales == "0":
+        (language_code, country_code, language_label) = self.split_locale(self.selected_language.split(".")[0])
+        archive = subprocess.check_output(["localedef", "--list-archive"]).decode('utf-8').split()
+        if not [name for name in archive if name.split("_")[0] == language_code]:
             installed_packs = []
-            for prefix in ["language-pack", "language-pack-gnome"]:
-                for pkgname in ["%s-%s" % (prefix, language_code), "%s-%s-%s" % (prefix, language_code, country_code)]:
-                    if pkgname in self.cache:
-                        pkg = self.cache[pkgname]
-                        if (pkg.has_versions and pkg.current_state == apt_pkg.CURSTATE_INSTALLED):
-                            installed_packs.append(pkgname)
-                            print(pkgname)
+            for (pkgname, depname) in self.get_language_packs(language_code, country_code, specific_only=True):
+                pkg = self.cache[pkgname]
+                if pkg.has_versions and pkg.current_state == apt_pkg.CURSTATE_INSTALLED:
+                    installed_packs.append(pkgname)
 
             if len(installed_packs) > 0:
+                print("Removing %s" % " ".join(installed_packs))
                 self.apt.set_finished_callback(self.on_install_finished)
                 self.apt.remove_packages(installed_packs)
 
