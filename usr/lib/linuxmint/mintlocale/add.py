@@ -11,6 +11,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
 import localegen
+import localeinfo
 
 # i18n
 APP = 'mintlocale'
@@ -20,7 +21,6 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
-FLAG_PATH = "/usr/share/iso-flag-png/%s.png"
 FLAG_SIZE = 22
 
 class MintLocale:
@@ -30,6 +30,7 @@ class MintLocale:
     def __init__(self):
 
         self.selected_language = None
+        self.locale_info = localeinfo.LocaleInfo()
 
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
@@ -67,45 +68,11 @@ class MintLocale:
         surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, self.scale)
         cell.set_property("surface", surface)
 
-    # Checks for minority languages that have a flag and returns the corresponding flag_path or the unchanged flag_path
-    def set_minority_language_flag_path(self, locale_code, flag_path):
-        # Get the language code from the locale_code. For example, Basque's locale code can be eu or eu_es or eu_fr, Welsh's cy or cy_gb...
-        language_code = locale_code.split("_")[0]
-
-        if language_code == 'ca':
-            flag_path = FLAG_PATH % '_catalonia'
-        elif language_code == 'cy':
-            flag_path = FLAG_PATH % '_wales'
-        elif language_code == 'eu':
-            flag_path = FLAG_PATH % '_basque'
-        elif language_code == 'gl':
-            flag_path = FLAG_PATH % '_galicia'
-
-        return flag_path
-
     def build_lang_list(self):
         self.builder.get_object('button_install').set_sensitive(False)
 
         model = Gtk.ListStore(str, str, GdkPixbuf.Pixbuf)  # label, locale, flag
         model.set_sort_column_id(0, Gtk.SortType.ASCENDING)
-
-        # Load countries into memory
-        self.countries = {}
-        with open('/usr/share/linuxmint/mintlocale/countries', "r", encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.countries[split[0]] = split[1]
-
-        # Load languages into memory
-        self.languages = {}
-        with open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.languages[split[0]] = split[1]
 
         if os.path.exists("/usr/share/i18n/SUPPORTED"):
             with open("/usr/share/i18n/SUPPORTED", "r", encoding="utf-8") as file:
@@ -133,38 +100,10 @@ class MintLocale:
                 if len(locale.split(".")) > 1:
                     charmap = locale.split(".")[1].strip()
 
-                if "_" in locale_code:
-                    split = locale_code.split("_")
-                    if len(split) == 2:
-                        language_code = split[0]
-
-                        if language_code == "iw":
-                            continue  # use 'he' instead
-
-                        if language_code in self.languages:
-                            language = self.languages[language_code]
-                        else:
-                            language = language_code
-
-                        country_code = split[1].split('@')[0].lower()
-                        if country_code in self.countries:
-                            country = self.countries[country_code]
-                        else:
-                            country = country_code
-
-                        if '@' in split[1]:
-                            language_label = "%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
-                        else:
-                            language_label = "%s, %s" % (language, country)
-                        flag_path = FLAG_PATH % country_code
-                else:
-                    if locale_code in self.languages:
-                        language_label = self.languages[locale_code]
-                    else:
-                        language_label = locale_code
-                    flag_path = FLAG_PATH % locale_code
-
-                flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
+                language_code, country_code, language_label = self.locale_info.split_locale(locale_code)
+                if language_code == "iw":
+                    continue  # use 'he' instead
+                flag_path = self.locale_info.get_flag_path(language_code, country_code)
 
                 if lcharmap is not None and lcharmap != "UTF-8":
                     language_label = "%s <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, lcharmap)
@@ -172,10 +111,7 @@ class MintLocale:
                 iter = model.append()
                 model.set_value(iter, 0, language_label)
                 model.set_value(iter, 1, line)
-                if os.path.exists(flag_path):
-                    model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(flag_path, -1, FLAG_SIZE * self.scale))
-                else:
-                    model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(FLAG_PATH % '_generic', -1, FLAG_SIZE * self.scale))
+                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(flag_path, -1, FLAG_SIZE * self.scale))
 
         treeview = self.builder.get_object("treeview_language_list")
         treeview.set_model(model)
