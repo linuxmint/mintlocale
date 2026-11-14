@@ -446,31 +446,47 @@ class MintLocale:
         print("Setting system locale: language '%s', region '%s', time '%s'" % (self.current_language, self.current_region, self.current_time))
 
         if os.path.isdir("/run/systemd/system"):
-            # localed refuses a LANGUAGE holding the usual "it_IT:it" fallback
-            # list, and gettext drops the territory by itself anyway
-            variables = {'LANG': self.current_language,
-                         'LANGUAGE': self.current_language.replace(".UTF-8", ""),
-                         'LC_TIME': self.current_time}
-            for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_IDENTIFICATION', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT']:
-                variables[lc_variable] = self.current_region
-
-            # Called asynchronously and without a timeout because localed also
-            # generates the locales which are missing, which takes as long as it
-            # takes: a minute is not unusual with a good number of them installed
             self.locale_system_wide_button.set_sensitive(False)
-            Gio.bus_get_sync(Gio.BusType.SYSTEM, None).call(
-                'org.freedesktop.locale1', '/org/freedesktop/locale1', 'org.freedesktop.locale1', 'SetLocale',
-                GLib.Variant('(asb)', (["%s=%s" % item for item in variables.items()], True)),
-                None, Gio.DBusCallFlags.NONE, GLib.MAXINT32, None, self.on_system_locale_set, None)
+            # Asked first without the authentication prompt: Debian keeps localed
+            # from changing the locale with a D-Bus policy, and the AccessDenied
+            # that policy returns is also what a dismissed prompt ends with
+            self.call_localed(interactive=False)
         else:
-            subprocess.call(['pkexec', 'set-default-locale', self.locale_path, self.current_language, self.current_region, self.current_time])
+            self.run_set_default_locale()
             self.set_system_locale()
 
-    def on_system_locale_set(self, connection, result, data):
+    def call_localed(self, interactive):
+        # localed refuses a LANGUAGE holding the usual "it_IT:it" fallback
+        # list, and gettext drops the territory by itself anyway
+        variables = {'LANG': self.current_language,
+                     'LANGUAGE': self.current_language.replace(".UTF-8", ""),
+                     'LC_TIME': self.current_time}
+        for lc_variable in ['LC_NUMERIC', 'LC_MONETARY', 'LC_PAPER', 'LC_IDENTIFICATION', 'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_MEASUREMENT']:
+            variables[lc_variable] = self.current_region
+
+        # Called asynchronously and without a timeout because localed also
+        # generates the locales which are missing, which takes as long as it
+        # takes: a minute is not unusual with a good number of them installed
+        Gio.bus_get_sync(Gio.BusType.SYSTEM, None).call(
+            'org.freedesktop.locale1', '/org/freedesktop/locale1', 'org.freedesktop.locale1', 'SetLocale',
+            GLib.Variant('(asb)', (["%s=%s" % item for item in variables.items()], interactive)),
+            None, Gio.DBusCallFlags.NONE, GLib.MAXINT32, None, self.on_system_locale_set, interactive)
+
+    def run_set_default_locale(self):
+        subprocess.call(['pkexec', 'set-default-locale', self.locale_path, self.current_language, self.current_region, self.current_time])
+
+    def on_system_locale_set(self, connection, result, interactive):
         try:
             connection.call_finish(result)
         except GLib.Error as error:
-            print("Could not set the system locale: %s" % error.message)
+            error_name = Gio.DBusError.get_remote_error(error)
+            if not interactive and error_name == "org.freedesktop.DBus.Error.InteractiveAuthorizationRequired":
+                self.call_localed(interactive=True)
+                return
+            if not interactive and error_name == "org.freedesktop.DBus.Error.AccessDenied":
+                self.run_set_default_locale()
+            else:
+                print("Could not set the system locale: %s" % error.message)
 
         self.locale_system_wide_button.set_sensitive(True)
         self.set_system_locale()
