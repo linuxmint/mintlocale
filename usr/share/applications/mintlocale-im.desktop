@@ -148,6 +148,7 @@ Comment[zh_CN]=语言设置
 Comment[zh_HK]=語言設定
 Comment[zh_TW]=語言設定
 Exec=mintlocale-im
+TryExec=im-config
 Icon=mintlocale-im
 Terminal=false
 Type=Application
