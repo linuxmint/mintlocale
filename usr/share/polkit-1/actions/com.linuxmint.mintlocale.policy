@@ -10,11 +10,15 @@
   <action id="com.linuxmint.mintlocale.add-remove">
     <icon_name>preferences-desktop-locale</icon_name>
 <message>Languages</message>
+<message xml:lang="af">Tale</message>
 <message xml:lang="am">ቋንቋዎች</message>
 <message xml:lang="ar">اللغات</message>
+<message xml:lang="ast">Idiomes</message>
 <message xml:lang="az">Dillər</message>
 <message xml:lang="be">Мовы</message>
 <message xml:lang="bg">Езици</message>
+<message xml:lang="bn">ভাষাসমূহ</message>
+<message xml:lang="br">Yezhoù</message>
 <message xml:lang="bs">Jezici</message>
 <message xml:lang="ca">Idiomes</message>
 <message xml:lang="ca@valencia">Idiomes</message>
@@ -27,6 +31,7 @@
 <message xml:lang="es">Idiomas</message>
 <message xml:lang="et">Keeled</message>
 <message xml:lang="eu">Hizkuntzak</message>
+<message xml:lang="fa">زبان‌ها</message>
 <message xml:lang="fi">Kielet</message>
 <message xml:lang="fr">Langues</message>
 <message xml:lang="fr_CA">Langues</message>
@@ -50,10 +55,13 @@
 <message xml:lang="km">ភាសា</message>
 <message xml:lang="ko">언어</message>
 <message xml:lang="ku">Ziman</message>
+<message xml:lang="la">Linguae</message>
 <message xml:lang="lo">ພາສາ</message>
 <message xml:lang="lt">Kalbos</message>
 <message xml:lang="lv">Valodas</message>
+<message xml:lang="mi">Ngā reo</message>
 <message xml:lang="ml">ഭാഷകള്‍</message>
+<message xml:lang="mnw">သာသာဂမၠိုၚ်</message>
 <message xml:lang="mr">भाषा</message>
 <message xml:lang="ms">Bahasa</message>
 <message xml:lang="nap">Lengue</message>
@@ -61,6 +69,7 @@
 <message xml:lang="nds">Sprachen</message>
 <message xml:lang="ne">भाषाहरु</message>
 <message xml:lang="nl">Talen</message>
+<message xml:lang="nn">Språk</message>
 <message xml:lang="oc">Lengas</message>
 <message xml:lang="pap">Idiomanan</message>
 <message xml:lang="pl">Języki</message>
@@ -76,14 +85,17 @@
 <message xml:lang="sr@latin">Jezici</message>
 <message xml:lang="sv">Språk</message>
 <message xml:lang="ta">மொழிகள்</message>
+<message xml:lang="te">భాషలు</message>
 <message xml:lang="tg">Забонҳо</message>
 <message xml:lang="th">ภาษา</message>
 <message xml:lang="tr">Diller</message>
 <message xml:lang="tt">Телләр</message>
+<message xml:lang="ug">تىل</message>
 <message xml:lang="uk">Мови</message>
 <message xml:lang="ur">زبانیں</message>
-<message xml:lang="uz">Тиллар</message>
+<message xml:lang="uz">Tillar</message>
 <message xml:lang="vi">Ngôn ngữ</message>
+<message xml:lang="zgh">ⵜⵓⵜⵍⴰⵢⵉⵏ</message>
 <message xml:lang="zh_CN">语言</message>
 <message xml:lang="zh_HK">語言</message>
 <message xml:lang="zh_TW">語言</message>
@@ -100,11 +112,15 @@
     <action id="com.linuxmint.mintlocale.set-locale">
     <icon_name>preferences-desktop-locale</icon_name>
 <message>Languages</message>
+<message xml:lang="af">Tale</message>
 <message xml:lang="am">ቋንቋዎች</message>
 <message xml:lang="ar">اللغات</message>
+<message xml:lang="ast">Idiomes</message>
 <message xml:lang="az">Dillər</message>
 <message xml:lang="be">Мовы</message>
 <message xml:lang="bg">Езици</message>
+<message xml:lang="bn">ভাষাসমূহ</message>
+<message xml:lang="br">Yezhoù</message>
 <message xml:lang="bs">Jezici</message>
 <message xml:lang="ca">Idiomes</message>
 <message xml:lang="ca@valencia">Idiomes</message>
@@ -117,6 +133,7 @@
 <message xml:lang="es">Idiomas</message>
 <message xml:lang="et">Keeled</message>
 <message xml:lang="eu">Hizkuntzak</message>
+<message xml:lang="fa">زبان‌ها</message>
 <message xml:lang="fi">Kielet</message>
 <message xml:lang="fr">Langues</message>
 <message xml:lang="fr_CA">Langues</message>
@@ -140,10 +157,13 @@
 <message xml:lang="km">ភាសា</message>
 <message xml:lang="ko">언어</message>
 <message xml:lang="ku">Ziman</message>
+<message xml:lang="la">Linguae</message>
 <message xml:lang="lo">ພາສາ</message>
 <message xml:lang="lt">Kalbos</message>
 <message xml:lang="lv">Valodas</message>
+<message xml:lang="mi">Ngā reo</message>
 <message xml:lang="ml">ഭാഷകള്‍</message>
+<message xml:lang="mnw">သာသာဂမၠိုၚ်</message>
 <message xml:lang="mr">भाषा</message>
 <message xml:lang="ms">Bahasa</message>
 <message xml:lang="nap">Lengue</message>
@@ -151,6 +171,7 @@
 <message xml:lang="nds">Sprachen</message>
 <message xml:lang="ne">भाषाहरु</message>
 <message xml:lang="nl">Talen</message>
+<message xml:lang="nn">Språk</message>
 <message xml:lang="oc">Lengas</message>
 <message xml:lang="pap">Idiomanan</message>
 <message xml:lang="pl">Języki</message>
@@ -166,14 +187,17 @@
 <message xml:lang="sr@latin">Jezici</message>
 <message xml:lang="sv">Språk</message>
 <message xml:lang="ta">மொழிகள்</message>
+<message xml:lang="te">భాషలు</message>
 <message xml:lang="tg">Забонҳо</message>
 <message xml:lang="th">ภาษา</message>
 <message xml:lang="tr">Diller</message>
 <message xml:lang="tt">Телләр</message>
+<message xml:lang="ug">تىل</message>
 <message xml:lang="uk">Мови</message>
 <message xml:lang="ur">زبانیں</message>
-<message xml:lang="uz">Тиллар</message>
+<message xml:lang="uz">Tillar</message>
 <message xml:lang="vi">Ngôn ngữ</message>
+<message xml:lang="zgh">ⵜⵓⵜⵍⴰⵢⵉⵏ</message>
 <message xml:lang="zh_CN">语言</message>
 <message xml:lang="zh_HK">語言</message>
 <message xml:lang="zh_TW">語言</message>
