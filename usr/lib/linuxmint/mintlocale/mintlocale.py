@@ -22,9 +22,6 @@ from gi.repository import Gtk, AccountsService, Gio, GLib, Gdk, GdkPixbuf, XApp
 # Used to detect Debian derivatives (we don't want to show APT features in other distros)
 IS_DEBIAN = os.path.exists("/etc/debian_version")
 
-if IS_DEBIAN:
-    import apt
-
 # i18n
 APP = 'mintlocale'
 LOCALE_DIR = "/usr/share/linuxmint/locale"
@@ -294,11 +291,6 @@ class MintLocale:
         self.locale_path='/etc/default/locale'
         if os.path.exists('/etc/locale.conf'):
             self.locale_path='/etc/locale.conf'
-
-        # Prepare the APT cache
-        if IS_DEBIAN:
-            self.cache = apt.Cache()
-        self.cache_updated = False
 
         # load our glade ui file in
         self.builder = Gtk.Builder()
