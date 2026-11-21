@@ -18,6 +18,7 @@ gi.require_version('AccountsService', '1.0')
 gi.require_version('XApp', '1.0')
 from gi.repository import Gtk, AccountsService, Gio, GLib, Gdk, GdkPixbuf, XApp
 
+import localeinfo
 
 # Used to detect Debian derivatives (we don't want to show APT features in other distros)
 IS_DEBIAN = os.path.exists("/etc/debian_version")
@@ -33,7 +34,6 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
-FLAG_PATH = "/usr/share/iso-flag-png/%s.png"
 # libpaper takes the paper size from LC_PAPER, and PAPERSIZE would override it
 DROPPED_VARIABLES = ('PAPERSIZE',)
 FLAG_SIZE = 22
@@ -422,6 +422,7 @@ class MintLocale:
         self.current_region = self.current_region.replace(".utf8", ".UTF-8")
         self.current_time = self.current_time.replace(".utf8", ".UTF-8")
 
+        self.locale_info = localeinfo.LocaleInfo()
         self.build_lang_list()
         self.set_system_locale()
         self.set_num_installed()
@@ -481,21 +482,10 @@ class MintLocale:
         self.set_system_locale()
         self.set_num_installed()
 
-    # Checks for minority languages that have a flag and returns the corresponding flag_path or the unchanged flag_path
-    def set_minority_language_flag_path(self, locale_code, flag_path):
-        # Get the language code from the locale_code. For example, Basque's locale code can be eu or eu_es or eu_fr, Welsh's cy or cy_gb...
-        language_code = locale_code.split("_")[0]
-
-        if language_code == 'ca':
-            flag_path = FLAG_PATH % '_catalonia'
-        elif language_code == 'cy':
-            flag_path = FLAG_PATH % '_wales'
-        elif language_code == 'eu':
-            flag_path = FLAG_PATH % '_basque'
-        elif language_code == 'gl':
-            flag_path = FLAG_PATH % '_galicia'
-
-        return flag_path
+    def get_locale_label(self, value):
+        """The label of a locale variable as read from a file, quotes and codeset included"""
+        locale_code = value.replace('"', '').replace("'", "").split(".")[0].strip()
+        return self.locale_info.split_locale(locale_code)[2]
 
     def set_system_locale(self):
         language_str = _("No locale defined")
@@ -519,80 +509,13 @@ class MintLocale:
                     vars[lc_variable] = vars['LANG']
 
             if "LANG" in vars:
-                locale = vars['LANG'].replace('"', '').replace("'", "")
-                locale = locale.split(".")[0].strip()
-                if "_" in locale:
-                    split = locale.split("_")
-                    if len(split) == 2:
-                        language_code = split[0]
-                        if language_code in self.languages:
-                            language = self.languages[language_code]
-                        else:
-                            language = language_code
-                        country_code = split[1].lower()
-                        if country_code in self.countries:
-                            country = self.countries[country_code]
-                        else:
-                            country = country_code
-                        language_label = u"%s, %s" % (language, country)
-                else:
-                    if locale in self.languages:
-                        language_label = self.languages[locale]
-                    else:
-                        language_label = locale
-
-                language_str = language_label
+                language_str = self.get_locale_label(vars['LANG'])
 
             if "LC_NUMERIC" in vars:
-                locale = vars['LC_NUMERIC'].replace('"', '').replace("'", "")
-                locale = locale.split(".")[0].strip()
-                if "_" in locale:
-                    split = locale.split("_")
-                    if len(split) == 2:
-                        language_code = split[0]
-                        if language_code in self.languages:
-                            language = self.languages[language_code]
-                        else:
-                            language = language_code
-                        country_code = split[1].lower()
-                        if country_code in self.countries:
-                            country = self.countries[country_code]
-                        else:
-                            country = country_code
-                        language_label = u"%s, %s" % (language, country)
-                else:
-                    if locale in self.languages:
-                        language_label = self.languages[locale]
-                    else:
-                        language_label = locale
-
-                region_str = language_label
+                region_str = self.get_locale_label(vars['LC_NUMERIC'])
 
             if "LC_TIME" in vars:
-                locale = vars['LC_TIME'].replace('"', '').replace("'", "")
-                locale = locale.split(".")[0].strip()
-                if "_" in locale:
-                    split = locale.split("_")
-                    if len(split) == 2:
-                        language_code = split[0]
-                        if language_code in self.languages:
-                            language = self.languages[language_code]
-                        else:
-                            language = language_code
-                        country_code = split[1].lower()
-                        if country_code in self.countries:
-                            country = self.countries[country_code]
-                        else:
-                            country = country_code
-                        language_label = u"%s, %s" % (language, country)
-                else:
-                    if locale in self.languages:
-                        language_label = self.languages[locale]
-                    else:
-                        language_label = locale
-
-                time_str = language_label
-
+                time_str = self.get_locale_label(vars['LC_TIME'])
 
         language_prefix = (_("Language:"))
         region_prefix = (_("Region:"))
@@ -615,24 +538,6 @@ class MintLocale:
         self.region_button.set_button_label(self.current_region)
         self.time_button.set_button_label(self.current_time)
 
-        # Load countries into memory
-        self.countries = {}
-        with open('/usr/share/linuxmint/mintlocale/countries', "r", encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.countries[split[0]] = split[1]
-
-        # Load languages into memory
-        self.languages = {}
-        with open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.languages[split[0]] = split[1]
-
         cur_index = -1  # find the locale :P
         locales = subprocess.check_output("localedef --list-archive", shell=True)
         locales = locales.decode('utf-8')
@@ -654,44 +559,11 @@ class MintLocale:
             if len(line.split(".")) > 1:
                 charmap = line.split(".")[1].strip()
 
-            if "_" in locale_code:
-                split = locale_code.split("_")
-                if len(split) == 2:
-                    language_code = split[0]
-
-                    if language_code in self.languages:
-                        language = self.languages[language_code]
-                    else:
-                        language = language_code
-
-                    country_code = split[1].lower().split('@')[0].strip()
-                    if country_code in self.countries:
-                        country = self.countries[country_code]
-                    else:
-                        country = country_code
-
-                    if '@' in split[1]:
-                        language_label = u"%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
-                    else:
-                        language_label = u"%s, %s" % (language, country)
-
-                    flag_path = FLAG_PATH % country_code
-            else:
-                if locale_code in self.languages:
-                    language_label = self.languages[locale_code]
-                else:
-                    language_label = locale_code
-                flag_path = FLAG_PATH % locale_code
-
-            flag_path = self.set_minority_language_flag_path(locale_code, flag_path)
+            language_code, country_code, language_label = self.locale_info.split_locale(locale_code)
+            flag = self.locale_info.get_flag_path(language_code, country_code)
 
             if charmap is not None and charmap != "UTF-8":
                 language_label = u"%s  <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
-
-            if os.path.exists(flag_path):
-                flag = flag_path
-            else:
-                flag = FLAG_PATH % '_generic'
 
             built_locales[language_label] = (line, flag)
 
