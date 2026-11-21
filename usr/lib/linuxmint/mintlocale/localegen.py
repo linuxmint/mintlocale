@@ -37,10 +37,18 @@ def install_locale(entry):
 
 def remove_locale(name):
     """Remove a locale, given by name as listed by localedef --list-archive"""
+    names = [name]
+    # A locale that SUPPORTED lists without the codeset, such as "am_ET UTF-8",
+    # is stored both under that name and under the am_ET.utf8 alias
+    bare_name = name.replace(".UTF-8", "")
+    if bare_name != name and _supported_entry(bare_name) == "%s UTF-8" % bare_name:
+        names.append(bare_name)
+
     if os.path.exists(LOCALE_GEN_PATH):
         _migrate_supported()
-        _update_locale_gen(name)
-    subprocess.call(["localedef", "--delete-from-archive", name.replace("UTF-8", "utf8")])
+        for locale_name in names:
+            _update_locale_gen(locale_name)
+    subprocess.call(["localedef", "--delete-from-archive"] + [locale_name.replace("UTF-8", "utf8") for locale_name in names])
 
 
 def _update_locale_gen(name, entry=None):
