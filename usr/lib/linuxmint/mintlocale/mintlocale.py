@@ -36,6 +36,11 @@ _ = gettext.gettext
 FLAG_PATH = "/usr/share/iso-flag-png/%s.png"
 # libpaper takes the paper size from LC_PAPER, and PAPERSIZE would override it
 DROPPED_VARIABLES = ('PAPERSIZE',)
+# Sessions started without the Xsession of x11-common don't source ~/.xsessionrc,
+# the session wrappers there source ~/.xprofile instead
+XSESSIONRC_SOURCED = os.path.exists("/etc/X11/Xsession.d/40x11-common_xsessionrc")
+XPROFILE_BLOCK_START = "# Locale settings written by mintlocale"
+XPROFILE_BLOCK_END = "# End of the locale settings written by mintlocale"
 FLAG_SIZE = 22
 BUTTON_FLAG_SIZE = 22
 
@@ -370,6 +375,7 @@ class MintLocale:
 
         self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
         self.xsessionrc_path = os.path.join(GLib.get_home_dir(), ".xsessionrc")
+        self.xprofile_path = os.path.join(GLib.get_home_dir(), ".xprofile")
         self.dmrc_path = os.path.join(GLib.get_home_dir(), ".dmrc")
         self.dmrc = configparser.ConfigParser()
         self.dmrc.optionxform = str  # force case sensitivity on ConfigParser
@@ -835,6 +841,39 @@ class MintLocale:
         # Xsession sources this file without "set -a", so plain assignments would
         # stay shell local and never reach the session
         self.write_env_file(self.xsessionrc_path, self.get_locale_variables(), prefix="export ", dropped=DROPPED_VARIABLES)
+        if not XSESSIONRC_SOURCED:
+            self.set_xprofile()
+
+    def set_xprofile(self):
+        # ~/.xprofile is a script of the user's own, so keep our variables in a
+        # block of their own and leave every other line alone
+        lines = []
+        if os.path.exists(self.xprofile_path):
+            with open(self.xprofile_path, 'r', encoding='utf-8') as xprofile:
+                lines = xprofile.read().splitlines()
+
+        content = []
+        block = None
+        for line in lines:
+            if block is None and line == XPROFILE_BLOCK_START:
+                block = [line]
+            elif block is not None and line == XPROFILE_BLOCK_END:
+                block = None
+            elif block is not None:
+                block.append(line)
+            else:
+                content.append(line)
+        if block is not None:
+            # No end marker, the lines after the start one may not be ours
+            content += block[1:]
+
+        content.append(XPROFILE_BLOCK_START)
+        for name, value in self.get_locale_variables().items():
+            content.append("export %s=%s" % (name, value))
+        content.append(XPROFILE_BLOCK_END)
+
+        with open(self.xprofile_path, 'w', encoding='utf-8') as xprofile:
+            xprofile.write("\n".join(content) + "\n")
 
 if __name__ == "__main__":
 
