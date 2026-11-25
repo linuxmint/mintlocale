@@ -2,14 +2,21 @@
 
 import os
 import gettext
-import apt_pkg
-import aptkit.simpleclient
 import subprocess
 import locale
 
+# Without APT the window only adds and removes locales, the language packs are left out
+try:
+    import apt_pkg
+    import aptkit.simpleclient
+    HAS_APT = True
+except ImportError:
+    HAS_APT = False
+
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, GdkPixbuf
+gi.require_version('XApp', '1.0')
+from gi.repository import Gtk, Gdk, GdkPixbuf, XApp  # install_remove.ui uses XAppGtkWindow
 
 import localegen
 
@@ -54,8 +61,10 @@ class MintLocale:
                     else:
                         self.language_packs.append(LanguagePack(category, language, dependency, package))
 
-        apt_pkg.init()
-        self.cache = apt_pkg.Cache(None)
+        self.cache = None
+        if HAS_APT:
+            apt_pkg.init()
+            self.cache = apt_pkg.Cache(None)
         self.cache_updated = False
 
 
@@ -94,11 +103,16 @@ class MintLocale:
         column = Gtk.TreeViewColumn("Packs", ren)
         column.add_attribute(ren, "markup", 3)
         ren.set_property('xpad', 10)
+        column.set_visible(HAS_APT)
         self.treeview.append_column(column)
+        self.builder.get_object("button_install").set_visible(HAS_APT)
+        self.builder.get_object("label1").set_visible(HAS_APT)
 
         self.build_lang_list(refresh_cache=False)
 
-        self.apt = aptkit.simpleclient.SimpleAPTClient(self.window)
+        self.apt = None
+        if HAS_APT:
+            self.apt = aptkit.simpleclient.SimpleAPTClient(self.window)
 
     def data_func_surface(self, column, cell, model, iter_, *args):
         pixbuf = model.get_value(iter_, 2)
@@ -142,6 +156,8 @@ class MintLocale:
         """
         packs = []
         names = []
+        if not HAS_APT:
+            return packs
         for language_pack in self.language_packs:
             if language_pack.language not in ("", language_code):
                 continue
@@ -158,7 +174,7 @@ class MintLocale:
         return packs
 
     def build_lang_list(self, refresh_cache=True):
-        if refresh_cache:
+        if refresh_cache and HAS_APT:
             self.cache = apt_pkg.Cache(None)
 
         self.builder.get_object('button_install').set_sensitive(False)

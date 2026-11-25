@@ -370,8 +370,7 @@ class MintLocale:
 
         self.install_row = SettingsRow(self.install_label, self.locale_install_button)
         self.install_row.set_no_show_all(True)
-        if IS_DEBIAN:
-            language_settings.add_row(self.install_row)
+        language_settings.add_row(self.install_row)
 
         self.pam_environment_path = os.path.join(GLib.get_home_dir(), ".pam_environment")
         self.xsessionrc_path = os.path.join(GLib.get_home_dir(), ".xsessionrc")
