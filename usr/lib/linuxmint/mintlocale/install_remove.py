@@ -12,6 +12,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
 import localegen
+import names
 
 # i18n
 APP = 'mintlocale'
@@ -167,23 +168,9 @@ class MintLocale:
         model = Gtk.ListStore(str, str, GdkPixbuf.Pixbuf, str, bool, object)  # label, locale, flag, packs_label, packs_installed, list_of_missing_packs
         model.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
-        # Load countries into memory
-        self.countries = {}
-        with open('/usr/share/linuxmint/mintlocale/countries', "r", encoding="utf-8") as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.countries[split[0]] = split[1]
-
-        # Load languages into memory
-        self.languages = {}
-        with open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.languages[split[0]] = split[1]
+        # Language and country names, translated where iso-codes allows
+        self.countries = names.load_countries()
+        self.languages = names.load_languages()
 
         locales = subprocess.check_output("localedef --list-archive", shell=True)
         locales = locales.decode('utf-8').strip()

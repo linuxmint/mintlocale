@@ -18,6 +18,8 @@ gi.require_version('AccountsService', '1.0')
 gi.require_version('XApp', '1.0')
 from gi.repository import Gtk, AccountsService, Gio, GLib, Gdk, GdkPixbuf, XApp
 
+import names
+
 
 # Used to detect Debian derivatives (we don't want to show APT features in other distros)
 IS_DEBIAN = os.path.exists("/etc/debian_version")
@@ -621,23 +623,9 @@ class MintLocale:
         self.region_button.set_button_label(self.current_region)
         self.time_button.set_button_label(self.current_time)
 
-        # Load countries into memory
-        self.countries = {}
-        with open('/usr/share/linuxmint/mintlocale/countries', "r", encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.countries[split[0]] = split[1]
-
-        # Load languages into memory
-        self.languages = {}
-        with open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.languages[split[0]] = split[1]
+        # Language and country names, translated where iso-codes allows
+        self.countries = names.load_countries()
+        self.languages = names.load_languages()
 
         cur_index = -1  # find the locale :P
         locales = subprocess.check_output("localedef --list-archive", shell=True)
