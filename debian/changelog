@@ -1,3 +1,14 @@
+mintlocale (1.6.10) adrien; urgency=medium
+
+  [ Michael Webster ]
+  * generate_desktop_files: Fix polkit rule rewrite
+  * Run generate_desktop_files
+
+  [ Alexander Berg ]
+  * Write the locale variables to ~/.xprofile where ~/.xsessionrc isn't read (#111)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 25 Nov 2026 10:30:32 +0000
+
 mintlocale (1.6.9) adrien; urgency=medium
 
   [ Fabio Fantoni ]
