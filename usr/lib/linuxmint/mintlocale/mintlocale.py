@@ -430,6 +430,10 @@ class MintLocale:
         self.current_region = self.current_region.replace(".utf8", ".UTF-8")
         self.current_time = self.current_time.replace(".utf8", ".UTF-8")
 
+        # Language and country names, translated where iso-codes allows
+        self.countries = names.load_countries()
+        self.languages = names.load_languages()
+
         self.build_lang_list()
         self.set_system_locale()
         self.set_num_installed()
@@ -623,10 +627,6 @@ class MintLocale:
         self.region_button.set_button_label(self.current_region)
         self.time_button.set_button_label(self.current_time)
 
-        # Language and country names, translated where iso-codes allows
-        self.countries = names.load_countries()
-        self.languages = names.load_languages()
-
         cur_index = -1  # find the locale :P
         locales = subprocess.check_output("localedef --list-archive", shell=True)
         locales = locales.decode('utf-8')
@@ -687,9 +687,9 @@ class MintLocale:
             else:
                 flag = FLAG_PATH % '_generic'
 
-            built_locales[language_label] = (line, flag)
+            built_locales[line] = (language_label, flag)
 
-        for language_label, (line, flag) in sorted(built_locales.items()):
+        for line, (language_label, flag) in sorted(built_locales.items(), key=lambda item: item[1][0]):
             locale = Locale(line, language_label)
             self.locale_button.add_picture(flag, self.set_user_locale, title=language_label, id=locale)
             self.region_button.add_picture(flag, self.set_user_region, title=language_label, id=locale)

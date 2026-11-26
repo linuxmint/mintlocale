@@ -31,6 +31,9 @@ class MintLocale:
     def __init__(self):
 
         self.selected_language = None
+        # Language and country names, translated where iso-codes allows
+        self.countries = names.load_countries()
+        self.languages = names.load_languages()
 
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("mintlocale")
@@ -89,10 +92,6 @@ class MintLocale:
 
         model = Gtk.ListStore(str, str, GdkPixbuf.Pixbuf)  # label, locale, flag
         model.set_sort_column_id(0, Gtk.SortType.ASCENDING)
-
-        # Language and country names, translated where iso-codes allows
-        self.countries = names.load_countries()
-        self.languages = names.load_languages()
 
         if os.path.exists("/usr/share/i18n/SUPPORTED"):
             with open("/usr/share/i18n/SUPPORTED", "r", encoding="utf-8") as file:

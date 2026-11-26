@@ -41,6 +41,9 @@ class MintLocale:
 
         self.selected_language = None
         self.selected_language_packs = None
+        # Language and country names, translated where iso-codes allows
+        self.countries = names.load_countries()
+        self.languages = names.load_languages()
 
         self.language_packs = []
         with open("/usr/share/linuxmint/mintlocale/language_packs", 'r', encoding='utf-8') as f:
@@ -167,10 +170,6 @@ class MintLocale:
 
         model = Gtk.ListStore(str, str, GdkPixbuf.Pixbuf, str, bool, object)  # label, locale, flag, packs_label, packs_installed, list_of_missing_packs
         model.set_sort_column_id(0, Gtk.SortType.ASCENDING)
-
-        # Language and country names, translated where iso-codes allows
-        self.countries = names.load_countries()
-        self.languages = names.load_languages()
 
         locales = subprocess.check_output("localedef --list-archive", shell=True)
         locales = locales.decode('utf-8').strip()
