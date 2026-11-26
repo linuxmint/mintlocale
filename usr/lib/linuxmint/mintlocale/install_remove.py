@@ -12,6 +12,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
 import localegen
+import localeinfo
 
 # i18n
 APP = 'mintlocale'
@@ -21,7 +22,6 @@ gettext.bindtextdomain(APP, LOCALE_DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
 
-FLAG_PATH = "/usr/share/iso-flag-png/%s.png"
 FLAG_SIZE = 22
 
 class LanguagePack:
@@ -40,6 +40,7 @@ class MintLocale:
 
         self.selected_language = None
         self.selected_language_packs = None
+        self.locale_info = localeinfo.LocaleInfo()
 
         self.language_packs = []
         with open("/usr/share/linuxmint/mintlocale/language_packs", 'r', encoding='utf-8') as f:
@@ -105,35 +106,6 @@ class MintLocale:
         surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, self.scale)
         cell.set_property("surface", surface)
 
-    def split_locale(self, locale_code):
-        if "_" in locale_code:
-            split = locale_code.split("_")
-            language_code = split[0]
-            if language_code in self.languages:
-                language = self.languages[language_code]
-            else:
-                language = language_code
-
-            country_code = split[1].lower().split('@')[0].strip()
-            if country_code in self.countries:
-                country = self.countries[country_code]
-            else:
-                country = country_code
-
-            if '@' in split[1]:
-                language_label = "%s (@%s), %s" % (language, split[1].split('@')[1].strip(), country)
-            else:
-                language_label = "%s, %s" % (language, country)
-        else:
-            if locale_code in self.languages:
-                language_label = self.languages[locale_code]
-            else:
-                language_label = locale_code
-            language_code = locale_code
-            country_code = ""
-
-        return (language_code, country_code, language_label)
-
     def get_language_packs(self, language_code, country_code, specific_only=False):
         """The packages providing support for a language, as (package, dependency) pairs
 
@@ -167,24 +139,6 @@ class MintLocale:
         model = Gtk.ListStore(str, str, GdkPixbuf.Pixbuf, str, bool, object)  # label, locale, flag, packs_label, packs_installed, list_of_missing_packs
         model.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
-        # Load countries into memory
-        self.countries = {}
-        with open('/usr/share/linuxmint/mintlocale/countries', "r", encoding="utf-8") as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.countries[split[0]] = split[1]
-
-        # Load languages into memory
-        self.languages = {}
-        with open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.languages[split[0]] = split[1]
-
         locales = subprocess.check_output("localedef --list-archive", shell=True)
         locales = locales.decode('utf-8').strip()
         for line in locales.split("\n"):
@@ -199,22 +153,8 @@ class MintLocale:
             if len(line.split(".")) > 1:
                 charmap = line.split(".")[1].strip()
 
-            language_code, country_code, language_label = self.split_locale(locale_code)
-            if country_code == "":
-                flag_path = FLAG_PATH % locale_code
-            else:
-                flag_path = FLAG_PATH % country_code
-
-            # Check for minority languages. Get tje language code from the locale_code.
-            # For example, Basque's locale code can be eu or eu_es or eu_fr, Welsh's cy or cy_gb...
-            if language_code == 'ca':
-                flag_path = FLAG_PATH % '_catalonia'
-            elif language_code == 'cy':
-                flag_path = FLAG_PATH % '_wales'
-            elif language_code == 'eu':
-                flag_path = FLAG_PATH % '_basque'
-            elif language_code == 'gl':
-                flag_path = FLAG_PATH % '_galicia'
+            language_code, country_code, language_label = self.locale_info.split_locale(locale_code)
+            flag_path = self.locale_info.get_flag_path(language_code, country_code)
 
             if charmap is not None and charmap != "UTF-8":
                 language_label = "%s <small><span foreground='#3c3c3c'>%s</span></small>" % (language_label, charmap)
@@ -241,10 +181,7 @@ class MintLocale:
             else:
                 model.set_value(iter, 3, "<small><span fgcolor='#4ba048'>%s</span></small>" % _("Fully installed"))
                 model.set_value(iter, 4, True)
-            if os.path.exists(flag_path):
-                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(flag_path, -1, FLAG_SIZE * self.scale))
-            else:
-                model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(FLAG_PATH % '_generic', -1, FLAG_SIZE * self.scale))
+            model.set_value(iter, 2, GdkPixbuf.Pixbuf.new_from_file_at_size(flag_path, -1, FLAG_SIZE * self.scale))
 
         treeview = self.builder.get_object("treeview_language_list")
         treeview.set_model(model)
@@ -295,7 +232,7 @@ class MintLocale:
         localegen.remove_locale(self.selected_language)
 
         # If there are no more locales using the language, remove the language packs
-        (language_code, country_code, language_label) = self.split_locale(self.selected_language.split(".")[0])
+        (language_code, country_code, language_label) = self.locale_info.split_locale(self.selected_language.split(".")[0])
         archive = subprocess.check_output(["localedef", "--list-archive"]).decode('utf-8').split()
         if not [name for name in archive if name.split("_")[0] == language_code]:
             installed_packs = []
