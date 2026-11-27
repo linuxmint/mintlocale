@@ -18,6 +18,8 @@ gi.require_version('AccountsService', '1.0')
 gi.require_version('XApp', '1.0')
 from gi.repository import Gtk, AccountsService, Gio, GLib, Gdk, GdkPixbuf, XApp
 
+import names
+
 
 # Used to detect Debian derivatives (we don't want to show APT features in other distros)
 IS_DEBIAN = os.path.exists("/etc/debian_version")
@@ -428,6 +430,10 @@ class MintLocale:
         self.current_region = self.current_region.replace(".utf8", ".UTF-8")
         self.current_time = self.current_time.replace(".utf8", ".UTF-8")
 
+        # Language and country names, translated where iso-codes allows
+        self.countries = names.load_countries()
+        self.languages = names.load_languages()
+
         self.build_lang_list()
         self.set_system_locale()
         self.set_num_installed()
@@ -621,24 +627,6 @@ class MintLocale:
         self.region_button.set_button_label(self.current_region)
         self.time_button.set_button_label(self.current_time)
 
-        # Load countries into memory
-        self.countries = {}
-        with open('/usr/share/linuxmint/mintlocale/countries', "r", encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.countries[split[0]] = split[1]
-
-        # Load languages into memory
-        self.languages = {}
-        with open('/usr/share/linuxmint/mintlocale/languages', "r", encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                split = line.split("=")
-                if len(split) == 2:
-                    self.languages[split[0]] = split[1]
-
         cur_index = -1  # find the locale :P
         locales = subprocess.check_output("localedef --list-archive", shell=True)
         locales = locales.decode('utf-8')
@@ -699,9 +687,9 @@ class MintLocale:
             else:
                 flag = FLAG_PATH % '_generic'
 
-            built_locales[language_label] = (line, flag)
+            built_locales[line] = (language_label, flag)
 
-        for language_label, (line, flag) in sorted(built_locales.items()):
+        for line, (language_label, flag) in sorted(built_locales.items(), key=lambda item: item[1][0]):
             locale = Locale(line, language_label)
             self.locale_button.add_picture(flag, self.set_user_locale, title=language_label, id=locale)
             self.region_button.add_picture(flag, self.set_user_region, title=language_label, id=locale)
