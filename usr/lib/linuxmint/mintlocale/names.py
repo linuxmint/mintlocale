@@ -54,7 +54,8 @@ def _translations(names, iso_names, domain):
         matches = [msgid for msgid in msgids if msgid in [name] + name.split("; ")]
         if matches:
             text = _capitalize(translation.gettext(matches[0]))
-            if text not in (name, matches[0]) and owners[text] == {entry}:
+            # Some translations list several names ("Pangiabi; Punjabi"); keep the English one
+            if ";" not in text and text not in (name, matches[0]) and owners[text] == {entry}:
                 translated[code] = text
     return translated
 
