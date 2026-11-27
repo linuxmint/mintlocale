@@ -48,15 +48,21 @@ def _update_locale_gen(name, entry=None):
     with open(LOCALE_GEN_PATH, "r", encoding="utf-8") as gen_file:
         lines = gen_file.read().splitlines()
 
+    # Debian writes the entries commented out as "# name charmap", Arch as "#name charmap"
+    prefix = "#" if any(line[:1] == "#" and line[1:2].isalpha() for line in lines) else "# "
+
     found = False
     content = []
     for line in lines:
-        fields = line.lstrip("#").split()
+        body = line.lstrip("#").lstrip()
+        fields = body.split()
         if fields and fields[0] == name:
             found = True
-            content.append(entry if entry else "# %s" % " ".join(fields))
-        else:
-            content.append(line)
+            if entry:
+                line = body if fields == entry.split() else entry
+            elif not line.startswith("#"):
+                line = prefix + line
+        content.append(line)
 
     if entry and not found:
         content.append(entry)
